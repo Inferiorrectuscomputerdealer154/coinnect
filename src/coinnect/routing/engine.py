@@ -59,6 +59,53 @@ def build_graph(edges: list[Edge]) -> dict[str, list[Edge]]:
     return graph
 
 
+def _dijkstra(
+    graph: dict[str, list[Edge]],
+    start: str,
+    end: str,
+    amount: float,
+    optimize: str = "cost",  # "cost" or "time"
+    max_routes: int = 5,
+    max_steps: int = 3,
+) -> list[tuple[float, float, list[Edge]]]:
+    """Single Dijkstra run optimizing by cost or time."""
+    counter = 0
+    heap = [(0.0, counter, 0, start, amount, [])]
+    results = []
+    visited_states: dict[tuple, float] = {}
+
+    while heap and len(results) < max_routes:
+        priority, _, steps, curr, curr_amount, path = heapq.heappop(heap)
+
+        state = (curr, steps)
+        if state in visited_states and visited_states[state] <= priority:
+            continue
+        visited_states[state] = priority
+
+        if curr == end and path:
+            total_cost = sum(e.fee_pct for e in path)
+            results.append((total_cost, curr_amount, path))
+            continue
+
+        if steps >= max_steps:
+            continue
+
+        for edge in graph.get(curr, []):
+            new_amount = curr_amount * (1 - edge.fee_pct / 100)
+            new_priority = priority + (edge.fee_pct if optimize == "cost" else edge.estimated_minutes)
+            counter += 1
+            heapq.heappush(heap, (
+                new_priority,
+                counter,
+                steps + 1,
+                edge.to_currency,
+                new_amount,
+                path + [edge],
+            ))
+
+    return results
+
+
 def find_routes(
     graph: dict[str, list[Edge]],
     start: str,
@@ -68,44 +115,22 @@ def find_routes(
     max_steps: int = 3,
 ) -> list[tuple[float, float, list[Edge]]]:
     """
-    Dijkstra to find cheapest routes.
+    Find diverse routes — runs Dijkstra twice (by cost, by time) and merges.
     Returns list of (total_cost_pct, amount_received, path).
     """
-    counter = 0  # tie-breaker so heap never compares Edge objects
-    # heap: (total_cost, counter, steps_count, current, amount, path)
-    heap = [(0.0, counter, 0, start, amount, [])]
-    results = []
-    visited_states: dict[tuple, float] = {}
+    by_cost = _dijkstra(graph, start, end, amount, optimize="cost", max_routes=5, max_steps=max_steps)
+    by_time = _dijkstra(graph, start, end, amount, optimize="time", max_routes=3, max_steps=max_steps)
 
-    while heap and len(results) < max_routes:
-        cost, _, steps, curr, curr_amount, path = heapq.heappop(heap)
+    # Merge, deduplicating by path signature (set of via names per step)
+    seen: set[tuple] = set()
+    merged = []
+    for cost, received, path in by_cost + by_time:
+        sig = tuple((e.from_currency, e.to_currency, e.via) for e in path)
+        if sig not in seen:
+            seen.add(sig)
+            merged.append((cost, received, path))
 
-        state = (curr, steps)
-        if state in visited_states and visited_states[state] <= cost:
-            continue
-        visited_states[state] = cost
-
-        if curr == end and path:
-            results.append((cost, curr_amount, path))
-            continue
-
-        if steps >= max_steps:
-            continue
-
-        for edge in graph.get(curr, []):
-            new_amount = curr_amount * (1 - edge.fee_pct / 100)
-            new_cost = cost + edge.fee_pct
-            counter += 1
-            heapq.heappush(heap, (
-                new_cost,
-                counter,
-                steps + 1,
-                edge.to_currency,
-                new_amount,
-                path + [edge],
-            ))
-
-    return results
+    return merged[:max_routes]
 
 
 def build_quote(
