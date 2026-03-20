@@ -1,7 +1,7 @@
 # Coinnect: The Open Route Guide for Global Money
 
 **Version:** 0.3 (Draft — March 2026)
-**Author:** [Miguel V.](https://www.linkedin.com/in/miguelvalencia/)
+**Author:** [Miguel V.](https://www.linkedin.com/in/miguelvalenciav/)
 **Domain:** coinnect.bot
 **Status:** Pre-launch white paper
 
@@ -261,7 +261,7 @@ Coinnect never holds funds, never processes payments, and never collects user id
 
 ## 7. The Founder
 
-[Miguel V.](https://www.linkedin.com/in/miguelvalencia/) built Coinnect because the problem is real, the solution is simple, and nobody was building it without a business model attached.
+[Miguel V.](https://www.linkedin.com/in/miguelvalenciav/) built Coinnect because the problem is real, the solution is simple, and nobody was building it without a business model attached.
 
 His public donation wallet is listed on coinnect.bot. His compensation is capped by the founding statutes and published quarterly. He has no equity to sell, no investors to answer to, and no exit to plan.
 
