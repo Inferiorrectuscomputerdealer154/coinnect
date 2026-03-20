@@ -9,6 +9,25 @@
     if (localStorage.theme === 'light') document.documentElement.classList.remove('dark');
     else document.documentElement.classList.add('dark');
   </script>
+  <!-- GA4 opt-out: visit /?notrack to disable tracking in this browser -->
+  <script>
+    const GA_ID = 'G-CKBJHEVM2X';
+    if (new URLSearchParams(location.search).has('notrack')) {
+      localStorage.setItem('ga_optout', '1');
+      history.replaceState(null, '', location.pathname);
+    }
+    if (localStorage.getItem('ga_optout') === '1') {
+      window['ga-disable-' + GA_ID] = true;
+    }
+  </script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CKBJHEVM2X"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CKBJHEVM2X');
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     // Must be set AFTER CDN loads
