@@ -278,36 +278,80 @@ function loading() {
     </div>`;
 }
 
-function renderReqs(viaList) {
-  const reqs = viaList.map(v => REQS[v]).filter(Boolean);
-  if (!reqs.length) return '';
-  const sR = [...new Set(reqs.flatMap(r => r.sender))];
-  const rR = [...new Set(reqs.flatMap(r => r.recipient))];
+const FIAT_SERVICES = new Set(['Wise', 'Western Union', 'MoneyGram']);
+
+// Classify each step as 'sender' or 'recipient' responsibility
+function classifySteps(steps, to) {
+  if (steps.length === 1) return ['sender']; // single-step: sender initiates
+  return steps.map((s, i) => {
+    const isLast = i === steps.length - 1;
+    // Last step converting to the final destination via a crypto exchange = recipient must act
+    if (isLast && s.to_currency === to && !FIAT_SERVICES.has(s.via)) return 'recipient';
+    return 'sender';
+  });
+}
+
+function renderReqs(steps, to) {
+  const classes = classifySteps(steps, to);
+  const senderVias = [...new Set(steps.filter((_, i) => classes[i] === 'sender').map(s => s.via))];
+  const recipientVias = [...new Set(steps.filter((_, i) => classes[i] === 'recipient').map(s => s.via))];
+
+  const sReqs = senderVias.map(v => REQS[v]).filter(Boolean);
+  const rReqs = recipientVias.map(v => REQS[v]).filter(Boolean);
+
+  // For fiat-only routes: recipient just needs bank account / ID (already in REQS)
+  // For single-step sender fiat: recipient needs from the via's recipient list
+  const isSingleFiat = steps.length === 1 && FIAT_SERVICES.has(steps[0].via);
+  const recipientItems = isSingleFiat
+    ? (REQS[steps[0].via]?.recipient || [])
+    : [...new Set(rReqs.flatMap(r => r.recipient))];
+
+  const senderItems = [...new Set(sReqs.flatMap(r => r.sender))];
+  if (!senderItems.length && !recipientItems.length) return '';
+
   return `
     <div class="mt-4 grid grid-cols-2 gap-3">
       <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-800/40 rounded-xl p-3">
-        <div class="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-2 uppercase tracking-wide">Sender needs</div>
-        ${sR.map(r => `<div class="flex gap-1.5 mb-1"><span class="text-blue-400 text-xs mt-0.5">•</span><span class="text-xs text-gray-600 dark:text-gray-300">${r}</span></div>`).join('')}
+        <div class="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-2 flex items-center gap-1.5">
+          <span class="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[10px] font-bold">S</span>
+          Sender needs
+        </div>
+        ${senderItems.length ? senderItems.map(r => `<div class="flex gap-1.5 mb-1"><span class="text-blue-400 text-xs mt-0.5">•</span><span class="text-xs text-gray-600 dark:text-gray-300">${r}</span></div>`).join('') : '<span class="text-xs text-gray-400">No special requirements</span>'}
       </div>
       <div class="bg-violet-50 dark:bg-violet-950/30 border border-violet-100 dark:border-violet-800/40 rounded-xl p-3">
-        <div class="text-xs font-semibold text-violet-700 dark:text-violet-400 mb-2 uppercase tracking-wide">Recipient needs</div>
-        ${rR.map(r => `<div class="flex gap-1.5 mb-1"><span class="text-violet-400 text-xs mt-0.5">•</span><span class="text-xs text-gray-600 dark:text-gray-300">${r}</span></div>`).join('')}
+        <div class="text-xs font-semibold text-violet-700 dark:text-violet-400 mb-2 flex items-center gap-1.5">
+          <span class="w-4 h-4 rounded-full bg-violet-500 text-white flex items-center justify-center text-[10px] font-bold">R</span>
+          Recipient needs
+        </div>
+        ${recipientItems.length ? recipientItems.map(r => `<div class="flex gap-1.5 mb-1"><span class="text-violet-400 text-xs mt-0.5">•</span><span class="text-xs text-gray-600 dark:text-gray-300">${r}</span></div>`).join('') : '<span class="text-xs text-gray-400">No special requirements</span>'}
       </div>
     </div>`;
 }
 
-function renderSteps(steps) {
-  return steps.map(s => `
+function renderSteps(steps, to) {
+  const classes = classifySteps(steps, to);
+  return steps.map((s, i) => {
+    const who = classes[i];
+    const isSender = who === 'sender';
+    const circleClass = isSender
+      ? 'bg-blue-100 dark:bg-blue-950/70 border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
+      : 'bg-violet-100 dark:bg-violet-950/70 border-violet-300 dark:border-violet-700 text-violet-600 dark:text-violet-300';
+    const badge = isSender
+      ? '<span class="text-[10px] font-semibold text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded px-1 py-px">Sender</span>'
+      : '<span class="text-[10px] font-semibold text-violet-500 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/50 border border-violet-200 dark:border-violet-800 rounded px-1 py-px">Recipient</span>';
+    return `
     <div class="step-line relative pl-8 pb-3">
-      <div class="absolute left-0 top-1 w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-xs text-gray-500 dark:text-gray-400">${s.step}</div>
+      <div class="absolute left-0 top-1 w-6 h-6 rounded-full ${circleClass} border flex items-center justify-center text-xs font-bold">${s.step}</div>
       <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
         <span class="font-mono text-sm text-gray-900 dark:text-white">${flag(s.from_currency)} ${s.from_currency} → ${flag(s.to_currency)} ${s.to_currency}</span>
         <span class="text-xs text-gray-400">via</span>
         <span class="text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-1.5 py-0.5">${s.via}</span>
         <span class="text-xs text-gray-400">${s.fee_pct}% · ${fmtTime(s.estimated_minutes)}</span>
+        ${badge}
       </div>
       <div class="text-xs text-gray-400 dark:text-gray-500">${s.instructions}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function transferBox(r, from, to) {
@@ -361,15 +405,15 @@ function renderFeaturedCard(r, from, to) {
           <span class="text-gray-400 text-xs transition-transform group-open:rotate-180">▼</span>
         </summary>
         <div class="px-5 pb-5">
-          <div class="pt-3 border-t border-gray-100 dark:border-gray-800">${renderSteps(r.steps)}</div>
-          ${renderReqs(viaList)}
+          <div class="pt-3 border-t border-gray-100 dark:border-gray-800">${renderSteps(r.steps, to)}</div>
+          ${renderReqs(r.steps, to)}
         </div>
       </details>
     </div>`;
 }
 
 function renderCompactRow(r, from, to) {
-  const viaList = [...new Set(r.steps.map(s => s.via))];
+  const viaList = [...new Set(r.steps.map(s => s.via))]; // used for display only
   const rate = fmtRate(r.you_send, r.they_receive, from, to);
   return `
     <details class="group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
@@ -401,8 +445,8 @@ function renderCompactRow(r, from, to) {
           </div>
         </div>
         <div class="px-5 py-2 bg-gray-50 dark:bg-gray-800/40 text-xs font-mono text-gray-500">Rate: ${rate}</div>
-        <div class="px-5 py-4">${renderSteps(r.steps)}</div>
-        <div class="px-5 pb-5">${renderReqs(viaList)}</div>
+        <div class="px-5 py-4">${renderSteps(r.steps, to)}</div>
+        <div class="px-5 pb-5">${renderReqs(r.steps, to)}</div>
       </div>
     </details>`;
 }
