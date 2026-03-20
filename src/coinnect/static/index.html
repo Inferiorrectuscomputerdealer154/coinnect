@@ -201,45 +201,52 @@
     <div class="max-w-2xl mx-auto text-center">
       <div class="text-3xl mb-3">❤️</div>
       <h2 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Keep Coinnect free & unbiased</h2>
-      <p class="text-gray-500 dark:text-gray-400 text-sm mb-6 max-w-lg mx-auto">
-        Coinnect has no affiliate fees, no ads, and no investors. We show the best route — not the most profitable one.
-        If this saved you money, consider donating to keep the servers running.
+      <p class="text-gray-500 dark:text-gray-400 text-sm mb-2 max-w-lg mx-auto">
+        No affiliate fees. No ads. No investors. We show the best route — not the most profitable one for us.
+        Built and maintained by one person. If this saved you money, consider supporting the project.
+      </p>
+      <p class="text-gray-400 dark:text-gray-500 text-xs mb-8 max-w-lg mx-auto">
+        Crypto donations coming soon (ETH / USDC / BTC).
       </p>
 
       <!-- Tiers -->
       <div class="grid grid-cols-3 gap-3 mb-8 text-left">
-        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-cyan-300 dark:hover:border-cyan-700 transition-colors cursor-pointer" onclick="openDonate(5)">
-          <div class="text-2xl mb-1">☕</div>
-          <div class="font-semibold text-gray-900 dark:text-white">$5</div>
-          <div class="text-xs text-gray-400 mt-0.5">A coffee</div>
+        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-cyan-300 dark:hover:border-cyan-700 transition-colors cursor-pointer group" onclick="openDonate('buymeacoffee', 5)">
+          <div class="text-2xl mb-2">☕</div>
+          <div class="font-bold text-gray-900 dark:text-white">$5</div>
+          <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">You saved $10+ on fees.<br>Buy me a coffee.</div>
         </div>
-        <div class="border-2 border-cyan-400 dark:border-cyan-600 rounded-xl p-4 relative cursor-pointer bg-cyan-50/50 dark:bg-cyan-950/20" onclick="openDonate(20)">
-          <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white bg-cyan-500 rounded-full px-2 py-0.5">Popular</div>
-          <div class="text-2xl mb-1">🚀</div>
-          <div class="font-semibold text-gray-900 dark:text-white">$20</div>
-          <div class="text-xs text-gray-400 mt-0.5">A month of hosting</div>
+        <div class="border-2 border-cyan-400 dark:border-cyan-600 rounded-xl p-4 relative cursor-pointer bg-cyan-50/50 dark:bg-cyan-950/20" onclick="openDonate('github', 25)">
+          <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white bg-cyan-500 rounded-full px-2 py-0.5">Most common</div>
+          <div class="text-2xl mb-2">⭐</div>
+          <div class="font-bold text-gray-900 dark:text-white">$25 / mo</div>
+          <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Monthly supporter.<br>Keeps this independent.</div>
         </div>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-cyan-300 dark:hover:border-cyan-700 transition-colors cursor-pointer" onclick="openDonate(50)">
-          <div class="text-2xl mb-1">🌍</div>
-          <div class="font-semibold text-gray-900 dark:text-white">$50</div>
-          <div class="text-xs text-gray-400 mt-0.5">A new corridor</div>
+        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-cyan-300 dark:hover:border-cyan-700 transition-colors cursor-pointer" onclick="openDonate('github', 100)">
+          <div class="text-2xl mb-2">🏗️</div>
+          <div class="font-bold text-gray-900 dark:text-white">$100 / mo</div>
+          <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Power user or API integration.<br>Sponsor a new corridor.</div>
         </div>
       </div>
 
       <!-- CTA buttons -->
       <div class="flex flex-col sm:flex-row gap-3 justify-center">
-        <a href="https://opencollective.com/coinnect" target="_blank"
-          class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-semibold px-6 py-3 rounded-xl transition-all text-sm">
-          ❤️ Donate via Open Collective
+        <a href="https://github.com/sponsors/coinnect" target="_blank"
+          class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-semibold px-6 py-3 rounded-xl transition-all text-sm shadow-sm">
+          ❤️ Sponsor on GitHub
         </a>
-        <a href="https://github.com/coinnect" target="_blank"
+        <a href="https://buymeacoffee.com/coinnect" target="_blank"
           class="inline-flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm">
-          ⭐ Star on GitHub
+          ☕ Buy me a coffee
+        </a>
+        <a href="/whitepaper" target="_blank"
+          class="inline-flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm">
+          📄 Read the whitepaper
         </a>
       </div>
 
       <p class="mt-6 text-xs text-gray-400 dark:text-gray-600">
-        Coinnect is fiscally sponsored by Open Collective Foundation · 501(c)(3) · Donations may be tax-deductible
+        Open source · MIT license · Built by one person, for everyone sending money across borders
       </p>
     </div>
   </section>
@@ -614,8 +621,9 @@ async function getQuote() {
   }
 }
 
-function openDonate(amount) {
-  window.open(`https://opencollective.com/coinnect/donate?amount=${amount}`, '_blank');
+function openDonate(platform, amount) {
+  if (platform === 'github') window.open('https://github.com/sponsors/coinnect', '_blank');
+  else window.open('https://buymeacoffee.com/coinnect', '_blank');
 }
 
 window.onload = () => { updateThemeIcon(); getQuote(); };
