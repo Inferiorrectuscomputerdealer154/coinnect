@@ -147,7 +147,22 @@ Coinnect is funded entirely by voluntary donations from users who save money usi
 
 No advertising. No affiliate fees. No investor expectations. No exit.
 
-### 3.3 Transparent compensation
+### 3.3 Infrastructure cost
+
+Coinnect is designed to run at minimal cost:
+
+| Layer | Service | Cost/month |
+|-------|---------|-----------|
+| API + cron jobs | Cloudflare Workers | $5 |
+| Quote engine (2 regions) | Fly.io shared instances | ~$14 |
+| Rate cache | Upstash Redis (serverless) | $0–10 |
+| Analytics | Turso (SQLite edge) | $0–8 |
+| Frontend | Cloudflare Pages | $0 |
+| **Total** | | **$28–37/mo** |
+
+At $28/month of infrastructure, Coinnect can serve hundreds of thousands of users per month. A single $25 monthly donor covers the entire server cost. This is not a sustainability risk — it is a structural advantage over any VC-backed competitor that needs to monetize at scale.
+
+### 3.4 Transparent compensation
 
 The founder's compensation and all operational expenses are published publicly. The founding statutes establish a hard cap on founder compensation tied to the organization's annual budget. Financial reports are published quarterly.
 
@@ -246,20 +261,48 @@ Coinnect never holds funds, never processes payments, and never collects user id
 
 ---
 
-## 6. Roadmap
+## 6. Legal & Regulatory
+
+### 6.1 What Coinnect is not
+
+Coinnect is a **price comparison and routing information service**. It is not:
+
+- A money transfer operator (MTO)
+- A payment processor
+- A cryptocurrency exchange
+- A financial advisor
+- A custodian of any kind
+
+Coinnect never holds user funds, never processes transactions, and never has access to user wallets or accounts. Every transfer is executed entirely by the third-party exchange the user chooses to use, under that exchange's own regulatory framework.
+
+### 6.2 Regulatory classification
+
+In most jurisdictions, a service that provides publicly available pricing information and routing recommendations — without executing, facilitating, or touching transactions — does not require a money services business (MSB) license or equivalent.
+
+This mirrors the legal position of price comparison services like Google Flights (which shows flight prices without being an airline) or Monito (which compares transfer fees without being a remittance service).
+
+Users are responsible for complying with the regulations of their own jurisdiction and the KYC/AML requirements of each exchange they choose to use. Coinnect does not provide legal or financial advice.
+
+### 6.3 Data privacy
+
+Coinnect does not collect personal information. Quote requests include only currency types and amounts — no user identity, no wallet addresses, no IP logging. Optional analytics (GA4, opt-out available via `/?notrack`) collect only aggregate usage patterns.
+
+---
+
+## 7. Roadmap
 
 | Phase | Timeline | Milestone |
 |-------|----------|-----------|
-| 0 — Foundation | March 2026 | White paper, GitHub repo, coinnect.bot landing |
-| 1 — MVP | April 2026 | Quote API live, 6 exchanges, USD/MXN/ARS/NGN/PHP |
-| 2 — Public launch | May 1, 2026 | Web UI, public API, donation wallet visible |
+| 0 — Foundation | March 2026 | White paper, GitHub repo, coinnect.bot live |
+| 1 — MVP | April 2026 | Quote API live, 8 exchanges, USD/MXN/BRL/ARS/NGN/PHP/KES |
+| 2 — Public launch | May 1, 2026 | Web UI, public API, MCP server, donation wallet |
 | 3 — Community | Q3 2026 | User-contributed exchange reviews, rate accuracy feedback |
-| 4 — Machine layer | Q4 2026 | MCP-compatible endpoint, AI agent integrations |
+| 4 — Ecosystem | Q4 2026 | Stellar anchors (M-Pesa, Wave, GCash), `pip install coinnect-tool` |
 | 5 — Global | 2027 | 30+ exchanges, 50+ currencies, Africa + Asia full coverage |
 
 ---
 
-## 7. The Founder
+## 8. The Founder
 
 [Miguel V.](https://www.linkedin.com/in/miguelvalenciav/) built Coinnect because the problem is real, the solution is simple, and nobody was building it without a business model attached.
 
@@ -269,7 +312,7 @@ He intends to do this for as long as it is useful.
 
 ---
 
-## 8. Vision
+## 9. Vision
 
 Before GPS, every driver carried a road atlas. It didn't drive. It didn't own the roads. It had no preference for which highway you took. You trusted it precisely because it had no stake in your route — it just knew every path and showed you all of them.
 
@@ -285,5 +328,5 @@ Eventually: machines consult it automatically, and money moves at its natural co
 
 ---
 
-*This document is version 0.1. It will be updated publicly as the project develops.*
-*All feedback welcome at miguel@coinnect.bot (forthcoming)*
+*This document is version 0.3. It will be updated publicly as the project develops.*
+*All feedback welcome at miguel@coinnect.bot*

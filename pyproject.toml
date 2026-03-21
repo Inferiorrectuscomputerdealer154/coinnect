@@ -11,7 +11,12 @@ dependencies = [
     "pydantic>=2.7.0",
     "python-dotenv>=1.0.0",
     "markdown>=3.6",
+    "mcp>=1.0.0",
 ]
+
+[project.scripts]
+coinnect-api = "coinnect.main:app"
+coinnect-mcp = "coinnect.mcp_server:main"
 
 [project.optional-dependencies]
 dev = [

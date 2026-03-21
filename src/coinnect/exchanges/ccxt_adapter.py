@@ -94,8 +94,12 @@ async def get_bitso_edges() -> list[Edge]:
                     spread_pct = ((ask - bid) / ask) * 100
                     total = round(fee + spread_pct, 3)
                     edges += [
-                        Edge(base, quote, "Bitso", total, 15, f"Sell {base} for {quote} on Bitso", exchange_rate=bid),
-                        Edge(quote, base, "Bitso", total, 15, f"Buy {base} with {quote} on Bitso", exchange_rate=1.0/ask),
+                        Edge(base, quote, "Bitso", total, 15,
+                             f"Sell {base} for MXN on Bitso — withdraw via SPEI to any Mexican bank (CLABE)",
+                             exchange_rate=bid),
+                        Edge(quote, base, "Bitso", total, 15,
+                             f"Buy {base} with MXN on Bitso",
+                             exchange_rate=1.0/ask),
                     ]
             except Exception:
                 pass

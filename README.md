@@ -48,6 +48,32 @@ Coinnect accepts no commission from any exchange, ever. It is funded by voluntar
 
 **Machines** query the public REST API directly. Coinnect is designed to be called as a tool by AI agents, chatbots, and automated systems. Full OpenAPI spec in [`/docs/api`](./docs/api/).
 
+**AI agents via MCP** — Coinnect ships with a native MCP server that exposes three tools from day one:
+
+| Tool | Description |
+|------|-------------|
+| `coinnect_quote` | Find cheapest/fastest routes between any two currencies |
+| `coinnect_corridors` | List supported currency pairs |
+| `coinnect_explain_route` | Natural language explanation of a route |
+
+To use with Claude Code or Claude Desktop, add to your MCP config:
+
+```json
+{
+  "mcpServers": {
+    "coinnect": {
+      "command": "python",
+      "args": ["-m", "coinnect.mcp_server"],
+      "env": {
+        "COINNECT_API": "https://coinnect.bot"
+      }
+    }
+  }
+}
+```
+
+Or run directly: `COINNECT_API=https://coinnect.bot python -m coinnect.mcp_server`
+
 ## The problem we solve
 
 Global money flows through dozens of closed ecosystems — M-Pesa, GCash, bKash, UPI, Alipay, Western Union, regional P2P platforms — that don't speak to each other. Moving money between them requires knowing which path exists, which is cheapest today, and how many steps it takes.
@@ -61,10 +87,13 @@ Coinnect organizes it without bias. No referral fees. No promoted routes. No equ
 🚧 **Pre-launch** — targeting May 1, 2026
 
 - [x] White paper (v0.3)
-- [ ] OpenAPI spec
-- [ ] Quote engine (MVP: 6 exchanges)
-- [ ] Web UI
-- [ ] Public API
+- [x] Quote engine — Kraken, Binance, Coinbase, Bitso, Wise, Yellow Card, Western Union, MoneyGram
+- [x] Web UI (coinnect.bot)
+- [x] Public API (`/v1/quote`, `/v1/exchanges`, `/v1/corridors`, `/v1/health`)
+- [x] MCP server (`coinnect-mcp`) — AI agent integration from day 1
+- [ ] OpenAPI spec (publish at `/docs`)
+- [ ] Rate limiting (slowapi)
+- [ ] GitHub repo public
 
 ## White paper
 

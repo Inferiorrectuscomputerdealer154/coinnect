@@ -2,6 +2,9 @@
 Coinnect API — entry point
 """
 
+import asyncio
+import logging
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -10,9 +13,87 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, HTMLResponse
 
 from coinnect.api.routes import router
+from coinnect.db.history import init_db, record_snapshot, prune_old, TRACKED_CORRIDORS
 
+logger = logging.getLogger(__name__)
 STATIC_DIR = Path(__file__).parent / "static"
 DOCS_DIR = Path(__file__).parent.parent.parent / "docs"
+
+
+# ── Background rate refresh ─────────────────────────────────────────────────
+
+async def _refresh_once(force: bool = False) -> int:
+    """Refresh all exchange edges, store history snapshots. Returns edge count."""
+    from coinnect.exchanges.ccxt_adapter import get_all_edges
+    from coinnect.exchanges.wise_adapter import get_wise_edges, get_traditional_edges
+    from coinnect.exchanges.yellowcard_adapter import get_yellowcard_edges
+    from coinnect.routing.engine import build_quote
+
+    crypto_edges, wise_edges, trad_edges, yc_edges = await asyncio.gather(
+        get_all_edges(force_refresh=force),
+        get_wise_edges(),
+        get_traditional_edges(),
+        get_yellowcard_edges(),
+    )
+    all_edges = crypto_edges + wise_edges + trad_edges + yc_edges
+
+    if not all_edges:
+        logger.warning("Refresh returned 0 edges")
+        return 0
+
+    # Record snapshot for each tracked corridor
+    for from_c, to_c, amount in TRACKED_CORRIDORS:
+        try:
+            result = build_quote(all_edges, from_c, to_c, amount)
+            if result.routes:
+                await record_snapshot(from_c, to_c, amount, result.routes)
+        except Exception as e:
+            logger.debug(f"Snapshot failed {from_c}→{to_c}: {e}")
+
+    return len(all_edges)
+
+
+async def _refresh_loop() -> None:
+    """Background task: refresh rates every 3 minutes, prune DB weekly."""
+    prune_counter = 0
+    while True:
+        try:
+            count = await _refresh_once(force=True)
+            logger.info(f"Rate refresh: {count} edges loaded")
+        except Exception as e:
+            logger.error(f"Rate refresh failed: {e}")
+
+        prune_counter += 1
+        if prune_counter >= 336:  # ~7 days at 3-min intervals
+            try:
+                deleted = prune_old(keep_days=30)
+                logger.info(f"History pruned: {deleted} old rows removed")
+                prune_counter = 0
+            except Exception as e:
+                logger.error(f"Prune failed: {e}")
+
+        await asyncio.sleep(180)  # 3 minutes
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    init_db()
+    # Do one immediate refresh (no force — use cache if warm)
+    asyncio.create_task(_refresh_once(force=False))
+    # Start background loop
+    refresh_task = asyncio.create_task(_refresh_loop())
+    logger.info("Coinnect started — background refresh active (3 min interval)")
+    yield
+    # Shutdown
+    refresh_task.cancel()
+    try:
+        await refresh_task
+    except asyncio.CancelledError:
+        pass
+
+
+# ── App ─────────────────────────────────────────────────────────────────────
 
 app = FastAPI(
     title="Coinnect API",
@@ -20,12 +101,15 @@ app = FastAPI(
         "The open routing layer for global money.\n\n"
         "Finds the cheapest path to send money between any two currencies — "
         "across traditional remittance, crypto exchanges, and P2P platforms.\n\n"
-        "Non-profit. No affiliate fees. No custody. No KYC.\n\n"
-        "**For AI agents:** call `/v1/quote` as a tool with `from`, `to`, and `amount` parameters."
+        "**Non-profit. No affiliate fees. No custody. No KYC.**\n\n"
+        "**For AI agents:** call `/v1/quote` as a tool with `from`, `to`, and `amount` parameters. "
+        "Or use the MCP server (`python -m coinnect.mcp_server`) for Claude/MCP-compatible agents.\n\n"
+        "Rate limits: 100 req/day anonymous · No auth required for basic use."
     ),
-    version="0.1.0",
+    version="0.3.0",
     contact={"name": "Coinnect", "url": "https://coinnect.bot"},
     license_info={"name": "MIT"},
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -80,4 +164,3 @@ async def whitepaper():
   {body}
 </body>
 </html>""")
-

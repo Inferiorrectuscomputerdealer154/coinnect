@@ -4,367 +4,513 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coinnect — The open routing layer for global money</title>
+  <meta name="description" content="Find the cheapest path to send money anywhere. Free API for humans and AI agents. Non-profit, no affiliate fees, no KYC.">
+
+  <!-- Prevent theme flash -->
+  <script>if(localStorage.theme==='light')document.documentElement.classList.remove('dark');else document.documentElement.classList.add('dark');</script>
+
+  <!-- GA4 with opt-out -->
   <script>
-    // Apply saved theme before render to prevent flash
-    if (localStorage.theme === 'light') document.documentElement.classList.remove('dark');
-    else document.documentElement.classList.add('dark');
+    const GA_ID='G-CKBJHEVM2X';
+    if(new URLSearchParams(location.search).has('notrack')){localStorage.setItem('ga_optout','1');history.replaceState(null,'',location.pathname);}
+    if(localStorage.getItem('ga_optout')==='1'){window['ga-disable-'+GA_ID]=true;}
   </script>
-  <!-- GA4 opt-out: visit /?notrack to disable tracking in this browser -->
-  <script>
-    const GA_ID = 'G-CKBJHEVM2X';
-    if (new URLSearchParams(location.search).has('notrack')) {
-      localStorage.setItem('ga_optout', '1');
-      history.replaceState(null, '', location.pathname);
-    }
-    if (localStorage.getItem('ga_optout') === '1') {
-      window['ga-disable-' + GA_ID] = true;
-    }
-  </script>
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-CKBJHEVM2X"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-CKBJHEVM2X');
-  </script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CKBJHEVM2X');</script>
+
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    // Must be set AFTER CDN loads
-    tailwind.config = { darkMode: 'class' };
-  </script>
+  <script>tailwind.config={darkMode:'class'};</script>
+
   <style>
-    body { font-family: 'Inter', system-ui, sans-serif; }
-    .gradient-text {
-      background: linear-gradient(135deg, #06b6d4, #3b82f6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .step-line::before {
-      content: '';
-      position: absolute;
-      left: 11px; top: 24px; bottom: -8px;
-      width: 2px;
-      background: #d1d5db;
-    }
-    .dark .step-line::before { background: #374151; }
-    .step-line:last-child::before { display: none; }
-    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.4} }
-    .loading-dot { animation: pulse-dot 1.2s ease infinite; }
-    .loading-dot:nth-child(2) { animation-delay: .2s; }
-    .loading-dot:nth-child(3) { animation-delay: .4s; }
-    details > summary { list-style: none; cursor: pointer; }
-    details > summary::-webkit-details-marker { display: none; }
-    .filter-btn.active {
-      background: rgb(6 182 212 / 0.15);
-      border-color: rgb(6 182 212 / 0.6);
-      color: #06b6d4;
-    }
+    body{font-family:'Inter',system-ui,sans-serif;}
+    .gradient-text{background:linear-gradient(135deg,#06b6d4,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .btc-text{background:linear-gradient(135deg,#F7931A,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .step-line::before{content:'';position:absolute;left:11px;top:24px;bottom:-8px;width:2px;background:#d1d5db;}
+    .dark .step-line::before{background:#374151;}
+    .step-line:last-child::before{display:none;}
+    @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+    .loading-dot{animation:pulse-dot 1.2s ease infinite;}
+    .loading-dot:nth-child(2){animation-delay:.2s;}
+    .loading-dot:nth-child(3){animation-delay:.4s;}
+    details>summary{list-style:none;cursor:pointer;}
+    details>summary::-webkit-details-marker{display:none;}
+    .filter-btn.active{background:rgb(6 182 212/0.15);border-color:rgb(6 182 212/0.6);color:#06b6d4;}
+    /* Sparkline */
+    .sparkline-svg{overflow:visible;}
+    /* Hero tabs */
+    .audience-tab{transition:all .2s;}
+    .audience-tab.active{background:rgb(6 182 212/0.12);border-color:#06b6d4;color:#06b6d4;}
+    /* Plug logo animation */
+    @keyframes plug-glow{0%,100%{filter:drop-shadow(0 0 3px #F7931A44) drop-shadow(0 0 3px #06b6d444)}50%{filter:drop-shadow(0 0 6px #F7931A88) drop-shadow(0 0 6px #06b6d488)}}
+    .logo-plug{animation:plug-glow 3s ease-in-out infinite;}
+    /* Pill badge */
+    .pill{display:inline-flex;align-items:center;gap:.3rem;font-size:.65rem;font-weight:600;letter-spacing:.05em;padding:.2rem .55rem;border-radius:9999px;border-width:1px;}
   </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-200">
 
-  <!-- Header -->
-  <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10">
-    <div class="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between gap-4">
-      <!-- Logo -->
-      <a href="/" class="flex items-center gap-2.5 shrink-0">
-        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-sm font-black text-white shadow-sm">C</div>
-        <span class="font-bold text-base tracking-tight">Coinnect</span>
-        <span class="text-[10px] font-medium text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800 bg-cyan-50 dark:bg-cyan-950/50 rounded-full px-1.5 py-0.5 hidden sm:inline">beta</span>
+<!-- ── Header ────────────────────────────────────────────────────────────── -->
+<header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-20">
+  <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between gap-4">
+
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2.5 shrink-0">
+      <img src="/static/logo.svg" alt="Coinnect" class="logo-plug h-9 w-auto" />
+      <span class="font-bold text-base tracking-tight">Coinnect</span>
+      <span class="pill text-cyan-600 dark:text-cyan-400 border-cyan-200 dark:border-cyan-800 bg-cyan-50 dark:bg-cyan-950/50 hidden sm:inline-flex">beta</span>
+    </a>
+
+    <!-- Nav -->
+    <nav class="hidden md:flex items-center gap-1">
+      <a href="/docs" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">API docs</a>
+      <a href="/whitepaper" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">Whitepaper</a>
+      <a href="https://github.com/miguelvalenciav" target="_blank" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">GitHub</a>
+      <a href="#donate" onclick="document.getElementById('donateSection').scrollIntoView({behavior:'smooth'});return false;"
+         class="text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 px-3 py-1.5 rounded-lg transition-all ml-1">
+        ❤️ Support
       </a>
+    </nav>
 
-      <!-- Nav -->
-      <nav class="hidden md:flex items-center gap-1">
-        <a href="/docs" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">API docs</a>
-        <a href="https://github.com/coinnect" target="_blank" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">GitHub</a>
-        <a href="#donate" onclick="document.getElementById('donateSection').scrollIntoView({behavior:'smooth'}); return false;"
-          class="text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 px-3 py-1.5 rounded-lg transition-all ml-1">
-          ❤️ Donate
-        </a>
-      </nav>
+    <div class="flex items-center gap-2">
+      <a href="#donate" onclick="document.getElementById('donateSection').scrollIntoView({behavior:'smooth'});return false;"
+         class="md:hidden text-xs font-medium text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800 rounded-lg px-2.5 py-1.5 hover:bg-cyan-50 dark:hover:bg-cyan-950/50 transition-colors">❤️</a>
+      <button onclick="toggleTheme()" id="themeBtn"
+        class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+        <span id="themeIcon" class="text-sm"></span>
+      </button>
+    </div>
+  </div>
+</header>
 
-      <!-- Right controls -->
-      <div class="flex items-center gap-2">
-        <!-- Mobile donate -->
-        <a href="#donate" onclick="document.getElementById('donateSection').scrollIntoView({behavior:'smooth'}); return false;"
-          class="md:hidden text-xs font-medium text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800 rounded-lg px-2.5 py-1.5 hover:bg-cyan-50 dark:hover:bg-cyan-950/50 transition-colors">
-          ❤️ Donate
-        </a>
-        <button onclick="toggleTheme()" id="themeBtn"
-          class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          title="Toggle light/dark mode"><span id="themeIcon" class="text-sm"></span></button>
+<!-- ── Hero: dual audience ────────────────────────────────────────────────── -->
+<div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+  <div class="max-w-5xl mx-auto px-5 pt-8 pb-6">
+
+    <!-- Headline -->
+    <div class="text-center mb-6">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
+        The open routing layer for <span class="gradient-text">global money</span>
+      </h1>
+      <p class="text-gray-500 dark:text-gray-400 text-sm max-w-xl mx-auto">
+        Finds the cheapest multi-step path between any two currencies — fiat, crypto, P2P.
+        No affiliate fees. No custody. No KYC. Free forever.
+      </p>
+    </div>
+
+    <!-- Dual audience tabs -->
+    <div class="grid grid-cols-2 gap-3 max-w-2xl mx-auto mb-7">
+      <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-gray-50 dark:bg-gray-800/50">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-lg">👤</span>
+          <span class="font-semibold text-sm text-gray-900 dark:text-white">For humans</span>
+        </div>
+        <ul class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+          <li>→ Pick currencies &amp; amount</li>
+          <li>→ Compare all routes instantly</li>
+          <li>→ See step-by-step instructions</li>
+          <li>→ Know exactly how much arrives</li>
+        </ul>
+      </div>
+      <div class="border border-cyan-200 dark:border-cyan-800/60 rounded-xl p-4 bg-cyan-50/50 dark:bg-cyan-950/20">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-lg">🤖</span>
+          <span class="font-semibold text-sm text-gray-900 dark:text-white">For AI agents</span>
+        </div>
+        <ul class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+          <li>→ <code class="text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/50 px-1 rounded">GET /v1/quote</code> — no auth</li>
+          <li>→ MCP server included</li>
+          <li>→ 100 req/day free, unlimited self-hosted</li>
+          <li>→ JSON, OpenAPI 3.0 spec</li>
+        </ul>
       </div>
     </div>
-  </header>
 
-  <!-- Search bar -->
-  <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-5">
-    <div class="max-w-5xl mx-auto">
-      <div class="flex flex-wrap gap-3 items-end">
-        <div>
-          <label class="block text-xs text-gray-400 mb-1 uppercase tracking-wide">Amount</label>
-          <input id="amount" type="number" value="500" min="1"
-            class="w-32 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2.5 text-gray-900 dark:text-white text-base font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500">
+    <!-- Search form -->
+    <div class="flex flex-wrap gap-3 items-end justify-center">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1 uppercase tracking-wide">Amount</label>
+        <input id="amount" type="number" value="1" min="0.00001" step="any"
+          class="w-28 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2.5 text-gray-900 dark:text-white text-base font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500">
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1 uppercase tracking-wide">From</label>
+        <select id="from" class="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500">
+          <optgroup label="Crypto">
+            <option value="BTC">₿ BTC — Bitcoin</option>
+            <option value="ETH">Ξ ETH — Ethereum</option>
+            <option value="XRP">✕ XRP — Ripple</option>
+            <option value="SOL">◎ SOL — Solana</option>
+            <option value="USDC">◈ USDC — USD Coin</option>
+            <option value="USDT">◈ USDT — Tether</option>
+          </optgroup>
+          <optgroup label="Major Fiat">
+            <option value="USD" selected>🇺🇸 USD — US Dollar</option>
+            <option value="EUR">🇪🇺 EUR — Euro</option>
+            <option value="GBP">🇬🇧 GBP — Pound</option>
+            <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
+            <option value="AUD">🇦🇺 AUD — Australian Dollar</option>
+            <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
+            <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
+            <option value="CHF">🇨🇭 CHF — Swiss Franc</option>
+          </optgroup>
+          <optgroup label="Latin America">
+            <option value="MXN">🇲🇽 MXN — Mexican Peso</option>
+            <option value="BRL">🇧🇷 BRL — Brazilian Real</option>
+            <option value="COP">🇨🇴 COP — Colombian Peso</option>
+            <option value="ARS">🇦🇷 ARS — Argentine Peso</option>
+            <option value="PEN">🇵🇪 PEN — Peruvian Sol</option>
+          </optgroup>
+          <optgroup label="Asia">
+            <option value="INR">🇮🇳 INR — Indian Rupee</option>
+            <option value="PHP">🇵🇭 PHP — Philippine Peso</option>
+            <option value="THB">🇹🇭 THB — Thai Baht</option>
+            <option value="IDR">🇮🇩 IDR — Indonesian Rupiah</option>
+            <option value="VND">🇻🇳 VND — Vietnamese Dong</option>
+            <option value="PKR">🇵🇰 PKR — Pakistani Rupee</option>
+          </optgroup>
+          <optgroup label="Africa">
+            <option value="NGN">🇳🇬 NGN — Nigerian Naira</option>
+            <option value="KES">🇰🇪 KES — Kenyan Shilling</option>
+            <option value="GHS">🇬🇭 GHS — Ghanaian Cedi</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="text-gray-400 pb-2.5 text-lg">→</div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1 uppercase tracking-wide">To</label>
+        <select id="to" class="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500">
+          <optgroup label="Latin America">
+            <option value="MXN">🇲🇽 MXN — Mexico</option>
+            <option value="BRL">🇧🇷 BRL — Brazil</option>
+            <option value="COP">🇨🇴 COP — Colombia</option>
+            <option value="ARS">🇦🇷 ARS — Argentina</option>
+            <option value="PEN">🇵🇪 PEN — Peru</option>
+          </optgroup>
+          <optgroup label="Asia">
+            <option value="PHP">🇵🇭 PHP — Philippines</option>
+            <option value="INR">🇮🇳 INR — India</option>
+            <option value="IDR">🇮🇩 IDR — Indonesia</option>
+            <option value="VND">🇻🇳 VND — Vietnam</option>
+            <option value="THB">🇹🇭 THB — Thailand</option>
+            <option value="BDT">🇧🇩 BDT — Bangladesh</option>
+            <option value="PKR">🇵🇰 PKR — Pakistan</option>
+            <option value="LKR">🇱🇰 LKR — Sri Lanka</option>
+            <option value="NPR">🇳🇵 NPR — Nepal</option>
+          </optgroup>
+          <optgroup label="Africa">
+            <option value="NGN">🇳🇬 NGN — Nigeria</option>
+            <option value="KES">🇰🇪 KES — Kenya</option>
+            <option value="GHS">🇬🇭 GHS — Ghana</option>
+            <option value="TZS">🇹🇿 TZS — Tanzania</option>
+            <option value="UGX">🇺🇬 UGX — Uganda</option>
+          </optgroup>
+          <optgroup label="Major Fiat">
+            <option value="USD">🇺🇸 USD</option>
+            <option value="EUR">🇪🇺 EUR</option>
+            <option value="GBP">🇬🇧 GBP</option>
+            <option value="JPY">🇯🇵 JPY</option>
+          </optgroup>
+          <optgroup label="Crypto">
+            <option value="USDC">◈ USDC</option>
+            <option value="USDT">◈ USDT</option>
+            <option value="BTC">₿ BTC</option>
+            <option value="ETH">Ξ ETH</option>
+          </optgroup>
+        </select>
+      </div>
+      <button id="searchBtn" onclick="getQuote()"
+        class="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 disabled:opacity-50 text-white font-semibold px-6 py-2.5 rounded-lg transition-all text-sm shadow-sm">
+        Find routes →
+      </button>
+    </div>
+
+    <!-- Agent quickstart (collapsible) -->
+    <div class="mt-5 max-w-2xl mx-auto">
+      <details class="group">
+        <summary class="flex items-center gap-2 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer select-none">
+          <span class="transition-transform group-open:rotate-90">▶</span>
+          <span>Agent / API quickstart</span>
+        </summary>
+        <div class="mt-3 bg-gray-900 dark:bg-gray-800 rounded-xl p-4 font-mono text-xs text-gray-300 space-y-2">
+          <div><span class="text-gray-500"># REST — no auth required</span></div>
+          <div><span class="text-cyan-400">curl</span> <span class="text-amber-300">"https://coinnect.bot/v1/quote?from=BTC&amp;to=MXN&amp;amount=1"</span></div>
+          <div class="mt-3"><span class="text-gray-500"># MCP server (Claude / any MCP client)</span></div>
+          <div><span class="text-green-400">python</span> -m coinnect.mcp_server</div>
+          <div class="mt-3"><span class="text-gray-500"># Tools: coinnect_quote · coinnect_corridors · coinnect_explain_route</span></div>
         </div>
-        <div>
-          <label class="block text-xs text-gray-400 mb-1 uppercase tracking-wide">From</label>
-          <select id="from" class="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500">
-            <optgroup label="Major">
-              <option value="USD" selected>🇺🇸 USD — US Dollar</option>
-              <option value="EUR">🇪🇺 EUR — Euro</option>
-              <option value="GBP">🇬🇧 GBP — British Pound</option>
-              <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
-              <option value="AUD">🇦🇺 AUD — Australian Dollar</option>
-              <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
-              <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
-              <option value="CHF">🇨🇭 CHF — Swiss Franc</option>
-            </optgroup>
-            <optgroup label="Latin America">
-              <option value="MXN">🇲🇽 MXN — Mexican Peso</option>
-              <option value="BRL">🇧🇷 BRL — Brazilian Real</option>
-              <option value="COP">🇨🇴 COP — Colombian Peso</option>
-              <option value="ARS">🇦🇷 ARS — Argentine Peso</option>
-              <option value="PEN">🇵🇪 PEN — Peruvian Sol</option>
-            </optgroup>
-            <optgroup label="Asia">
-              <option value="INR">🇮🇳 INR — Indian Rupee</option>
-              <option value="PHP">🇵🇭 PHP — Philippine Peso</option>
-              <option value="THB">🇹🇭 THB — Thai Baht</option>
-              <option value="IDR">🇮🇩 IDR — Indonesian Rupiah</option>
-              <option value="VND">🇻🇳 VND — Vietnamese Dong</option>
-              <option value="PKR">🇵🇰 PKR — Pakistani Rupee</option>
-            </optgroup>
-            <optgroup label="Africa">
-              <option value="NGN">🇳🇬 NGN — Nigerian Naira</option>
-              <option value="KES">🇰🇪 KES — Kenyan Shilling</option>
-              <option value="GHS">🇬🇭 GHS — Ghanaian Cedi</option>
-            </optgroup>
-            <optgroup label="Crypto">
-              <option value="USDC">USDC</option>
-              <option value="USDT">USDT</option>
-              <option value="BTC">₿ BTC</option>
-              <option value="ETH">Ξ ETH</option>
-            </optgroup>
-          </select>
-        </div>
-        <div class="text-gray-400 pb-2.5 text-lg">→</div>
-        <div>
-          <label class="block text-xs text-gray-400 mb-1 uppercase tracking-wide">To</label>
-          <select id="to" class="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500">
-            <optgroup label="Asia">
-              <option value="PHP" selected>🇵🇭 PHP — Philippines</option>
-              <option value="INR">🇮🇳 INR — India</option>
-              <option value="IDR">🇮🇩 IDR — Indonesia</option>
-              <option value="VND">🇻🇳 VND — Vietnam</option>
-              <option value="THB">🇹🇭 THB — Thailand</option>
-              <option value="BDT">🇧🇩 BDT — Bangladesh</option>
-              <option value="PKR">🇵🇰 PKR — Pakistan</option>
-              <option value="LKR">🇱🇰 LKR — Sri Lanka</option>
-              <option value="NPR">🇳🇵 NPR — Nepal</option>
-            </optgroup>
-            <optgroup label="Latin America">
-              <option value="MXN">🇲🇽 MXN — Mexico</option>
-              <option value="BRL">🇧🇷 BRL — Brazil</option>
-              <option value="COP">🇨🇴 COP — Colombia</option>
-              <option value="ARS">🇦🇷 ARS — Argentina</option>
-              <option value="PEN">🇵🇪 PEN — Peru</option>
-            </optgroup>
-            <optgroup label="Africa">
-              <option value="NGN">🇳🇬 NGN — Nigeria</option>
-              <option value="KES">🇰🇪 KES — Kenya</option>
-              <option value="GHS">🇬🇭 GHS — Ghana</option>
-              <option value="TZS">🇹🇿 TZS — Tanzania</option>
-              <option value="UGX">🇺🇬 UGX — Uganda</option>
-            </optgroup>
-            <optgroup label="Major">
-              <option value="USD">🇺🇸 USD</option>
-              <option value="EUR">🇪🇺 EUR</option>
-              <option value="GBP">🇬🇧 GBP</option>
-            </optgroup>
-            <optgroup label="Crypto">
-              <option value="USDC">USDC</option>
-              <option value="USDT">USDT</option>
-              <option value="BTC">₿ BTC</option>
-              <option value="ETH">Ξ ETH</option>
-            </optgroup>
-          </select>
-        </div>
-        <button id="searchBtn" onclick="getQuote()"
-          class="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 disabled:opacity-50 text-white font-semibold px-6 py-2.5 rounded-lg transition-all text-sm">
-          Search →
-        </button>
+      </details>
+    </div>
+  </div>
+</div>
+
+<!-- ── Results ─────────────────────────────────────────────────────────────── -->
+<div class="max-w-5xl mx-auto px-5 py-6">
+
+  <!-- Filters bar -->
+  <div id="filtersBar" class="hidden mb-5">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="text-xs text-gray-400 mr-1">Filter:</span>
+      <button class="filter-btn active text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all" data-filter="all" onclick="setFilter('all')">All</button>
+      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="cheap" onclick="setFilter('cheap')">💰 Cheapest first</button>
+      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="fast" onclick="setFilter('fast')">⚡ Fastest first</button>
+      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="nocrypto" onclick="setFilter('nocrypto')">🏦 Fiat only</button>
+      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="crypto" onclick="setFilter('crypto')">🔗 Crypto routes</button>
+      <div class="ml-auto flex items-center gap-3">
+        <div id="routeCount" class="text-xs text-gray-400"></div>
+        <div id="rateAge" class="text-xs text-gray-400 hidden">🟢 <span id="rateAgeText"></span></div>
       </div>
     </div>
   </div>
 
-  <!-- Results area -->
-  <div class="max-w-5xl mx-auto px-6 py-6">
-    <!-- Filters bar (shown after search) -->
-    <div id="filtersBar" class="hidden mb-5">
-      <div class="flex flex-wrap items-center gap-2">
-        <span class="text-xs text-gray-400 mr-1">Filter:</span>
-        <button class="filter-btn active text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all" data-filter="all" onclick="setFilter('all')">All</button>
-        <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="cheap" onclick="setFilter('cheap')">💰 Cheapest first</button>
-        <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="fast" onclick="setFilter('fast')">⚡ Fastest first</button>
-        <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="nocrypto" onclick="setFilter('nocrypto')">🏦 Fiat only</button>
-        <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="crypto" onclick="setFilter('crypto')">🔗 Crypto routes</button>
-        <div class="ml-auto text-xs text-gray-400" id="routeCount"></div>
-      </div>
+  <!-- Sparkline history banner -->
+  <div id="historyBar" class="hidden mb-5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Best route fee — last 7 days</span>
+      <span id="histStats" class="text-xs text-gray-400"></span>
     </div>
-    <div id="results"></div>
+    <div id="sparklineWrap" class="h-12"></div>
   </div>
 
-  <!-- Donations section -->
-  <section id="donateSection" class="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-6 py-12 mt-4">
-    <div class="max-w-2xl mx-auto text-center">
-      <div class="text-3xl mb-3">❤️</div>
-      <h2 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Keep Coinnect free & unbiased</h2>
-      <p class="text-gray-500 dark:text-gray-400 text-sm mb-2 max-w-lg mx-auto">
-        No affiliate fees. No ads. No investors. We show the best route — not the most profitable one for us.
-        Built and maintained by one person. If this saved you money, consider supporting the project.
-      </p>
-      <p class="text-gray-400 dark:text-gray-500 text-xs mb-8 max-w-lg mx-auto">
-        Crypto donations coming soon (ETH / USDC / BTC).
-      </p>
+  <div id="results"></div>
+</div>
 
-      <!-- Tiers -->
-      <div class="grid grid-cols-3 gap-3 mb-8 text-left">
-        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-cyan-300 dark:hover:border-cyan-700 transition-colors cursor-pointer group" onclick="openDonate('buymeacoffee', 5)">
-          <div class="text-2xl mb-2">☕</div>
-          <div class="font-bold text-gray-900 dark:text-white">$5</div>
-          <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">You saved $10+ on fees.<br>Buy me a coffee.</div>
-        </div>
-        <div class="border-2 border-cyan-400 dark:border-cyan-600 rounded-xl p-4 relative cursor-pointer bg-cyan-50/50 dark:bg-cyan-950/20" onclick="openDonate('github', 25)">
-          <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white bg-cyan-500 rounded-full px-2 py-0.5">Most common</div>
-          <div class="text-2xl mb-2">⭐</div>
-          <div class="font-bold text-gray-900 dark:text-white">$25 / mo</div>
-          <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Monthly supporter.<br>Keeps this independent.</div>
-        </div>
-        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-cyan-300 dark:hover:border-cyan-700 transition-colors cursor-pointer" onclick="openDonate('github', 100)">
-          <div class="text-2xl mb-2">🏗️</div>
-          <div class="font-bold text-gray-900 dark:text-white">$100 / mo</div>
-          <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Power user or API integration.<br>Sponsor a new corridor.</div>
-        </div>
+<!-- ── Donate ──────────────────────────────────────────────────────────────── -->
+<section id="donateSection" class="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-5 py-12 mt-4">
+  <div class="max-w-2xl mx-auto text-center">
+    <div class="text-3xl mb-3">❤️</div>
+    <h2 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Keep Coinnect free &amp; unbiased</h2>
+    <p class="text-gray-500 dark:text-gray-400 text-sm mb-2 max-w-lg mx-auto">
+      No affiliate fees. No ads. No investors. We show the best route — not the most profitable one for us.
+      Infrastructure costs $28/mo. If this saved you money, consider supporting the project.
+    </p>
+    <p class="text-gray-400 dark:text-gray-500 text-xs mb-8 max-w-lg mx-auto">
+      Crypto donations coming soon (ETH / USDC / BTC).
+    </p>
+    <div class="grid grid-cols-3 gap-3 mb-8 text-left">
+      <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-cyan-300 dark:hover:border-cyan-700 transition-colors cursor-pointer" onclick="openDonate('buymeacoffee',5)">
+        <div class="text-2xl mb-2">☕</div>
+        <div class="font-bold text-gray-900 dark:text-white">$5</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">You saved $10+ on fees.<br>Buy me a coffee.</div>
       </div>
-
-      <!-- CTA buttons -->
-      <div class="flex flex-col sm:flex-row gap-3 justify-center">
-        <a href="https://github.com/sponsors/miguelvalenciav" target="_blank"
-          class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-semibold px-6 py-3 rounded-xl transition-all text-sm shadow-sm">
-          ❤️ Sponsor on GitHub
-        </a>
-        <a href="https://buymeacoffee.com/miguelvalenciav" target="_blank"
-          class="inline-flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm">
-          ☕ Buy me a coffee
-        </a>
-        <a href="/whitepaper" target="_blank"
-          class="inline-flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm">
-          📄 Read the whitepaper
-        </a>
+      <div class="border-2 border-cyan-400 dark:border-cyan-600 rounded-xl p-4 relative cursor-pointer bg-cyan-50/50 dark:bg-cyan-950/20" onclick="openDonate('github',25)">
+        <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white bg-cyan-500 rounded-full px-2 py-0.5">Most common</div>
+        <div class="text-2xl mb-2">⭐</div>
+        <div class="font-bold text-gray-900 dark:text-white">$25 / mo</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Monthly supporter.<br>Keeps this independent.</div>
       </div>
-
-      <p class="mt-6 text-xs text-gray-400 dark:text-gray-600">
-        Open source · MIT license · Built by one person, for everyone sending money across borders
-      </p>
+      <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-cyan-300 dark:hover:border-cyan-700 transition-colors cursor-pointer" onclick="openDonate('github',100)">
+        <div class="text-2xl mb-2">🏗️</div>
+        <div class="font-bold text-gray-900 dark:text-white">$100 / mo</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Power user or API integration.<br>Sponsor a new corridor.</div>
+      </div>
     </div>
-  </section>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="https://github.com/sponsors/miguelvalenciav" target="_blank"
+         class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-semibold px-6 py-3 rounded-xl transition-all text-sm shadow-sm">
+        ❤️ Sponsor on GitHub
+      </a>
+      <a href="https://buymeacoffee.com/miguelvalenciav" target="_blank"
+         class="inline-flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm">
+        ☕ Buy me a coffee
+      </a>
+      <a href="/whitepaper" target="_blank"
+         class="inline-flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm">
+        📄 Read the whitepaper
+      </a>
+    </div>
+    <p class="mt-6 text-xs text-gray-400 dark:text-gray-600">
+      Open source · MIT license · $28/mo to run · Built by one person, for everyone sending money across borders
+    </p>
+  </div>
+</section>
 
-  <footer class="text-center text-xs text-gray-400 dark:text-gray-600 py-6 border-t border-gray-100 dark:border-gray-800">
-    <a href="/docs" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">API docs</a>
-    &nbsp;·&nbsp;<span>Rates refresh every 3 min</span>&nbsp;·&nbsp;
-    <span>Coinnect never holds your funds</span>&nbsp;·&nbsp;
-    <a href="https://github.com/coinnect" target="_blank" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">GitHub</a>
-  </footer>
+<footer class="text-center text-xs text-gray-400 dark:text-gray-600 py-5 border-t border-gray-100 dark:border-gray-800">
+  <a href="/docs" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">API docs</a>
+  &nbsp;·&nbsp;
+  <a href="/whitepaper" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">Whitepaper</a>
+  &nbsp;·&nbsp;
+  <span>Rates refresh every 3 min</span>
+  &nbsp;·&nbsp;
+  <span>Coinnect never holds your funds</span>
+  &nbsp;·&nbsp;
+  <a href="/?notrack" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">No tracking</a>
+</footer>
 
 <script>
-const API = '';
+const API='';
 
-const FLAGS = {
-  USD:'🇺🇸', EUR:'🇪🇺', GBP:'🇬🇧', SGD:'🇸🇬', JPY:'🇯🇵', AUD:'🇦🇺', CAD:'🇨🇦', CHF:'🇨🇭',
-  MXN:'🇲🇽', NGN:'🇳🇬', PHP:'🇵🇭', INR:'🇮🇳', ARS:'🇦🇷', BRL:'🇧🇷',
-  COP:'🇨🇴', KES:'🇰🇪', GHS:'🇬🇭', IDR:'🇮🇩', VND:'🇻🇳', THB:'🇹🇭',
-  BDT:'🇧🇩', PKR:'🇵🇰', LKR:'🇱🇰', NPR:'🇳🇵', PEN:'🇵🇪', TZS:'🇹🇿', UGX:'🇺🇬',
-  BTC:'₿', ETH:'Ξ', USDC:'', USDT:''
+// ── Currency metadata ──────────────────────────────────────────────────────
+const FLAGS={
+  USD:'🇺🇸',EUR:'🇪🇺',GBP:'🇬🇧',SGD:'🇸🇬',JPY:'🇯🇵',AUD:'🇦🇺',CAD:'🇨🇦',CHF:'🇨🇭',
+  MXN:'🇲🇽',NGN:'🇳🇬',PHP:'🇵🇭',INR:'🇮🇳',ARS:'🇦🇷',BRL:'🇧🇷',
+  COP:'🇨🇴',KES:'🇰🇪',GHS:'🇬🇭',IDR:'🇮🇩',VND:'🇻🇳',THB:'🇹🇭',
+  BDT:'🇧🇩',PKR:'🇵🇰',LKR:'🇱🇰',NPR:'🇳🇵',PEN:'🇵🇪',TZS:'🇹🇿',UGX:'🇺🇬',
+  BTC:'₿',ETH:'Ξ',XRP:'✕',SOL:'◎',USDC:'◈',USDT:'◈'
 };
 
-const CRYPTO_SET = new Set(['BTC','ETH','USDC','USDT','XRP','SOL','BNB']);
+const CRYPTO_SET=new Set(['BTC','ETH','USDC','USDT','XRP','SOL','BNB']);
 
-const REQS = {
-  'Binance':       { sender: ['Binance account', 'Email verified', 'KYC (ID + selfie)'], recipient: ['Binance account or crypto wallet', 'Bank account for withdrawals'], kyc: 'Required' },
-  'Kraken':        { sender: ['Kraken account', 'KYC for fiat (ID + address proof)'], recipient: ['Crypto wallet or Kraken account'], kyc: 'For fiat' },
-  'Coinbase':      { sender: ['Coinbase account', 'Full KYC (government ID)'], recipient: ['Crypto wallet or Coinbase account'], kyc: 'Required' },
-  'Bitso':         { sender: ['Bitso account', 'Mexican phone number', 'RFC (Mexico tax ID)'], recipient: ['MXN bank account (CLABE)'], kyc: 'Required' },
-  'Wise':          { sender: ['Wise account', 'Government ID', 'Local bank account'], recipient: ['Bank account in destination country', 'Name must match'], kyc: 'Required' },
-  'Western Union': { sender: ['Government ID', 'Cash or debit card'], recipient: ['Show government ID at agent, or bank account'], kyc: 'ID at pickup' },
-  'MoneyGram':     { sender: ['Government ID', 'Cash, card, or online'], recipient: ['Show government ID at agent'], kyc: 'ID at pickup' },
+// Map browser locale to local currency for default BTC→local pairing
+const LOCALE_CURRENCY={
+  'es-MX':'MXN','es-CO':'COP','es-AR':'ARS','es-PE':'PEN','es-CL':'CLP',
+  'pt-BR':'BRL','en-NG':'NGN','en-KE':'KES','en-GH':'GHS',
+  'fil':'PHP','en-PH':'PHP','hi':'INR','en-IN':'INR',
+  'id':'IDR','vi':'VND','th':'THB','ur':'PKR',
+  'en-GB':'GBP','de':'EUR','fr':'EUR','es':'EUR',
+  'ja':'JPY','zh':'CNY',
 };
 
-const FEATURED = { 'Cheapest': '💰', 'Balanced': '⚖️', 'Fastest': '⚡' };
-const CRYPTO_EXCHANGES = new Set(['Binance','Kraken','Coinbase','Bitso','Kucoin','Huobi']);
+const REQS={
+  'Binance':{sender:['Binance account','Email verified','KYC (ID + selfie)'],recipient:['Binance account or crypto wallet','Bank account for withdrawals'],kyc:'Required'},
+  'Kraken':{sender:['Kraken account','KYC for fiat (ID + address proof)'],recipient:['Crypto wallet or Kraken account'],kyc:'For fiat'},
+  'Coinbase':{sender:['Coinbase account','Full KYC (government ID)'],recipient:['Crypto wallet or Coinbase account'],kyc:'Required'},
+  'Bitso':{sender:['Bitso account','Mexican phone number','RFC (Mexico tax ID)'],recipient:['MXN bank account (CLABE) · SPEI delivery'],kyc:'Required'},
+  'Yellow Card':{sender:['Yellow Card account','Government ID'],recipient:['Mobile money number or bank account'],kyc:'Required'},
+  'Wise':{sender:['Wise account','Government ID','Local bank account'],recipient:['Bank account in destination country'],kyc:'Required'},
+  'Western Union':{sender:['Government ID','Cash or debit card'],recipient:['Show government ID at agent, or bank account'],kyc:'ID at pickup'},
+  'MoneyGram':{sender:['Government ID','Cash, card, or online'],recipient:['Show government ID at agent'],kyc:'ID at pickup'},
+};
 
-let _allRoutes = [];
-let _fromCur = '', _toCur = '';
-let _activeFilter = 'all';
+const FEATURED={'Cheapest':'💰','Balanced':'⚖️','Fastest':'⚡'};
+const CRYPTO_EXCHANGES=new Set(['Binance','Kraken','Coinbase','Bitso','Kucoin','Huobi']);
 
-function flag(c) { return FLAGS[c] || ''; }
-function isCryptoExchange(via) { return CRYPTO_EXCHANGES.has(via); }
-function routeUsesCrypto(r) { return r.steps.some(s => isCryptoExchange(s.via) || CRYPTO_SET.has(s.from_currency) || CRYPTO_SET.has(s.to_currency)); }
+let _allRoutes=[];
+let _fromCur='',_toCur='',_quoteTime=null;
+let _activeFilter='all';
 
-function fmtNum(n) {
-  if (!n && n !== 0) return '—';
-  if (Math.abs(n) >= 1e6) return (n/1e6).toFixed(2)+'M';
-  if (Math.abs(n) >= 1000) return n.toLocaleString('en', {maximumFractionDigits:2});
-  if (Math.abs(n) < 0.001) return n.toFixed(6).replace(/0+$/, '');
-  if (Math.abs(n) < 1) return n.toFixed(4).replace(/0+$/, '');
-  return n.toLocaleString('en', {maximumFractionDigits:2});
+// ── Helpers ────────────────────────────────────────────────────────────────
+function flag(c){return FLAGS[c]||''}
+function isCryptoExchange(via){return CRYPTO_EXCHANGES.has(via)}
+function routeUsesCrypto(r){return r.steps.some(s=>isCryptoExchange(s.via)||CRYPTO_SET.has(s.from_currency)||CRYPTO_SET.has(s.to_currency))}
+
+function fmtNum(n){
+  if(!n&&n!==0)return'—';
+  if(Math.abs(n)>=1e9)return(n/1e9).toFixed(2)+'B';
+  if(Math.abs(n)>=1e6)return(n/1e6).toFixed(2)+'M';
+  if(Math.abs(n)>=1000)return n.toLocaleString('en',{maximumFractionDigits:2});
+  if(Math.abs(n)<0.0001)return n.toFixed(8).replace(/0+$/,'');
+  if(Math.abs(n)<0.01)return n.toFixed(6).replace(/0+$/,'');
+  if(Math.abs(n)<1)return n.toFixed(4).replace(/0+$/,'');
+  return n.toLocaleString('en',{maximumFractionDigits:2});
 }
 
-function fmtRate(send, receive, fromC, toC) {
-  if (!send || !receive) return '—';
-  const rate = receive / send;
-  return rate >= 1 ? `1 ${fromC} = ${fmtNum(rate)} ${toC}` : `1 ${toC} = ${fmtNum(1/rate)} ${fromC}`;
+function fmtRate(send,receive,fromC,toC){
+  if(!send||!receive)return'—';
+  const rate=receive/send;
+  return rate>=1?`1 ${fromC} = ${fmtNum(rate)} ${toC}`:`1 ${toC} = ${fmtNum(1/rate)} ${fromC}`;
 }
 
-function fmtTime(mins) {
-  if (mins < 60) return `~${mins}m`;
-  const h = Math.floor(mins/60), m = mins%60;
-  return m ? `~${h}h ${m}m` : `~${h}h`;
+function fmtTime(mins){
+  if(mins<60)return`~${mins}m`;
+  const h=Math.floor(mins/60),m=mins%60;
+  return m?`~${h}h ${m}m`:`~${h}h`;
 }
 
-function isDark() { return document.documentElement.classList.contains('dark'); }
-function toggleTheme() {
-  const dark = isDark();
-  document.documentElement.classList.toggle('dark', !dark);
-  localStorage.theme = dark ? 'light' : 'dark';
+// ── Theme ──────────────────────────────────────────────────────────────────
+function isDark(){return document.documentElement.classList.contains('dark')}
+function toggleTheme(){
+  const dark=isDark();
+  document.documentElement.classList.toggle('dark',!dark);
+  localStorage.theme=dark?'light':'dark';
   updateThemeIcon();
 }
-function updateThemeIcon() {
-  document.getElementById('themeIcon').textContent = isDark() ? '☀️' : '🌙';
+function updateThemeIcon(){document.getElementById('themeIcon').textContent=isDark()?'☀️':'🌙'}
+
+// ── Locale default ─────────────────────────────────────────────────────────
+function getLocalCurrency(){
+  const lang=navigator.language||'en';
+  return LOCALE_CURRENCY[lang]||LOCALE_CURRENCY[lang.split('-')[0]]||'MXN';
 }
 
-function setFilter(f) {
-  _activeFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.filter === f);
-    if (b.dataset.filter !== f) b.classList.add('text-gray-500', 'dark:text-gray-400');
-    else b.classList.remove('text-gray-500', 'dark:text-gray-400');
+function applyLocaleDefaults(){
+  const localCur=getLocalCurrency();
+  const fromSel=document.getElementById('from');
+  const toSel=document.getElementById('to');
+  // Default: BTC → local currency
+  fromSel.value='BTC';
+  // Find local currency in to selector
+  const opt=[...toSel.options].find(o=>o.value===localCur);
+  if(opt)toSel.value=localCur;
+  document.getElementById('amount').value='1';
+}
+
+// ── Filters ────────────────────────────────────────────────────────────────
+function setFilter(f){
+  _activeFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.filter===f);
+    if(b.dataset.filter!==f)b.classList.add('text-gray-500','dark:text-gray-400');
+    else b.classList.remove('text-gray-500','dark:text-gray-400');
   });
-  renderResults(_allRoutes, _fromCur, _toCur);
+  renderResults(_allRoutes,_fromCur,_toCur);
 }
 
-function applyFilter(routes) {
-  let r = [...routes];
-  if (_activeFilter === 'cheap') r.sort((a,b) => a.total_cost_pct - b.total_cost_pct);
-  else if (_activeFilter === 'fast') r.sort((a,b) => a.total_time_minutes - b.total_time_minutes);
-  else if (_activeFilter === 'nocrypto') r = r.filter(x => !routeUsesCrypto(x));
-  else if (_activeFilter === 'crypto') r = r.filter(x => routeUsesCrypto(x));
+function applyFilter(routes){
+  let r=[...routes];
+  if(_activeFilter==='cheap')r.sort((a,b)=>a.total_cost_pct-b.total_cost_pct);
+  else if(_activeFilter==='fast')r.sort((a,b)=>a.total_time_minutes-b.total_time_minutes);
+  else if(_activeFilter==='nocrypto')r=r.filter(x=>!routeUsesCrypto(x));
+  else if(_activeFilter==='crypto')r=r.filter(x=>routeUsesCrypto(x));
   return r;
 }
 
-function loading() {
+// ── Sparkline chart ────────────────────────────────────────────────────────
+function renderSparkline(points){
+  const wrap=document.getElementById('sparklineWrap');
+  if(!points||points.length<2){wrap.innerHTML='<p class="text-xs text-gray-400 text-center pt-3">Not enough history yet — check back in a few minutes.</p>';return;}
+
+  const fees=points.map(p=>p.best_cost_pct);
+  const minF=Math.min(...fees),maxF=Math.max(...fees);
+  const range=maxF-minF||0.01;
+
+  const W=wrap.clientWidth||600,H=48;
+  const pts=fees.map((f,i)=>{
+    const x=i/(fees.length-1)*W;
+    const y=H-((f-minF)/range)*(H-8)-2;
+    return`${x},${y}`;
+  }).join(' ');
+
+  // Color: gradient from amber (high fee) to cyan (low fee)
+  const latestFee=fees[fees.length-1];
+  const isImproving=fees.length>3&&fees[fees.length-1]<fees[fees.length-4];
+  const lineColor=isImproving?'#06b6d4':'#f59e0b';
+
+  wrap.innerHTML=`
+    <svg class="sparkline-svg w-full" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="spkGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${lineColor}" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="${lineColor}" stop-opacity="0.02"/>
+        </linearGradient>
+      </defs>
+      <polyline points="${pts}" fill="none" stroke="${lineColor}" stroke-width="1.5" stroke-linejoin="round"/>
+      <polyline points="0,${H} ${pts} ${W},${H}" fill="url(#spkGrad)" stroke="none"/>
+      <circle cx="${fees.length>0?(fees.length-1)/(fees.length-1)*W:W}" cy="${H-((latestFee-minF)/range)*(H-8)-2}" r="3" fill="${lineColor}"/>
+    </svg>`;
+}
+
+async function loadHistory(fromC,toC){
+  const bar=document.getElementById('historyBar');
+  try{
+    const r=await fetch(`${API}/v1/history?from=${fromC}&to=${toC}&days=7`);
+    if(!r.ok)return;
+    const data=await r.json();
+    if(!data.points||data.points.length<2)return;
+    bar.classList.remove('hidden');
+    renderSparkline(data.points);
+    const s=data.stats;
+    if(s&&s.points>0){
+      document.getElementById('histStats').textContent=
+        `${s.points} snapshots · min ${s.min_fee?.toFixed(2)}% · max ${s.max_fee?.toFixed(2)}% · avg ${s.avg_fee?.toFixed(2)}%`;
+    }
+  }catch(e){bar.classList.add('hidden');}
+}
+
+// ── Loading state ──────────────────────────────────────────────────────────
+function loading(){
   document.getElementById('filtersBar').classList.add('hidden');
-  document.getElementById('results').innerHTML = `
+  document.getElementById('historyBar').classList.add('hidden');
+  document.getElementById('results').innerHTML=`
     <div class="text-center py-16 text-gray-400">
       <div class="flex justify-center gap-1.5 mb-3">
         <div class="w-2 h-2 rounded-full bg-cyan-400 loading-dot"></div>
@@ -375,68 +521,52 @@ function loading() {
     </div>`;
 }
 
-const FIAT_SERVICES = new Set(['Wise', 'Western Union', 'MoneyGram']);
+// ── Requirements display ───────────────────────────────────────────────────
+const FIAT_SERVICES=new Set(['Wise','Western Union','MoneyGram']);
 
-// Classify each step as 'sender' or 'recipient' responsibility
-function classifySteps(steps, to) {
-  if (steps.length === 1) return ['sender']; // single-step: sender initiates
-  return steps.map((s, i) => {
-    const isLast = i === steps.length - 1;
-    // Last step converting to the final destination via a crypto exchange = recipient must act
-    if (isLast && s.to_currency === to && !FIAT_SERVICES.has(s.via)) return 'recipient';
-    return 'sender';
+function classifySteps(steps,to){
+  if(steps.length===1)return['sender'];
+  return steps.map((s,i)=>{
+    const isLast=i===steps.length-1;
+    if(isLast&&s.to_currency===to&&!FIAT_SERVICES.has(s.via))return'recipient';
+    return'sender';
   });
 }
 
-function renderReqs(steps, to) {
-  const classes = classifySteps(steps, to);
-  const senderVias = [...new Set(steps.filter((_, i) => classes[i] === 'sender').map(s => s.via))];
-  const recipientVias = [...new Set(steps.filter((_, i) => classes[i] === 'recipient').map(s => s.via))];
-
-  const sReqs = senderVias.map(v => REQS[v]).filter(Boolean);
-  const rReqs = recipientVias.map(v => REQS[v]).filter(Boolean);
-
-  // For fiat-only routes: recipient just needs bank account / ID (already in REQS)
-  // For single-step sender fiat: recipient needs from the via's recipient list
-  const isSingleFiat = steps.length === 1 && FIAT_SERVICES.has(steps[0].via);
-  const recipientItems = isSingleFiat
-    ? (REQS[steps[0].via]?.recipient || [])
-    : [...new Set(rReqs.flatMap(r => r.recipient))];
-
-  const senderItems = [...new Set(sReqs.flatMap(r => r.sender))];
-  if (!senderItems.length && !recipientItems.length) return '';
-
-  return `
+function renderReqs(steps,to){
+  const classes=classifySteps(steps,to);
+  const senderVias=[...new Set(steps.filter((_,i)=>classes[i]==='sender').map(s=>s.via))];
+  const recipientVias=[...new Set(steps.filter((_,i)=>classes[i]==='recipient').map(s=>s.via))];
+  const sReqs=senderVias.map(v=>REQS[v]).filter(Boolean);
+  const rReqs=recipientVias.map(v=>REQS[v]).filter(Boolean);
+  const isSingleFiat=steps.length===1&&FIAT_SERVICES.has(steps[0].via);
+  const recipientItems=isSingleFiat?(REQS[steps[0].via]?.recipient||[]):[...new Set(rReqs.flatMap(r=>r.recipient))];
+  const senderItems=[...new Set(sReqs.flatMap(r=>r.sender))];
+  if(!senderItems.length&&!recipientItems.length)return'';
+  return`
     <div class="mt-4 grid grid-cols-2 gap-3">
       <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-800/40 rounded-xl p-3">
         <div class="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-2 flex items-center gap-1.5">
-          <span class="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[10px] font-bold">S</span>
-          Sender needs
+          <span class="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[10px] font-bold">S</span>Sender needs
         </div>
-        ${senderItems.length ? senderItems.map(r => `<div class="flex gap-1.5 mb-1"><span class="text-blue-400 text-xs mt-0.5">•</span><span class="text-xs text-gray-600 dark:text-gray-300">${r}</span></div>`).join('') : '<span class="text-xs text-gray-400">No special requirements</span>'}
+        ${senderItems.length?senderItems.map(r=>`<div class="flex gap-1.5 mb-1"><span class="text-blue-400 text-xs mt-0.5">•</span><span class="text-xs text-gray-600 dark:text-gray-300">${r}</span></div>`).join(''):'<span class="text-xs text-gray-400">No special requirements</span>'}
       </div>
       <div class="bg-violet-50 dark:bg-violet-950/30 border border-violet-100 dark:border-violet-800/40 rounded-xl p-3">
         <div class="text-xs font-semibold text-violet-700 dark:text-violet-400 mb-2 flex items-center gap-1.5">
-          <span class="w-4 h-4 rounded-full bg-violet-500 text-white flex items-center justify-center text-[10px] font-bold">R</span>
-          Recipient needs
+          <span class="w-4 h-4 rounded-full bg-violet-500 text-white flex items-center justify-center text-[10px] font-bold">R</span>Recipient needs
         </div>
-        ${recipientItems.length ? recipientItems.map(r => `<div class="flex gap-1.5 mb-1"><span class="text-violet-400 text-xs mt-0.5">•</span><span class="text-xs text-gray-600 dark:text-gray-300">${r}</span></div>`).join('') : '<span class="text-xs text-gray-400">No special requirements</span>'}
+        ${recipientItems.length?recipientItems.map(r=>`<div class="flex gap-1.5 mb-1"><span class="text-violet-400 text-xs mt-0.5">•</span><span class="text-xs text-gray-600 dark:text-gray-300">${r}</span></div>`).join(''):'<span class="text-xs text-gray-400">No special requirements</span>'}
       </div>
     </div>`;
 }
 
-function renderSteps(steps, to) {
-  const classes = classifySteps(steps, to);
-  return steps.map((s, i) => {
-    const who = classes[i];
-    const isSender = who === 'sender';
-    const circleClass = isSender
-      ? 'bg-blue-100 dark:bg-blue-950/70 border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300'
-      : 'bg-violet-100 dark:bg-violet-950/70 border-violet-300 dark:border-violet-700 text-violet-600 dark:text-violet-300';
-    const badge = isSender
-      ? '<span class="text-[10px] font-semibold text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded px-1 py-px">Sender</span>'
-      : '<span class="text-[10px] font-semibold text-violet-500 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/50 border border-violet-200 dark:border-violet-800 rounded px-1 py-px">Recipient</span>';
-    return `
+function renderSteps(steps,to){
+  const classes=classifySteps(steps,to);
+  return steps.map((s,i)=>{
+    const isSender=classes[i]==='sender';
+    const circleClass=isSender?'bg-blue-100 dark:bg-blue-950/70 border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300':'bg-violet-100 dark:bg-violet-950/70 border-violet-300 dark:border-violet-700 text-violet-600 dark:text-violet-300';
+    const badge=isSender?'<span class="text-[10px] font-semibold text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded px-1 py-px">Sender</span>':'<span class="text-[10px] font-semibold text-violet-500 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/50 border border-violet-200 dark:border-violet-800 rounded px-1 py-px">Recipient</span>';
+    return`
     <div class="step-line relative pl-8 pb-3">
       <div class="absolute left-0 top-1 w-6 h-6 rounded-full ${circleClass} border flex items-center justify-center text-xs font-bold">${s.step}</div>
       <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
@@ -451,9 +581,10 @@ function renderSteps(steps, to) {
   }).join('');
 }
 
-function transferBox(r, from, to) {
-  const rate = fmtRate(r.you_send, r.they_receive, from, to);
-  return `
+// ── Card renderers ─────────────────────────────────────────────────────────
+function transferBox(r,from,to){
+  const rate=fmtRate(r.you_send,r.they_receive,from,to);
+  return`
     <div class="grid grid-cols-2 gap-0 divide-x divide-gray-100 dark:divide-gray-800">
       <div class="px-5 py-4">
         <div class="text-xs text-gray-400 mb-1 uppercase tracking-wide">You send</div>
@@ -472,52 +603,48 @@ function transferBox(r, from, to) {
     </div>`;
 }
 
-function renderFeaturedCard(r, from, to) {
-  const emoji = FEATURED[r.label] || '';
-  const isBest = r.rank === 1;
-  const border = isBest
-    ? 'border-cyan-300 dark:border-cyan-600/50 ring-1 ring-cyan-200 dark:ring-cyan-800/50'
-    : 'border-gray-200 dark:border-gray-700';
-  const viaList = [...new Set(r.steps.map(s => s.via))];
-  return `
+function renderFeaturedCard(r,from,to){
+  const emoji=FEATURED[r.label]||'';
+  const isBest=r.rank===1;
+  const border=isBest?'border-cyan-300 dark:border-cyan-600/50 ring-1 ring-cyan-200 dark:ring-cyan-800/50':'border-gray-200 dark:border-gray-700';
+  const viaList=[...new Set(r.steps.map(s=>s.via))];
+  return`
     <div class="bg-white dark:bg-gray-900 border ${border} rounded-2xl overflow-hidden">
       <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100 dark:border-gray-800">
         <div class="flex items-center gap-2">
           <span>${emoji}</span>
           <span class="font-semibold text-sm text-gray-700 dark:text-gray-200">${r.label}</span>
-          ${isBest ? '<span class="text-xs bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-700 rounded-full px-2 py-0.5">Best</span>' : ''}
+          ${isBest?'<span class="text-xs bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-700 rounded-full px-2 py-0.5">Best</span>':''}
         </div>
         <div class="flex items-center gap-3 text-xs text-gray-400">
           <span>🕐 ${fmtTime(r.total_time_minutes)}</span>
           <span>${r.total_cost_pct.toFixed(2)}% fees</span>
         </div>
       </div>
-      ${transferBox(r, from, to)}
+      ${transferBox(r,from,to)}
       <div class="px-5 py-2 bg-gray-50 dark:bg-gray-800/40 border-b border-gray-100 dark:border-gray-800">
         <span class="text-xs text-gray-400">via ${viaList.join(' + ')}</span>
       </div>
       <details class="group">
         <summary class="flex items-center justify-between px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors select-none">
-          <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Steps & requirements</span>
+          <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Steps &amp; requirements</span>
           <span class="text-gray-400 text-xs transition-transform group-open:rotate-180">▼</span>
         </summary>
         <div class="px-5 pb-5">
-          <div class="pt-3 border-t border-gray-100 dark:border-gray-800">${renderSteps(r.steps, to)}</div>
-          ${renderReqs(r.steps, to)}
+          <div class="pt-3 border-t border-gray-100 dark:border-gray-800">${renderSteps(r.steps,to)}</div>
+          ${renderReqs(r.steps,to)}
         </div>
       </details>
     </div>`;
 }
 
-function renderCompactRow(r, from, to) {
-  const viaList = [...new Set(r.steps.map(s => s.via))]; // used for display only
-  const rate = fmtRate(r.you_send, r.they_receive, from, to);
-  return `
+function renderCompactRow(r,from,to){
+  const viaList=[...new Set(r.steps.map(s=>s.via))];
+  const rate=fmtRate(r.you_send,r.they_receive,from,to);
+  return`
     <details class="group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
       <summary class="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-        <div class="w-20 shrink-0">
-          <span class="text-sm font-medium text-gray-600 dark:text-gray-300">${r.label}</span>
-        </div>
+        <div class="w-20 shrink-0"><span class="text-sm font-medium text-gray-600 dark:text-gray-300">${r.label}</span></div>
         <div class="flex-1 text-xs text-gray-400 hidden sm:block">via ${viaList.join(' + ')}</div>
         <div class="flex items-center gap-6">
           <div class="text-right hidden md:block">
@@ -542,19 +669,19 @@ function renderCompactRow(r, from, to) {
           </div>
         </div>
         <div class="px-5 py-2 bg-gray-50 dark:bg-gray-800/40 text-xs font-mono text-gray-500">Rate: ${rate}</div>
-        <div class="px-5 py-4">${renderSteps(r.steps, to)}</div>
-        <div class="px-5 pb-5">${renderReqs(r.steps, to)}</div>
+        <div class="px-5 py-4">${renderSteps(r.steps,to)}</div>
+        <div class="px-5 pb-5">${renderReqs(r.steps,to)}</div>
       </div>
     </details>`;
 }
 
-function renderSavings(routes, amount, from) {
-  const wu = routes.find(r => r.steps.some(s => s.via === 'Western Union'));
-  const best = routes[0];
-  if (!wu || !best || wu === best) return '';
-  const saved = (amount * (wu.total_cost_pct - best.total_cost_pct) / 100).toFixed(2);
-  if (parseFloat(saved) <= 0) return '';
-  return `
+function renderSavings(routes,amount,from){
+  const wu=routes.find(r=>r.steps.some(s=>s.via==='Western Union'));
+  const best=routes[0];
+  if(!wu||!best||wu===best)return'';
+  const saved=(amount*(wu.total_cost_pct-best.total_cost_pct)/100).toFixed(2);
+  if(parseFloat(saved)<=0)return'';
+  return`
     <div class="mb-5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-700/40 rounded-xl px-4 py-3 flex items-center gap-3">
       <span class="text-2xl">💸</span>
       <div>
@@ -564,12 +691,12 @@ function renderSavings(routes, amount, from) {
     </div>`;
 }
 
-function renderResults(routes, from, to) {
-  const filtered = applyFilter(routes);
-  document.getElementById('routeCount').textContent = `${filtered.length} route${filtered.length !== 1 ? 's' : ''}`;
+function renderResults(routes,from,to){
+  const filtered=applyFilter(routes);
+  document.getElementById('routeCount').textContent=`${filtered.length} route${filtered.length!==1?'s':''}`;
 
-  if (!filtered.length) {
-    document.getElementById('results').innerHTML = `
+  if(!filtered.length){
+    document.getElementById('results').innerHTML=`
       <div class="text-center py-12 text-gray-400 border border-gray-200 dark:border-gray-800 rounded-xl">
         <div class="text-2xl mb-2">🔍</div>
         <div class="text-sm">No routes match this filter</div>
@@ -577,75 +704,88 @@ function renderResults(routes, from, to) {
     return;
   }
 
-  // Featured = first 3 by current label order (or by position if filtered)
-  const featuredLabels = new Set(Object.keys(FEATURED));
-  let featured = filtered.filter(r => featuredLabels.has(r.label));
-  let extras = filtered.filter(r => !featuredLabels.has(r.label));
+  const featuredLabels=new Set(Object.keys(FEATURED));
+  let featured=filtered.filter(r=>featuredLabels.has(r.label));
+  let extras=filtered.filter(r=>!featuredLabels.has(r.label));
 
-  // If filter reorders everything, show top 3 as featured
-  if (_activeFilter !== 'all' && featured.length === 0) {
-    featured = filtered.slice(0, 3);
-    extras = filtered.slice(3);
+  if(_activeFilter!=='all'&&featured.length===0){featured=filtered.slice(0,3);extras=filtered.slice(3);}
+
+  // Rate freshness badge
+  if(_quoteTime){
+    const ageSec=Math.round((Date.now()-_quoteTime)/1000);
+    const ageEl=document.getElementById('rateAge');
+    const ageText=document.getElementById('rateAgeText');
+    ageEl.classList.remove('hidden');
+    ageText.textContent=ageSec<10?'Live rates':`Rates ${ageSec}s ago`;
   }
 
-  document.getElementById('results').innerHTML = `
-    ${renderSavings(filtered, parseFloat(document.getElementById('amount').value), from)}
+  document.getElementById('results').innerHTML=`
+    ${renderSavings(filtered,parseFloat(document.getElementById('amount').value),from)}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
-      ${featured.map(r => renderFeaturedCard(r, from, to)).join('')}
+      ${featured.map(r=>renderFeaturedCard(r,from,to)).join('')}
     </div>
-    ${extras.length ? `
+    ${extras.length?`
       <div>
         <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">More options</div>
-        <div class="flex flex-col gap-2">${extras.map(r => renderCompactRow(r, from, to)).join('')}</div>
-      </div>` : ''}
+        <div class="flex flex-col gap-2">${extras.map(r=>renderCompactRow(r,from,to)).join('')}</div>
+      </div>`:''}
     <div class="mt-6 text-center text-xs text-gray-400 dark:text-gray-600">
       Coinnect shows routes — it never executes transfers or holds funds. Each exchange handles its own KYC.
     </div>`;
 }
 
-async function getQuote() {
-  const from = document.getElementById('from').value;
-  const to   = document.getElementById('to').value;
-  const amount = parseFloat(document.getElementById('amount').value);
-  if (!amount || amount <= 0) return;
+// ── Main quote fetch ───────────────────────────────────────────────────────
+async function getQuote(){
+  const from=document.getElementById('from').value;
+  const to=document.getElementById('to').value;
+  const amount=parseFloat(document.getElementById('amount').value);
+  if(!amount||amount<=0)return;
 
-  _fromCur = from; _toCur = to; _activeFilter = 'all';
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.filter === 'all');
-    if (b.dataset.filter !== 'all') b.classList.add('text-gray-500', 'dark:text-gray-400');
-    else b.classList.remove('text-gray-500', 'dark:text-gray-400');
+  _fromCur=from;_toCur=to;_activeFilter='all';
+  document.querySelectorAll('.filter-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.filter==='all');
+    if(b.dataset.filter!=='all')b.classList.add('text-gray-500','dark:text-gray-400');
+    else b.classList.remove('text-gray-500','dark:text-gray-400');
   });
 
   loading();
-  document.getElementById('searchBtn').disabled = true;
+  document.getElementById('searchBtn').disabled=true;
 
-  try {
-    const res = await fetch(`${API}/v1/quote?from=${from}&to=${to}&amount=${amount}`);
-    if (!res.ok) { const e = await res.json(); throw new Error(e.detail || 'No routes found'); }
-    const data = await res.json();
-    _allRoutes = data.routes;
+  try{
+    const res=await fetch(`${API}/v1/quote?from=${from}&to=${to}&amount=${amount}`);
+    if(!res.ok){const e=await res.json();throw new Error(e.detail||'No routes found');}
+    const data=await res.json();
+    _allRoutes=data.routes;
+    _quoteTime=Date.now();
 
     document.getElementById('filtersBar').classList.remove('hidden');
-    document.getElementById('routeCount').textContent = `${_allRoutes.length} routes`;
-    renderResults(_allRoutes, from, to);
-  } catch(e) {
-    document.getElementById('results').innerHTML = `
+    document.getElementById('routeCount').textContent=`${_allRoutes.length} routes`;
+    renderResults(_allRoutes,from,to);
+
+    // Load history in background
+    loadHistory(from,to);
+  }catch(e){
+    document.getElementById('results').innerHTML=`
       <div class="text-center py-12 text-gray-400 border border-gray-200 dark:border-gray-800 rounded-xl">
         <div class="text-3xl mb-3">⚠️</div>
         <div class="text-sm font-medium">${e.message}</div>
-        <div class="text-xs mt-1">This corridor may not be supported yet</div>
+        <div class="text-xs mt-1">Try a different pair or check back in a moment</div>
       </div>`;
-  } finally {
-    document.getElementById('searchBtn').disabled = false;
+  }finally{
+    document.getElementById('searchBtn').disabled=false;
   }
 }
 
-function openDonate(platform, amount) {
-  if (platform === 'github') window.open('https://github.com/sponsors/miguelvalenciav', '_blank');
-  else window.open('https://buymeacoffee.com/miguelvalenciav', '_blank');
+function openDonate(platform,amount){
+  if(platform==='github')window.open('https://github.com/sponsors/miguelvalenciav','_blank');
+  else window.open('https://buymeacoffee.com/miguelvalenciav','_blank');
 }
 
-window.onload = () => { updateThemeIcon(); getQuote(); };
+window.onload=()=>{
+  updateThemeIcon();
+  applyLocaleDefaults();
+  getQuote();
+};
 </script>
 </body>
 </html>

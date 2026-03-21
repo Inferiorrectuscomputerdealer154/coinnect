@@ -1,5 +1,5 @@
 """
-FastAPI routes — /v1/quote, /v1/exchanges, /v1/corridors, /v1/health
+FastAPI routes — /v1/quote, /v1/exchanges, /v1/corridors, /v1/health, /v1/history
 """
 
 import asyncio
@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 from coinnect.exchanges.ccxt_adapter import get_all_edges, SUPPORTED_EXCHANGES
 from coinnect.exchanges.wise_adapter import get_wise_edges, get_traditional_edges
+from coinnect.exchanges.yellowcard_adapter import get_yellowcard_edges
 from coinnect.routing.engine import build_quote, QuoteResult
 
 router = APIRouter(prefix="/v1")
@@ -66,12 +67,13 @@ async def quote(
     from_ = from_.upper()
     to = to.upper()
 
-    crypto_edges, wise_edges, trad_edges = await asyncio.gather(
+    crypto_edges, wise_edges, trad_edges, yc_edges = await asyncio.gather(
         get_all_edges(),
         get_wise_edges(),
         get_traditional_edges(),
+        get_yellowcard_edges(),
     )
-    all_edges = crypto_edges + wise_edges + trad_edges
+    all_edges = crypto_edges + wise_edges + trad_edges + yc_edges
 
     if not all_edges:
         raise HTTPException(503, "Exchange data temporarily unavailable")
@@ -116,6 +118,7 @@ async def exchanges():
             for name in SUPPORTED_EXCHANGES
         ] + [
             {"name": "Wise", "type": "fiat_transfer", "api": "wise"},
+            {"name": "Yellow Card", "type": "crypto_to_fiat", "api": "yellowcard", "region": "Africa"},
         ]
     }
 
@@ -125,20 +128,52 @@ async def corridors():
     """Returns the most commonly used currency pairs."""
     return {
         "corridors": [
-            {"from": "USD", "to": "MXN", "via": ["Wise", "Bitso+USDC"]},
-            {"from": "USD", "to": "NGN", "via": ["Kraken+YellowCard"]},
-            {"from": "USD", "to": "PHP", "via": ["Wise", "Binance+GCash"]},
-            {"from": "USD", "to": "ARS", "via": ["Binance+Lemon"]},
+            {"from": "USD", "to": "MXN", "via": ["Wise", "Coinbase+USDC+Bitso", "SPEI"]},
+            {"from": "USD", "to": "BRL", "via": ["Wise", "Coinbase+USDC", "PIX"]},
+            {"from": "USD", "to": "NGN", "via": ["Coinbase+USDC+Yellow Card", "Kraken+USDC+Yellow Card", "Wise"]},
+            {"from": "USD", "to": "KES", "via": ["Coinbase+USDC+Yellow Card", "Wise"]},
+            {"from": "USD", "to": "GHS", "via": ["Coinbase+USDC+Yellow Card", "Wise"]},
+            {"from": "USD", "to": "PHP", "via": ["Wise", "Binance+USDC"]},
+            {"from": "USD", "to": "INR", "via": ["Wise", "Coinbase+USDC"]},
+            {"from": "USD", "to": "ARS", "via": ["Binance+USDC", "Wise"]},
             {"from": "EUR", "to": "USD", "via": ["Wise", "Kraken"]},
+            {"from": "MXN", "to": "USD", "via": ["Wise", "Bitso+USDC"]},
         ]
+    }
+
+
+@router.get("/history", summary="Historical fee rates for a corridor")
+async def history(
+    from_: str = Query(..., alias="from", description="Source currency, e.g. USD"),
+    to: str = Query(..., description="Destination currency, e.g. NGN"),
+    days: int = Query(7, ge=1, le=30, description="Number of days of history"),
+):
+    """
+    Returns time-series of the best route's fee% and received amount for a currency corridor.
+
+    Snapshots are captured automatically every 3 minutes for key corridors.
+    Use this to display sparkline charts or detect fee trends.
+    """
+    from coinnect.db.history import get_history, get_stats
+    points = get_history(from_.upper(), to.upper(), days)
+    stats = get_stats(from_.upper(), to.upper(), days)
+    return {
+        "from_currency": from_.upper(),
+        "to_currency": to.upper(),
+        "days": days,
+        "points": points,
+        "stats": stats,
     }
 
 
 @router.get("/health", summary="API health check")
 async def health():
+    from coinnect.db.history import DB_PATH
     return {
         "ok": True,
         "status": "live",
-        "exchanges_online": len(SUPPORTED_EXCHANGES) + 1,
+        "version": "0.3.0",
+        "exchanges_online": len(SUPPORTED_EXCHANGES) + 2,  # +Bitso +YellowCard
+        "history_db": str(DB_PATH),
         "checked_at": datetime.now(UTC).isoformat(),
     }
