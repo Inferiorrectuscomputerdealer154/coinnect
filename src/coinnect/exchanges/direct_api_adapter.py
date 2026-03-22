@@ -17,10 +17,16 @@ logger = logging.getLogger(__name__)
 _bitso_cache: dict = {"edges": [], "ts": 0.0}
 _buda_cache: dict = {"edges": [], "ts": 0.0}
 _coingecko_cache: dict = {"edges": [], "ts": 0.0}
+_strike_cache: dict = {"edges": [], "ts": 0.0}
+_frankfurter_cache: dict = {"edges": [], "ts": 0.0}
+_currencyapi_cache: dict = {"edges": [], "ts": 0.0}
 
 BITSO_TTL = 180       # 3 minutes
 BUDA_TTL = 180        # 3 minutes
 COINGECKO_TTL = 300   # 5 minutes
+STRIKE_TTL = 180      # 3 minutes
+FRANKFURTER_TTL = 1800  # 30 minutes (ECB updates daily)
+CURRENCYAPI_TTL = 1800  # 30 minutes
 
 HEADERS = {"User-Agent": "Coinnect/1.0 (coinnect.bot)"}
 
@@ -228,5 +234,162 @@ async def get_coingecko_edges() -> list[Edge]:
     except Exception as e:
         logger.warning(f"CoinGecko adapter failed: {e}")
         return _coingecko_cache["edges"]
+
+    return edges
+
+
+# ── Strike ──────────────────────────────────────────────────────────────────
+
+STRIKE_FEE = 0.50
+
+
+async def get_strike_edges() -> list[Edge]:
+    """Fetch BTC/USD rate from Strike public ticker (Lightning Network)."""
+    now = time.monotonic()
+    if _strike_cache["edges"] and (now - _strike_cache["ts"]) < STRIKE_TTL:
+        return _strike_cache["edges"]
+
+    edges: list[Edge] = []
+    try:
+        async with httpx.AsyncClient(headers=HEADERS, timeout=15) as client:
+            resp = await client.get("https://api.strike.me/v1/rates/ticker")
+            resp.raise_for_status()
+            data = resp.json()
+
+        # data is a list of rate objects; find BTC/USD
+        btc_usd_rate = None
+        for rate in data if isinstance(data, list) else []:
+            amount = rate.get("amount")
+            source = rate.get("sourceCurrency", "").upper()
+            target = rate.get("targetCurrency", "").upper()
+            if source == "BTC" and target == "USD" and amount:
+                btc_usd_rate = float(amount)
+                break
+
+        if btc_usd_rate:
+            edges.append(Edge(
+                from_currency="BTC",
+                to_currency="USD",
+                via="Strike",
+                fee_pct=STRIKE_FEE,
+                estimated_minutes=5,
+                instructions="Sell BTC for USD via Strike (Lightning Network)",
+                exchange_rate=btc_usd_rate,
+            ))
+            edges.append(Edge(
+                from_currency="USD",
+                to_currency="BTC",
+                via="Strike",
+                fee_pct=STRIKE_FEE,
+                estimated_minutes=5,
+                instructions="Buy BTC with USD via Strike (Lightning Network)",
+                exchange_rate=1.0 / btc_usd_rate,
+            ))
+
+        _strike_cache["edges"] = edges
+        _strike_cache["ts"] = now
+        logger.info(f"Strike: loaded {len(edges)} edges")
+    except Exception as e:
+        logger.warning(f"Strike adapter failed: {e}")
+        return _strike_cache["edges"]
+
+    return edges
+
+
+# ── Frankfurter (ECB reference rates) ──────────────────────────────────────
+
+
+async def get_frankfurter_edges() -> list[Edge]:
+    """Fetch FX reference rates from Frankfurter (ECB data), USD and EUR bases."""
+    now = time.monotonic()
+    if _frankfurter_cache["edges"] and (now - _frankfurter_cache["ts"]) < FRANKFURTER_TTL:
+        return _frankfurter_cache["edges"]
+
+    edges: list[Edge] = []
+    try:
+        async with httpx.AsyncClient(headers=HEADERS, timeout=15) as client:
+            # Fetch USD-based rates
+            resp_usd = await client.get("https://api.frankfurter.app/latest?from=USD")
+            resp_usd.raise_for_status()
+            usd_data = resp_usd.json()
+
+            for currency, rate in usd_data.get("rates", {}).items():
+                if not rate:
+                    continue
+                edges.append(Edge(
+                    from_currency="USD",
+                    to_currency=currency.upper(),
+                    via="ECB (reference)",
+                    fee_pct=0.0,
+                    estimated_minutes=0,
+                    instructions="ECB reference rate — not a transfer provider",
+                    exchange_rate=float(rate),
+                ))
+
+            # Fetch EUR-based rates
+            resp_eur = await client.get("https://api.frankfurter.app/latest?from=EUR")
+            resp_eur.raise_for_status()
+            eur_data = resp_eur.json()
+
+            for currency, rate in eur_data.get("rates", {}).items():
+                if not rate:
+                    continue
+                edges.append(Edge(
+                    from_currency="EUR",
+                    to_currency=currency.upper(),
+                    via="ECB (reference)",
+                    fee_pct=0.0,
+                    estimated_minutes=0,
+                    instructions="ECB reference rate — not a transfer provider",
+                    exchange_rate=float(rate),
+                ))
+
+        _frankfurter_cache["edges"] = edges
+        _frankfurter_cache["ts"] = now
+        logger.info(f"Frankfurter: loaded {len(edges)} ECB reference edges")
+    except Exception as e:
+        logger.warning(f"Frankfurter adapter failed: {e}")
+        return _frankfurter_cache["edges"]
+
+    return edges
+
+
+# ── Currency API (fawazahmed0 CDN fallback) ────────────────────────────────
+
+
+async def get_currencyapi_edges() -> list[Edge]:
+    """Fetch 150+ currency rates from fawazahmed0 CDN (fallback for exotic currencies)."""
+    now = time.monotonic()
+    if _currencyapi_cache["edges"] and (now - _currencyapi_cache["ts"]) < CURRENCYAPI_TTL:
+        return _currencyapi_cache["edges"]
+
+    edges: list[Edge] = []
+    try:
+        url = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json"
+        async with httpx.AsyncClient(headers=HEADERS, timeout=15) as client:
+            resp = await client.get(url)
+            resp.raise_for_status()
+            data = resp.json()
+
+        rates = data.get("usd", {})
+        for currency, rate in rates.items():
+            if not rate or currency == "usd":
+                continue
+            edges.append(Edge(
+                from_currency="USD",
+                to_currency=currency.upper(),
+                via="Market rate",
+                fee_pct=0.0,
+                estimated_minutes=0,
+                instructions="Market reference rate",
+                exchange_rate=float(rate),
+            ))
+
+        _currencyapi_cache["edges"] = edges
+        _currencyapi_cache["ts"] = now
+        logger.info(f"CurrencyAPI: loaded {len(edges)} reference edges")
+    except Exception as e:
+        logger.warning(f"CurrencyAPI adapter failed: {e}")
+        return _currencyapi_cache["edges"]
 
     return edges
