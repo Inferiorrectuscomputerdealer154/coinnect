@@ -161,6 +161,50 @@ def get_stats(from_currency: str, to_currency: str, minutes_back: int = 10080) -
         conn.close()
 
 
+def get_provider_history(from_currency: str, to_currency: str, minutes_back: int = 10080) -> dict:
+    """
+    For each snapshot, extract per-provider cost_pct from routes_json.
+    Returns {provider_via: [{captured_at, cost_pct}]} for up to the top 6 providers seen.
+    """
+    conn = _connect()
+    ts = _normalize_ts("captured_at")
+    try:
+        rows = conn.execute(f"""
+            SELECT captured_at, routes_json
+            FROM rate_snapshots
+            WHERE from_currency = ?
+              AND to_currency   = ?
+              AND {ts} >= datetime('now', ? || ' minutes')
+            ORDER BY captured_at ASC
+        """, (from_currency, to_currency, f"-{minutes_back}")).fetchall()
+    finally:
+        conn.close()
+
+    # Build per-provider series
+    series: dict[str, list[dict]] = {}
+    for row in rows:
+        try:
+            routes = json.loads(row["routes_json"])
+        except Exception:
+            continue
+        for r in routes:
+            via = r.get("via", "")
+            if not via:
+                continue
+            if via not in series:
+                series[via] = []
+            series[via].append({
+                "captured_at": row["captured_at"],
+                "cost_pct": r.get("total_cost_pct", 0),
+            })
+
+    # Keep only providers with enough data points, sort by avg cost
+    MIN_POINTS = 3
+    filtered = {v: pts for v, pts in series.items() if len(pts) >= MIN_POINTS}
+    sorted_vias = sorted(filtered, key=lambda v: sum(p["cost_pct"] for p in filtered[v]) / len(filtered[v]))
+    return {v: filtered[v] for v in sorted_vias[:8]}
+
+
 def prune_old(keep_days: int = 30) -> int:
     """Delete snapshots older than keep_days. Returns rows deleted."""
     conn = _connect()

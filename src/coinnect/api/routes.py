@@ -238,6 +238,33 @@ async def history(
     }
 
 
+@router.get("/history/providers", summary="Per-provider rate history for a corridor")
+async def history_providers(
+    from_: str = Query(..., alias="from"),
+    to: str = Query(...),
+    days: int = Query(None, ge=1, le=365),
+    minutes: int = Query(None, ge=15, le=43200),
+):
+    """
+    Returns historical cost_pct per provider/route for a given corridor.
+    Use this to compare e.g. Wise vs Binance P2P vs Strike over time for USD→MXN.
+    """
+    from coinnect.db.history import get_provider_history
+    if minutes is not None:
+        minutes_back = minutes
+    elif days is not None:
+        minutes_back = days * 24 * 60
+    else:
+        minutes_back = 7 * 24 * 60
+    data = get_provider_history(from_.upper(), to.upper(), minutes_back)
+    return {
+        "from_currency": from_.upper(),
+        "to_currency": to.upper(),
+        "minutes": minutes_back,
+        "providers": data,
+    }
+
+
 @router.get("/snapshot/daily", summary="Full daily rate snapshot (CSV) — open data")
 async def snapshot_daily(
     date: str | None = Query(None, description="YYYY-MM-DD, defaults to today UTC"),
