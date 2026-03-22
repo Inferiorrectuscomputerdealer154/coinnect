@@ -359,7 +359,7 @@ async def snapshot_meta():
     }
 
 
-@router.get("/health", summary="API health check")
+@router.api_route("/health", methods=["GET", "HEAD"], summary="API health check")
 async def health():
     return {
         "ok": True,
