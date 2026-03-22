@@ -66,6 +66,16 @@
         <div class="text-xs text-gray-400 mt-1">builder tier</div>
       </div>
       <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+        <div class="text-xs text-gray-400 uppercase tracking-wide mb-2">👤 Humans helped</div>
+        <div id="s-humans" class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">–</div>
+        <div class="text-xs text-gray-400 mt-1">unique visitors</div>
+      </div>
+      <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+        <div class="text-xs text-gray-400 uppercase tracking-wide mb-2">🤖 Bots helped</div>
+        <div id="s-bots" class="text-3xl font-bold text-cyan-600 dark:text-cyan-400">–</div>
+        <div class="text-xs text-gray-400 mt-1">unique API keys</div>
+      </div>
+      <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
         <div class="text-xs text-gray-400 uppercase tracking-wide mb-2">API vs Web today</div>
         <div id="s-split" class="text-2xl font-bold text-cyan-600 dark:text-cyan-400">–</div>
         <div class="text-xs text-gray-400 mt-1">bots vs humans</div>
@@ -195,6 +205,8 @@ async function loadStats(){
   document.getElementById('s-total').textContent=(d.searches_total??0).toLocaleString();
   document.getElementById('s-keys').textContent=d.keys_total??'—';
   document.getElementById('s-split').textContent=`${d.api_searches_today}/${d.web_searches_today}`;
+  document.getElementById('s-humans').textContent=(d.humans_helped??0).toLocaleString();
+  document.getElementById('s-bots').textContent=(d.bots_helped??0).toLocaleString();
 
   // Top corridors
   const corridors=d.top_corridors||[];

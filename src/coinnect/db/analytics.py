@@ -185,12 +185,22 @@ def get_stats() -> dict:
         """).fetchall()
         # Active API keys (same DB file)
         keys_total = conn.execute("SELECT COUNT(*) FROM api_keys").fetchone()[0]
+        # Unique humans helped (web searches, unique user_agent)
+        humans_helped = conn.execute(
+            "SELECT COUNT(DISTINCT user_agent) FROM search_log WHERE source='web' AND user_agent IS NOT NULL"
+        ).fetchone()[0]
+        # Unique bots helped (API searches, unique api_key_prefix)
+        bots_helped = conn.execute(
+            "SELECT COUNT(DISTINCT api_key_prefix) FROM search_log WHERE api_key_prefix IS NOT NULL"
+        ).fetchone()[0]
         return {
             "searches_today": searches_today,
             "api_searches_today": api_searches_today,
             "web_searches_today": searches_today - api_searches_today,
             "searches_total": searches_total,
             "keys_total": keys_total,
+            "humans_helped": humans_helped,
+            "bots_helped": bots_helped,
             "top_corridors": [dict(r) for r in top_corridors],
             "daily_searches": [dict(r) for r in daily],
             "date": today,
