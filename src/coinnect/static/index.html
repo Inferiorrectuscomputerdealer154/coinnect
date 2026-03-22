@@ -755,7 +755,7 @@ const API='';
 function esc(s){if(s==null)return'';const d=document.createElement('div');d.textContent=String(s);return d.innerHTML;}
 
 // ── Live vs estimated provider badges ─────────────────────────────────────
-const LIVE_PROVIDERS=new Set(['Binance','Kraken','Coinbase','Bitso','Luno','Mercado Bitcoin','Bitstamp','Gemini','Wise','Yellow Card']);
+const LIVE_PROVIDERS=new Set(['Binance','Kraken','Coinbase','Bitso','Luno','Bitstamp','Gemini','Wise','Yellow Card','Buda','CoinGecko (market)']);
 function rateBadge(via){
   return LIVE_PROVIDERS.has(via)
     ?'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">API RATE</span>'
