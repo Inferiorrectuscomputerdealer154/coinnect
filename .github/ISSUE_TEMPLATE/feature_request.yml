@@ -1,0 +1,67 @@
+name: "Feature request"
+description: "Proponer una nueva funcionalidad o mejora"
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ¿Tienes una idea para mejorar Coinnect? Cuéntanos.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema o necesidad
+      description: "¿Qué problema resuelve esta funcionalidad? ¿Qué frustra del estado actual?"
+      placeholder: "No puedo comparar tarifas históricas entre dos proveedores para el mismo corredor..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solución propuesta
+      description: "¿Cómo imaginas que debería funcionar?"
+      placeholder: "Un endpoint /v1/compare que acepte dos providers y un corredor, devolviendo la serie temporal de ambos..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área
+      options:
+        - API (nuevos endpoints)
+        - Web UI (interfaz)
+        - Motor de routing (algoritmo)
+        - MCP Server (agentes AI)
+        - Open Data (exportaciones)
+        - Documentación
+        - Infraestructura / DevOps
+        - Otro
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+      description: "¿Hay algún workaround actual o alternativa que hayas considerado?"
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto adicional
+      description: "Screenshots, mockups, links a proyectos similares, etc."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribución
+      options:
+        - label: "Estoy dispuesto a implementar esta funcionalidad y enviar un PR"
+          required: false

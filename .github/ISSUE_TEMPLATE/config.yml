@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: "Reportar error de tarifa"
+    url: "https://coinnect.bot"
+    about: "Si una tarifa mostrada no coincide con la realidad, usa el botón de 'Reportar error' directamente en la web."
+  - name: "Pregunta general"
+    url: "https://github.com/coinnect-dev/coinnect/discussions"
+    about: "Para preguntas, ideas o conversación general, usa GitHub Discussions."
+  - name: "Vulnerabilidad de seguridad"
+    url: "https://github.com/coinnect-dev/coinnect/blob/main/SECURITY.md"
+    about: "NO reportes vulnerabilidades aquí. Envía un email a miguel@coinnect.bot."

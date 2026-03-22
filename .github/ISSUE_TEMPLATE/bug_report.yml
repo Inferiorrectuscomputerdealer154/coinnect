@@ -1,0 +1,94 @@
+name: "Bug report"
+description: "Reportar un error en la API, web UI o motor de cotización"
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportar este bug. Entre más detalles incluyas, más rápido lo podemos resolver.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Componente afectado
+      description: "¿Dónde ocurre el problema?"
+      options:
+        - Web UI
+        - REST API (/v1/*)
+        - Motor de cotización (routing)
+        - MCP Server
+        - Adaptador de proveedor
+        - Documentación
+        - Otro
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción del bug
+      description: "¿Qué sucedió? ¿Qué esperabas que sucediera?"
+      placeholder: "Al consultar USD→NGN con monto 500, la ruta devuelve..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducir
+      description: "Pasos exactos para que podamos reproducir el problema"
+      placeholder: |
+        1. Ir a coinnect.bot
+        2. Seleccionar USD → NGN
+        3. Ingresar monto 500
+        4. Ver error en...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamiento esperado
+      description: "¿Qué debería haber pasado?"
+    validations:
+      required: true
+
+  - type: input
+    id: corridor
+    attributes:
+      label: Corredor (si aplica)
+      description: "Ejemplo: USD→NGN, EUR→MXN"
+      placeholder: "USD→NGN"
+    validations:
+      required: false
+
+  - type: input
+    id: provider
+    attributes:
+      label: Proveedor (si aplica)
+      description: "Ejemplo: Wise, Yellow Card, Binance"
+      placeholder: "Wise"
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Entorno
+      description: "Navegador, OS, o cómo accedes a la API"
+      placeholder: |
+        - Navegador: Chrome 124
+        - OS: Windows 11
+        - API client: httpx 0.27
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs o respuesta de la API
+      description: "Pega aquí la respuesta JSON, error de consola, o screenshot"
+      render: shell
+    validations:
+      required: false

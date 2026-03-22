@@ -1,0 +1,105 @@
+name: "New provider request"
+description: "Solicitar la integración de un nuevo proveedor de remesas o exchange"
+title: "[Provider]: "
+labels: ["provider-request", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ¡Gracias por sugerir un nuevo proveedor! Coinnect busca cubrir todos los corredores posibles.
+        Revisa los [criterios de inclusión](https://github.com/coinnect-dev/coinnect/blob/main/docs/LISTING_STANDARD.md) antes de enviar.
+
+  - type: input
+    id: provider_name
+    attributes:
+      label: Nombre del proveedor
+      placeholder: "Ejemplo: Lemon Cash"
+    validations:
+      required: true
+
+  - type: input
+    id: website
+    attributes:
+      label: Sitio web
+      placeholder: "https://lemon.me"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: provider_type
+    attributes:
+      label: Tipo de proveedor
+      options:
+        - Exchange crypto (CEX)
+        - Exchange P2P
+        - Remesa tradicional
+        - Neobank / Fintech
+        - Wallet crypto
+        - Otro
+    validations:
+      required: true
+
+  - type: textarea
+    id: corridors
+    attributes:
+      label: Corredores principales
+      description: "¿Qué pares de divisas maneja este proveedor?"
+      placeholder: |
+        - USD → ARS
+        - BRL → ARS
+        - USDT → ARS
+    validations:
+      required: true
+
+  - type: input
+    id: api_docs
+    attributes:
+      label: URL de documentación de API
+      description: "Si tiene API pública documentada"
+      placeholder: "https://docs.lemon.me/api"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: has_public_api
+    attributes:
+      label: "¿Tiene API pública?"
+      options:
+        - "Sí — API REST documentada"
+        - "Sí — pero sin documentación oficial"
+        - "No — solo web/app"
+        - "No estoy seguro"
+    validations:
+      required: true
+
+  - type: textarea
+    id: regulation
+    attributes:
+      label: Regulación
+      description: "¿En qué jurisdicciones está regulado?"
+      placeholder: "CNV Argentina, FinCEN (US)"
+    validations:
+      required: false
+
+  - type: textarea
+    id: why
+    attributes:
+      label: "¿Por qué incluirlo?"
+      description: "¿Qué corredores mejoraría? ¿En qué región es popular?"
+      placeholder: "Es la app crypto más popular en Argentina con 2M+ usuarios. Ofrece tasas muy competitivas para USD→ARS."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: "El proveedor tiene API pública o tasas publicadas"
+          required: false
+        - label: "Está regulado en al menos una jurisdicción"
+          required: false
+        - label: "No tiene historial de fraude o insolvencia en los últimos 3 años"
+          required: false
+        - label: "Estoy dispuesto a ayudar con la integración (escribir el adaptador)"
+          required: false
