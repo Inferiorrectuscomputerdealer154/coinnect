@@ -18,6 +18,10 @@ from coinnect.api.admin_routes import admin_router, suggest_router
 from coinnect.db.history import init_db, record_snapshot, prune_old, TRACKED_CORRIDORS
 from coinnect.db.keys import init_keys_db
 from coinnect.db.analytics import init_analytics_db
+from coinnect.seo_pages import (
+    render_corridor_page, render_country_page, generate_sitemap_xml,
+    TOP_CORRIDORS, COUNTRY_DATA, _cache_get, _cache_set,
+)
 
 logger = logging.getLogger(__name__)
 STATIC_DIR = Path(__file__).parent / "static"
@@ -194,7 +198,13 @@ async def root():
 
 @app.get("/sitemap.xml", include_in_schema=False)
 async def sitemap():
-    return FileResponse(STATIC_DIR / "sitemap.xml", media_type="application/xml")
+    from fastapi.responses import Response
+    cached = _cache_get("sitemap")
+    if cached:
+        return Response(content=cached, media_type="application/xml")
+    xml = generate_sitemap_xml()
+    _cache_set("sitemap", xml)
+    return Response(content=xml, media_type="application/xml")
 
 
 @app.get("/robots.txt", include_in_schema=False)
@@ -223,8 +233,100 @@ async def security_txt():
     return PlainTextResponse(content)
 
 
-@app.get("/rates/{snapshot_id}", include_in_schema=False)
-async def snapshot_page(snapshot_id: int):
+async def _get_all_edges_cached() -> list:
+    """Fetch all edges from all adapters (uses each adapter's internal cache)."""
+    from coinnect.exchanges.ccxt_adapter import get_all_edges
+    from coinnect.exchanges.wise_adapter import get_wise_edges, get_traditional_edges
+    from coinnect.exchanges.yellowcard_adapter import get_yellowcard_edges
+    from coinnect.exchanges.remittance_adapter import get_remittance_edges
+    from coinnect.exchanges.direct_api_adapter import (
+        get_bitso_edges, get_buda_edges, get_coingecko_edges,
+        get_strike_edges, get_frankfurter_edges, get_currencyapi_edges,
+        get_flutterwave_edges,
+        get_bluelytics_edges, get_dolarsi_edges, get_criptoya_edges,
+        get_bcb_edges, get_trm_edges, get_lirarate_edges,
+    )
+    results = await asyncio.gather(
+        get_all_edges(),
+        get_wise_edges(),
+        get_traditional_edges(),
+        get_yellowcard_edges(),
+        get_remittance_edges(),
+        get_bitso_edges(),
+        get_buda_edges(),
+        get_coingecko_edges(),
+        get_strike_edges(),
+        get_frankfurter_edges(),
+        get_currencyapi_edges(),
+        get_flutterwave_edges(),
+        get_bluelytics_edges(),
+        get_dolarsi_edges(),
+        get_criptoya_edges(),
+        get_bcb_edges(),
+        get_trm_edges(),
+        get_lirarate_edges(),
+    )
+    all_edges = []
+    for batch in results:
+        all_edges.extend(batch)
+    return all_edges
+
+
+@app.get("/send/{corridor}", include_in_schema=False)
+async def corridor_page(corridor: str):
+    """SEO corridor page: /send/usd-to-mxn"""
+    corridor = corridor.lower().strip()
+    parts = corridor.split("-to-")
+    if len(parts) != 2:
+        return HTMLResponse("<html><body><h2>Invalid corridor</h2><p><a href='/'>Back</a></p></body></html>", status_code=404)
+
+    from_c, to_c = parts[0].upper(), parts[1].upper()
+    cache_key = f"corridor:{from_c}:{to_c}"
+    cached = _cache_get(cache_key)
+    if cached:
+        return HTMLResponse(cached)
+
+    edges = await _get_all_edges_cached()
+    if not edges:
+        return HTMLResponse("<html><body><h2>Exchange data temporarily unavailable</h2><p><a href='/'>Back</a></p></body></html>", status_code=503)
+
+    page_html = render_corridor_page(from_c, to_c, edges)
+    _cache_set(cache_key, page_html)
+    return HTMLResponse(page_html)
+
+
+@app.get("/rates/{slug}", include_in_schema=False)
+async def rates_page(slug: str):
+    """Country page (/rates/mexico) or snapshot page (/rates/123)."""
+    # If slug is numeric, serve the snapshot page
+    if slug.isdigit():
+        return await snapshot_page_inner(int(slug))
+    # Otherwise treat as country slug
+    cache_key = f"country:{slug}"
+    cached = _cache_get(cache_key)
+    if cached:
+        return HTMLResponse(cached)
+
+    if slug not in COUNTRY_DATA:
+        return HTMLResponse(
+            "<html><body><h2>Country not found</h2>"
+            "<p><a href='/'>Back to Coinnect</a></p></body></html>",
+            status_code=404,
+        )
+
+    edges = await _get_all_edges_cached()
+    if not edges:
+        return HTMLResponse("<html><body><h2>Exchange data temporarily unavailable</h2><p><a href='/'>Back</a></p></body></html>", status_code=503)
+
+    page_html = render_country_page(slug, edges)
+    if not page_html:
+        return HTMLResponse("<html><body><h2>Country not found</h2><p><a href='/'>Back</a></p></body></html>", status_code=404)
+
+    _cache_set(cache_key, page_html)
+    return HTMLResponse(page_html)
+
+
+async def snapshot_page_inner(snapshot_id: int):
     """Human-readable permalink for a rate snapshot."""
     from coinnect.db.history import get_snapshot_by_id
     snap = get_snapshot_by_id(snapshot_id)
