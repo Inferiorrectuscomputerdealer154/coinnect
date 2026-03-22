@@ -521,12 +521,19 @@ async def get_remittance_edges() -> list[Edge]:
         logger.warning(f"Remittance adapter failed: {e}")
         return []
 
+    # Crypto tickers that open.er-api.com doesn't have — skip these corridors
+    # (they're handled by ccxt_adapter with real live rates)
+    CRYPTO_TICKERS = {"BTC", "ETH", "USDC", "USDT", "BNB", "SOL", "XRP", "DOGE", "DAI"}
+
     edges = []
     for provider, from_, to_, fee, minutes, note in all_corridors:
+        # Skip corridors involving crypto — FX API doesn't have real rates for these
+        if from_ in CRYPTO_TICKERS or to_ in CRYPTO_TICKERS:
+            continue
         rates = rate_maps.get(from_, {})
-        rate = rates.get(to_, 1.0)
-        if rate == 0:
-            rate = 1.0
+        rate = rates.get(to_, 0)
+        if rate <= 0:
+            continue  # Skip corridors with no real rate data
         min_amt, max_amt = PROVIDER_LIMITS.get(provider, (0.01, 1_000_000.0))
         edges.append(Edge(
             from_currency=from_,
