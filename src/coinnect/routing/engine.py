@@ -155,8 +155,8 @@ def build_quote(
     to_currency: str,
     amount: float,
 ) -> QuoteResult:
-    # Filter edges to only those compatible with the requested amount
-    valid_edges = [e for e in edges if e.min_amount <= amount <= e.max_amount]
+    # Only filter below minimum (don't hide providers that cap at lower amounts)
+    valid_edges = [e for e in edges if amount >= e.min_amount]
     graph = build_graph(valid_edges)
     raw_routes = find_routes(graph, from_currency, to_currency, amount)
 

@@ -315,9 +315,9 @@
         <tr class="bg-gray-50 dark:bg-gray-800 text-left text-gray-500 dark:text-gray-400 uppercase tracking-wide">
           <th class="px-4 py-3 font-semibold">#</th>
           <th class="px-4 py-3 font-semibold">Provider(s)</th>
+          <th class="px-4 py-3 font-semibold text-right">They receive</th>
           <th class="px-4 py-3 font-semibold text-right">Cost</th>
           <th class="px-4 py-3 font-semibold text-right">Time</th>
-          <th class="px-4 py-3 font-semibold text-right">They receive</th>
           <th class="px-4 py-3 font-semibold text-right">Rate</th>
           <th class="px-4 py-3 font-semibold text-center">Steps</th>
         </tr>
@@ -552,7 +552,7 @@
         <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">You saved $10+ on fees.<br>Buy me a coffee.</div>
       </div>
       <div class="border-2 border-cyan-400 dark:border-cyan-600 rounded-xl p-4 relative cursor-pointer bg-cyan-50/50 dark:bg-cyan-950/20" onclick="openDonate('github',25)">
-        <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white bg-cyan-500 rounded-full px-2 py-0.5">Most common</div>
+        <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white bg-cyan-500 rounded-full px-2 py-0.5">Most appreciated 🫶</div>
         <div class="text-2xl mb-2">⭐</div>
         <div class="font-bold text-gray-900 dark:text-white">$25 / mo</div>
         <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Monthly supporter.<br>Keeps this independent.</div>
@@ -583,6 +583,32 @@
   </div>
 </section>
 
+<!-- ── Community suggestions ──────────────────────────────────────────────── -->
+<section id="suggestSection" class="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 px-5 py-10 mt-0">
+  <div class="max-w-2xl mx-auto">
+    <div class="flex items-center justify-between mb-1">
+      <h2 class="text-lg font-bold text-gray-900 dark:text-white">Community requests</h2>
+      <span class="text-xs text-gray-400">Vote for corridors or providers you want added</span>
+    </div>
+    <p class="text-xs text-gray-400 mb-5">Most voted requests get prioritized. If a provider is shown as restricted, it means we investigated but it has API/legal limitations.</p>
+    <div id="suggestionsList" class="space-y-2 mb-6">
+      <div class="text-xs text-gray-400 py-4 text-center">Loading…</div>
+    </div>
+    <!-- Submit form -->
+    <details class="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+      <summary class="px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors select-none">+ Suggest a provider or corridor</summary>
+      <div class="px-4 py-4 space-y-3 border-t border-gray-200 dark:border-gray-700">
+        <input id="sgName" type="text" maxlength="100" placeholder="Provider or corridor name (e.g. 'Wise USD→CLP' or 'Nequi')" class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500">
+        <input id="sgNote" type="text" maxlength="200" placeholder="Why? (optional)" class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500">
+        <div class="flex gap-3">
+          <button onclick="submitSuggestion()" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white text-sm font-medium rounded-lg transition-colors">Submit</button>
+          <span id="sgMsg" class="text-sm text-cyan-600 dark:text-cyan-400 self-center hidden"></span>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
 <footer class="text-center text-xs text-gray-400 dark:text-gray-600 py-5 border-t border-gray-100 dark:border-gray-800">
   <a href="/docs" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">API docs</a>
   &nbsp;·&nbsp;
@@ -592,7 +618,7 @@
   &nbsp;·&nbsp;
   <span data-i18n="footer_nofunds">Coinnect never holds your funds</span>
   &nbsp;·&nbsp;
-  <a href="/?notrack" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors" data-i18n="footer_notrack">No tracking</a>
+  <button onclick="removeTracking()" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors text-left" data-i18n="footer_notrack">Remove tracking</button>
   &nbsp;·&nbsp;
   <button onclick="openDisclaimer()" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors" data-i18n="footer_disclaimer">Disclaimer</button>
   &nbsp;·&nbsp;
@@ -811,10 +837,10 @@ function renderTable(routes,from,to){
     return`<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${featured?'font-medium':''}">
       <td class="px-4 py-3 text-gray-400">${r.rank}</td>
       <td class="px-4 py-3 text-gray-900 dark:text-white">${via}${badge}</td>
-      <td class="px-4 py-3 text-right ${r.total_cost_pct<1.5?'text-emerald-600 dark:text-emerald-400':r.total_cost_pct<3?'text-amber-600 dark:text-amber-400':'text-red-500'}">${r.total_cost_pct.toFixed(2)}%</td>
+      <td class="px-4 py-3 text-right font-mono font-semibold text-gray-900 dark:text-white">${fmtNum(r.they_receive)} <span class="text-gray-400 font-normal text-xs">${r.they_receive_currency}</span></td>
+      <td class="px-4 py-3 text-right text-xs ${r.total_cost_pct<1.5?'text-emerald-600 dark:text-emerald-400':r.total_cost_pct<3?'text-amber-600 dark:text-amber-400':'text-red-500'}">${r.total_cost_pct.toFixed(2)}%</td>
       <td class="px-4 py-3 text-right text-gray-500 dark:text-gray-400">${fmtMin(r.total_time_minutes)}</td>
-      <td class="px-4 py-3 text-right text-gray-900 dark:text-white font-mono">${fmtNum(r.they_receive)} ${r.they_receive_currency}</td>
-      <td class="px-4 py-3 text-right text-gray-400 font-mono">${rate}</td>
+      <td class="px-4 py-3 text-right text-gray-400 font-mono text-xs">${rate}</td>
       <td class="px-4 py-3 text-center text-gray-400">${r.steps.length}</td>
     </tr>`;
   }).join('');
@@ -1123,6 +1149,7 @@ function renderProviderChart(){
 
 // Period button wiring (runs after DOM ready)
 document.addEventListener('DOMContentLoaded',()=>{
+  loadSuggestions();
   document.querySelectorAll('.hist-period').forEach(btn=>{
     btn.addEventListener('click',()=>{
       document.querySelectorAll('.hist-period').forEach(b=>{
@@ -1206,6 +1233,7 @@ function renderSteps(steps,to){
         <span class="text-xs text-gray-400">via</span>
         ${PROVIDER_URL[s.via]?`<a href="${PROVIDER_URL[s.via]}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-1.5 py-0.5 hover:opacity-75 transition-opacity">${exchangeLogo(s.via,12)}${s.via}</a>`:`<span class="inline-flex items-center gap-1 text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-1.5 py-0.5">${exchangeLogo(s.via,12)}${s.via}</span>`}
         <span class="text-xs text-gray-400">${s.fee_pct}% · ${fmtTime(s.estimated_minutes)}</span>
+        ${s.instructions&&s.instructions.includes('~est.')?'<span class="text-[10px] font-semibold text-amber-500 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded px-1 py-px">~est.</span>':''}
         ${badge}
       </div>
       <div class="text-xs text-gray-400 dark:text-gray-500">${s.instructions}</div>
@@ -1368,6 +1396,13 @@ function renderResults(routes,from,to){
   let featured=filtered.filter(r=>featuredLabels.has(r.label));
   let extras=filtered.filter(r=>!featuredLabels.has(r.label));
 
+  // If the best extra is tied with the cheapest featured, move it up
+  const cheapestFeatured=featured.find(r=>r.label==='Cheapest');
+  if(cheapestFeatured&&extras.length&&Math.abs(extras[0].total_cost_pct-cheapestFeatured.total_cost_pct)<=0.1){
+    featured=[...featured,extras[0]];
+    extras=extras.slice(1);
+  }
+
   if(_activeFilter!=='all'&&featured.length===0){featured=filtered.slice(0,3);extras=filtered.slice(3);}
 
   // extras keep their original labels (not used in compact row display anymore)
@@ -1520,43 +1555,107 @@ window.onload=()=>{
 
 // ── Cookie consent ──────────────────────────────────────────────────────────
 function initCookieBanner(){
-  if(localStorage.getItem('cookie_consent'))return;
+  if(localStorage.getItem('cookie_seen'))return;
   document.getElementById('cookieBanner').classList.remove('hidden');
 }
-function acceptCookies(){
-  localStorage.setItem('cookie_consent','accepted');
+function dismissBanner(){
+  localStorage.setItem('cookie_seen','1');
   document.getElementById('cookieBanner').classList.add('hidden');
 }
-function declineCookies(){
-  localStorage.setItem('cookie_consent','declined');
+function removeTracking(){
   localStorage.setItem('ga_optout','1');
   window['ga-disable-G-CKBJHEVM2X']=true;
-  document.getElementById('cookieBanner').classList.add('hidden');
+  dismissBanner();
+  const btn=document.querySelector('[data-i18n="footer_notrack"]');
+  if(btn){btn.textContent='✓ Tracking removed';btn.disabled=true;}
 }
 
 // ── Disclaimer modal ────────────────────────────────────────────────────────
 function openDisclaimer(){document.getElementById('disclaimerModal').classList.remove('hidden')}
 function closeDisclaimer(){document.getElementById('disclaimerModal').classList.add('hidden')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDisclaimer();});
+
+// ── Suggestions board ──────────────────────────────────────────────────────
+async function loadSuggestions(){
+  try{
+    const r=await fetch(`${API}/v1/suggestions`);
+    const d=await r.json();
+    renderSuggestions(d.suggestions||[]);
+  }catch(e){
+    document.getElementById('suggestionsList').innerHTML='<div class="text-xs text-gray-400 text-center py-3">Could not load suggestions.</div>';
+  }
+}
+
+function renderSuggestions(list){
+  const el=document.getElementById('suggestionsList');
+  if(!list.length){el.innerHTML='<div class="text-xs text-gray-400 text-center py-4">No suggestions yet — be the first!</div>';return;}
+  el.innerHTML=list.map(s=>`
+    <div class="flex gap-3 items-start bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3">
+      <button onclick="voteSuggestion(${s.id},this)" class="flex flex-col items-center gap-0.5 shrink-0 w-10 py-1 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-cyan-400 dark:hover:border-cyan-600 hover:bg-cyan-50 dark:hover:bg-cyan-950/30 transition-all group">
+        <span class="text-gray-400 group-hover:text-cyan-500 text-xs leading-none">▲</span>
+        <span class="text-sm font-bold text-gray-700 dark:text-gray-200">${s.votes}</span>
+      </button>
+      <div class="flex-1 min-w-0">
+        <div class="font-medium text-sm text-gray-900 dark:text-white">${s.name}</div>
+        ${s.note?`<div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${s.note}</div>`:''}
+        ${s.admin_note?`<div class="mt-1.5 flex items-start gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded px-2 py-1"><span class="shrink-0">ℹ️</span><span>${s.admin_note}</span></div>`:''}
+      </div>
+    </div>
+  `).join('');
+}
+
+async function voteSuggestion(id,btn){
+  const fp=await getFingerprint();
+  try{
+    const r=await fetch(`${API}/v1/suggestions/${id}/upvote`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fingerprint:fp})});
+    const d=await r.json();
+    if(d.votes!==undefined){
+      const countEl=btn.querySelector('span:last-child');
+      if(countEl)countEl.textContent=d.votes;
+      btn.classList.add('border-cyan-400','dark:border-cyan-600','bg-cyan-50','dark:bg-cyan-950/30');
+      btn.disabled=true;
+    }
+  }catch(e){}
+}
+
+async function submitSuggestion(){
+  const name=document.getElementById('sgName').value.trim();
+  const note=document.getElementById('sgNote').value.trim();
+  const msg=document.getElementById('sgMsg');
+  if(!name){document.getElementById('sgName').focus();return;}
+  const fp=await getFingerprint();
+  try{
+    const r=await fetch(`${API}/v1/suggestions`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,note:note||null,fingerprint:fp})});
+    if(r.ok){
+      document.getElementById('sgName').value='';
+      document.getElementById('sgNote').value='';
+      msg.textContent='✓ Submitted — thanks!';
+      msg.classList.remove('hidden');
+      setTimeout(()=>msg.classList.add('hidden'),3000);
+      loadSuggestions();
+    }
+  }catch(e){msg.textContent='Error submitting.';msg.classList.remove('hidden');}
+}
+
+async function getFingerprint(){
+  const stored=localStorage.getItem('_fp');
+  if(stored)return stored;
+  const arr=new Uint8Array(16);
+  crypto.getRandomValues(arr);
+  const fp=Array.from(arr).map(b=>b.toString(16).padStart(2,'0')).join('');
+  localStorage.setItem('_fp',fp);
+  return fp;
+}
 </script>
 
 <!-- ── Cookie banner ──────────────────────────────────────────────────────── -->
-<div id="cookieBanner" class="hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-5 py-4 shadow-lg">
+<div id="cookieBanner" class="hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-5 py-3 shadow-lg">
   <div class="max-w-5xl mx-auto flex flex-wrap items-center gap-4 justify-between">
     <div class="text-sm text-gray-600 dark:text-gray-300 flex-1 min-w-[260px]">
-      <span data-i18n="cookie_text">We use Google Analytics to understand how people use Coinnect. No personal data is sold.</span>
-      <button onclick="openDisclaimer()" class="underline text-cyan-600 dark:text-cyan-400 hover:no-underline ml-1" data-i18n="footer_disclaimer">Disclaimer & Terms</button>
+      We use Google Analytics to understand how people use Coinnect — it helps us know what corridors matter and where to focus. No personal data is sold.
+      <span class="text-gray-400">You can remove tracking anytime from the footer.</span>
     </div>
-    <div class="flex gap-2 shrink-0">
-      <button onclick="declineCookies()"
-        class="text-xs border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" data-i18n="cookie_decline">
-        Decline analytics
-      </button>
-      <button onclick="acceptCookies()"
-        class="text-xs bg-cyan-500 hover:bg-cyan-400 text-white font-medium px-4 py-2 rounded-lg transition-colors" data-i18n="cookie_accept">
-        Accept
-      </button>
-    </div>
+    <button onclick="dismissBanner()" class="text-xs bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-lg transition-colors shrink-0">Got it</button>
   </div>
 </div>
 
