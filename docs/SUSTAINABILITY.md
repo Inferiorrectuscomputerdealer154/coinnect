@@ -71,15 +71,14 @@ Once Coinnect has a legal entity or fiscal sponsor:
 
 ### Crypto
 
-All crypto donations go to the project treasury (Gnosis Safe multisig). The treasury address will be published here once deployed.
+| Asset | Network | Address |
+|-------|---------|---------|
+| ETH | Ethereum mainnet | `0xf0813041b9b017a88f28B8600E73a695E2B02e0A` |
+| USDC | Polygon (recommended) | `0xf0813041b9b017a88f28B8600E73a695E2B02e0A` |
+| BNB | BNB Smart Chain | `0xf0813041b9b017a88f28B8600E73a695E2B02e0A` |
+| BTC | Bitcoin | `bc1q7jxdfgv6gacyx5vmmnz2nekxhptxym69ducaqz` |
 
-| Asset | Network | Notes |
-|-------|---------|-------|
-| ETH | Ethereum mainnet | For larger donations |
-| USDC | Polygon | Preferred for small donations (low gas) |
-| USDC | Ethereum mainnet | Accepted |
-| BTC | Bitcoin | Classic donation address |
-| SOL | Solana | Accepted |
+USDC on Polygon is preferred for small donations — fees under $0.01. ETH mainnet for larger amounts.
 
 > **Why USDC over USDT?** USDC is issued by Circle, subject to US regulatory oversight, with monthly audited reserves. It is more appropriate for a transparent non-profit treasury.
 
