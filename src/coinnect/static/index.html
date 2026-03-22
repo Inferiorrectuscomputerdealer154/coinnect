@@ -654,9 +654,10 @@
     <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-1">30+ data sources</h2>
     <p class="text-xs text-gray-400 mb-4">Every search checks all sources. No affiliate fees, no hidden markup.</p>
     <!-- Legend -->
-    <div class="flex flex-wrap gap-4 mb-5 text-[10px] text-gray-500 dark:text-gray-400">
-      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> <strong>LIVE</strong> — Real-time exchange API</span>
-      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> <strong>REFERENCE</strong> — Central bank / market monitor</span>
+    <div class="flex flex-wrap gap-3 mb-5 text-[10px] text-gray-500 dark:text-gray-400">
+      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> <strong>LIVE</strong> — Exchange API</span>
+      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> <strong>REFERENCE</strong> — Central bank / monitor</span>
+      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-violet-500"></span> <strong>CALCULATED</strong> — Derived from live data</span>
       <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span> <strong>ESTIMATED</strong> — Published fee tables</span>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -707,7 +708,7 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 
 <footer class="text-xs text-gray-400 dark:text-gray-600 py-8 border-t border-gray-100 dark:border-gray-800">
-  <div class="max-w-5xl mx-auto px-4 grid grid-cols-2 sm:grid-cols-5 gap-6 mb-6">
+  <div class="max-w-5xl mx-auto px-4 grid grid-cols-3 sm:grid-cols-5 gap-6 mb-6">
     <!-- Column 0: Popular Routes -->
     <div>
       <h4 class="font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Routes</h4>
@@ -791,6 +792,7 @@ const REF_PROVIDERS=new Set(['CoinGecko (market)','ECB (reference)','Market rate
 function rateBadge(via){
   if(LIVE_PROVIDERS.has(via))return'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">LIVE</span>';
   if(REF_PROVIDERS.has(via)||via.endsWith('(AR)'))return'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400">REFERENCE</span>';
+  if(via.includes('+'))return'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-400">CALCULATED</span>';
   return'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">ESTIMATED</span>';
 }
 function viaBadges(steps){return[...new Set(steps.map(s=>s.via))].map(v=>rateBadge(v)).join('');}
