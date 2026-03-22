@@ -137,7 +137,7 @@ Results are merged, deduplicated by path signature, and returned as up to 30 ran
 
 Exchange rates refresh every 3 minutes via a background asyncio task:
 
-- **CCXT** — live order book data from Binance, Kraken, Coinbase, Bitso
+- **CCXT** — live order book data from Binance, Kraken, Coinbase, Bitso, Luno, Bitstamp, Gemini
 - **Wise API** — live fiat rates for 80+ currencies
 - **Yellow Card API** — live Africa crypto→fiat rates
 - **open.er-api.com** — FX cross-rates for fiat pairs
@@ -308,7 +308,7 @@ Providers without a live public API are included with fees from published pricin
 
 ### 6.1 Integrated providers (March 2026)
 
-**Crypto exchanges (live rates via CCXT):** Binance, Kraken, Coinbase, Bitso
+**Crypto exchanges (live rates via CCXT):** Binance, Kraken, Coinbase, Bitso, Luno (Africa), Bitstamp (EU), Gemini (US)
 
 **Fiat/crypto bridges (live APIs):** Wise (80+ currencies), Yellow Card (Africa, 8 countries)
 
