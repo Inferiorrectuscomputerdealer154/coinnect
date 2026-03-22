@@ -95,7 +95,7 @@ async def admin_suggestions(
 @admin_router.post("/suggestions/{sid}/status")
 async def admin_set_suggestion_status(
     sid: int,
-    status: str = Query(..., pattern="^(open|accepted|rejected)$"),
+    status: str = Query(..., pattern="^(open|accepted|rejected|integrated|considering|needs-api)$"),
     x_admin_key: str | None = Header(None),
 ):
     _require_admin(x_admin_key)
