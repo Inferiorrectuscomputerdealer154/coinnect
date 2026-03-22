@@ -155,12 +155,6 @@ CURRENCY_NAMES: dict[str, str] = {
     "ARS": "Argentine Peso", "JPY": "Japanese Yen", "ZAR": "South African Rand",
 }
 
-# ── Supported languages for hreflang ──────────────────────────────────────────
-
-HREFLANG_LANGS = [
-    "en", "es", "fr", "de", "pt", "hi", "ur", "bn", "tl", "tr", "ar", "sw", "ja", "zh", "ko",
-]
-
 # ── HTML cache ────────────────────────────────────────────────────────────────
 
 _html_cache: dict[str, tuple[float, str]] = {}
@@ -193,11 +187,11 @@ COINNECT_LOGO_SVG = (
 
 
 def _hreflang_tags(path: str) -> str:
-    tags = []
-    for lang in HREFLANG_LANGS:
-        tags.append(f'  <link rel="alternate" hreflang="{lang}" href="{BASE_URL}{path}">')
-    tags.append(f'  <link rel="alternate" hreflang="x-default" href="{BASE_URL}{path}">')
-    return "\n".join(tags)
+    """Only declare en + x-default (no false multilingual claims)."""
+    return (
+        f'  <link rel="alternate" hreflang="en" href="{BASE_URL}{path}">\n'
+        f'  <link rel="alternate" hreflang="x-default" href="{BASE_URL}{path}">'
+    )
 
 
 def _base_style() -> str:
@@ -421,7 +415,51 @@ def render_corridor_page(
         ],
     }
 
-    now_str = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
+    now_dt = datetime.now(UTC)
+    now_str = now_dt.strftime("%Y-%m-%d %H:%M UTC")
+    now_iso = now_dt.isoformat()
+
+    # Quick answer box (above the fold, before routes table)
+    if not has_routes:
+        best_via = ""
+    if has_routes:
+        answer_box = (
+            f'<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:12px;'
+            f'padding:16px 20px;margin-bottom:24px">\n'
+            f'  <p style="font-size:18px;font-weight:700;color:#166534;margin:0">\n'
+            f'    Right now: The cheapest route is {best_via} &mdash; {best_cost} fee.\n'
+            f'  </p>\n'
+            f'  <p style="font-size:14px;color:#4b5563;margin:8px 0 0">\n'
+            f'    Send {amount:g} {html.escape(from_c)}, recipient gets {best_receive} '
+            f'{html.escape(to_c)}. Updated {now_str}.\n'
+            f'  </p>\n'
+            f'</div>'
+        )
+    else:
+        answer_box = ""
+
+    # Methodology section (after routes table)
+    methodology_html = (
+        '<div class="card">\n'
+        '<h2>How we calculate these rates</h2>\n'
+        '<p>Coinnect pulls live rates from exchange APIs (Binance, Kraken, Coinbase, Wise, and others) '
+        'every 3 minutes. For providers without live APIs, we use published fee schedules verified '
+        'quarterly against World Bank data. Total cost includes exchange rate markup + transfer fees. '
+        'Routes are ranked by total cost to the recipient &mdash; never by partnerships or commissions. '
+        '<a href="/whitepaper">Read our methodology</a>.</p>\n'
+        '</div>'
+    )
+
+    # BreadcrumbList JSON-LD
+    breadcrumb_ld = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Coinnect", "item": f"{BASE_URL}/"},
+            {"@type": "ListItem", "position": 2, "name": "Send Money", "item": f"{BASE_URL}/send/"},
+            {"@type": "ListItem", "position": 3, "name": f"{from_c} to {to_c}", "item": canonical},
+        ],
+    }
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -443,6 +481,7 @@ def render_corridor_page(
   <meta name="twitter:description" content="{html.escape(og_desc)}">
   <script type="application/ld+json">{json.dumps(json_ld)}</script>
   <script type="application/ld+json">{json.dumps(faq_ld)}</script>
+  <script type="application/ld+json">{json.dumps(breadcrumb_ld)}</script>
   <style>{_base_style()}</style>
 </head>
 <body>
@@ -452,9 +491,12 @@ def render_corridor_page(
     <a href="/">Home</a> &rsaquo; <a href="/send/{from_c.lower()}-to-{to_c.lower()}">Send {html.escape(from_c)} to {html.escape(to_c)}</a>
   </nav>
   <h1>Send {from_name} ({html.escape(from_c)}) to {to_name} ({html.escape(to_c)})</h1>
+  <time datetime="{now_iso}" style="font-size:12px;color:#9ca3af">Last updated: {now_str} &middot; Refreshes every 3 minutes</time>
   <p class="subtitle">Compare the cheapest routes to convert {html.escape(from_c)} to {html.escape(to_c)} — updated every 3 minutes across 15+ providers.</p>
 
+  {answer_box}
   {table_html}
+  {methodology_html}
   {howto_html}
   {faq_html}
   {related_html}
@@ -540,6 +582,10 @@ def render_country_page(
         f"Live rates updated every 3 minutes across crypto, Wise, and remittance providers."
     )
 
+    now_dt = datetime.now(UTC)
+    now_str = now_dt.strftime("%Y-%m-%d %H:%M UTC")
+    now_iso = now_dt.isoformat()
+
     json_ld = {
         "@context": "https://schema.org",
         "@type": "WebPage",
@@ -551,8 +597,20 @@ def render_country_page(
             "name": "Coinnect",
             "url": BASE_URL,
         },
-        "dateModified": datetime.now(UTC).isoformat(),
+        "dateModified": now_iso,
     }
+
+    # Methodology section
+    methodology_html = (
+        '<div class="card">\n'
+        '<h2>How we calculate these rates</h2>\n'
+        '<p>Coinnect pulls live rates from exchange APIs (Binance, Kraken, Coinbase, Wise, and others) '
+        'every 3 minutes. For providers without live APIs, we use published fee schedules verified '
+        'quarterly against World Bank data. Total cost includes exchange rate markup + transfer fees. '
+        'Routes are ranked by total cost to the recipient &mdash; never by partnerships or commissions. '
+        '<a href="/whitepaper">Read our methodology</a>.</p>\n'
+        '</div>'
+    )
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -582,9 +640,11 @@ def render_country_page(
     <a href="/">Home</a> &rsaquo; <a href="/rates/{country_slug}">Rates: {country_name}</a>
   </nav>
   <h1>Money Transfer Rates: {country_name}</h1>
+  <time datetime="{now_iso}" style="font-size:12px;color:#9ca3af">Last updated: {now_str} &middot; Refreshes every 3 minutes</time>
   <p class="subtitle">Live rates for all corridors involving {currency} ({country_name}) — updated every 3 minutes.</p>
 
   {sections_html}
+  {methodology_html}
   {related_html}
 
   <div class="card" style="text-align:center">

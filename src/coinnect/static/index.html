@@ -41,7 +41,21 @@
       s.src='https://www.googletagmanager.com/gtag/js?id='+GA_ID;
       document.head.appendChild(s);
       window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
-      window.gtag=gtag;gtag('js',new Date());gtag('config',GA_ID);
+      window.gtag=gtag;gtag('js',new Date());
+      gtag('config',GA_ID,{
+        send_page_view:true,
+        cookie_flags:'SameSite=None;Secure',
+        page_title:document.title,
+        page_location:window.location.href,
+        custom_map:{'dimension1':'user_type','dimension2':'corridor','dimension3':'source_type'}
+      });
+      // Detect bot vs human
+      const isBot=/bot|crawl|spider|slurp|facebook|twitter|discord|telegram|whatsapp/i.test(navigator.userAgent);
+      gtag('set','user_properties',{
+        'user_type':isBot?'bot':'human',
+        'language':document.documentElement.lang||'en',
+        'theme':document.documentElement.classList.contains('dark')?'dark':'light'
+      });
     }
     // Only auto-load if user previously consented
     if(localStorage.getItem('ga_consent')==='1'&&localStorage.getItem('ga_optout')!=='1'){loadGA4();}
@@ -656,7 +670,7 @@
     <!-- Legend -->
     <div class="flex flex-wrap gap-3 mb-5 text-[10px] text-gray-500 dark:text-gray-400">
       <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> <strong>LIVE</strong> — Exchange API</span>
-      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> <strong>REFERENCE</strong> — Central bank / monitor</span>
+      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> <strong>OFFICIAL</strong> — Central bank / monitor</span>
       <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-violet-500"></span> <strong>CALCULATED</strong> — Derived from live data</span>
       <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span> <strong>ESTIMATED</strong> — Published fee tables</span>
     </div>
@@ -708,7 +722,7 @@ document.addEventListener('DOMContentLoaded',function(){
 </script>
 
 <footer class="text-xs text-gray-400 dark:text-gray-600 py-8 border-t border-gray-100 dark:border-gray-800">
-  <div class="max-w-5xl mx-auto px-4 grid grid-cols-3 sm:grid-cols-5 gap-6 mb-6">
+  <div class="max-w-5xl mx-auto px-4 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-5 mb-6">
     <!-- Column 0: Popular Routes -->
     <div>
       <h4 class="font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Routes</h4>
@@ -791,7 +805,7 @@ const LIVE_PROVIDERS=new Set(['Binance','Kraken','Coinbase','Bitso','Luno','Bits
 const REF_PROVIDERS=new Set(['CoinGecko (market)','ECB (reference)','Market rate','Blue market (AR)','Official (AR)','Dolar Blue (AR)','MEP (AR)','CCL (AR)','BCB PTAX (BR)','TRM (CO)','Parallel (LB)']);
 function rateBadge(via){
   if(LIVE_PROVIDERS.has(via))return'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">LIVE</span>';
-  if(REF_PROVIDERS.has(via)||via.endsWith('(AR)'))return'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400">REFERENCE</span>';
+  if(REF_PROVIDERS.has(via)||via.endsWith('(AR)'))return'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400">OFFICIAL</span>';
   if(via.includes('+'))return'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-400">CALCULATED</span>';
   return'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">ESTIMATED</span>';
 }
@@ -1723,6 +1737,11 @@ function copyAddr(btn,addr){
 function trackEvent(name, params){
   if(typeof gtag==='function')gtag('event',name,params);
 }
+function trackOutbound(url, label){
+  trackEvent('outbound_click',{url:url,label:label,transport_type:'beacon'});
+}
+// Debounce helper for amount_changed
+let _amountDebounce=null;
 
 // ── Pricing / key generator ─────────────────────────────────────────────────
 function showKeyGenerator(){
