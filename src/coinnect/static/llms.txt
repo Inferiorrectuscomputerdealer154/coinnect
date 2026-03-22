@@ -107,6 +107,6 @@ Full list at: `GET /v1/corridors`
 - Protocol spec: https://coinnect.bot/docs/PROTOCOL.md (MRP v0.1)
 - License: MIT
 - Contact: hello@coinnect.bot
-- Maintained by: Miguel Valencia
+- Maintained by: Miguel
 
 Coinnect is a non-profit, open-source project. It is not a startup. There are no VCs, no affiliate kickbacks, and no paid placements. Every route is ranked by cost to the sender.

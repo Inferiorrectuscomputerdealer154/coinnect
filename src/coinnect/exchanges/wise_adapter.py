@@ -75,23 +75,31 @@ TRADITIONAL_CORRIDORS: list[tuple] = [
     ("USD", "BRL",  "Western Union", 5.80, 30),
 ]
 
-# Rate cache keyed by base currency
-_rate_cache: dict[str, dict] = {}
+# Rate cache keyed by base currency, with TTL
+import time
+
+_rate_cache: dict[str, tuple[float, dict]] = {}  # base → (timestamp, rates)
+_RATE_CACHE_TTL = 300  # 5 minutes
 
 
 async def _fetch_rates(base: str, client: httpx.AsyncClient) -> dict[str, float]:
     """Fetch live exchange rates for a base currency."""
+    now = time.monotonic()
     if base in _rate_cache:
-        return _rate_cache[base]
+        cached_at, rates = _rate_cache[base]
+        if now - cached_at < _RATE_CACHE_TTL:
+            return rates
     try:
         r = await client.get(RATES_URL.format(base=base), timeout=5)
         data = r.json()
         if data.get("result") == "success":
             rates = data.get("rates", {})
-            _rate_cache[base] = rates
+            _rate_cache[base] = (now, rates)
             return rates
     except Exception as e:
         logger.warning(f"Failed to fetch rates for {base}: {e}")
+        if base in _rate_cache:
+            return _rate_cache[base][1]
     return {}
 
 

@@ -264,17 +264,6 @@ GLOBAL66_CORRIDORS: list[tuple] = [
     ("COP", "USD",  1.10, 60,   "Global66 — send COP, receive USD"),
 ]
 
-AIRTM_CORRIDORS: list[tuple] = [
-    # AirTM — dollar-denominated e-wallet designed for Venezuela and LatAm diaspora.
-    # Largest formal digital-dollar platform for Venezuelan recipients.
-    # Fees: ~2% deposit + 3–5% P2P cashout. Modeled at 4% total typical.
-    # VES delivery at near-parallel rate (better than formal BCV-rate remittances).
-    ("USD", "VES",  4.00, 120,  "AirTM — digital dollar wallet, VES cashout via P2P network"),
-    ("USD", "MXN",  3.50, 60,   "AirTM — wallet deposit, Mexico"),
-    ("USD", "ARS",  4.00, 60,   "AirTM — wallet deposit, Argentina"),
-    ("USD", "COP",  3.50, 60,   "AirTM — wallet deposit, Colombia"),
-    ("USD", "PEN",  3.80, 60,   "AirTM — wallet deposit, Peru"),
-]
 
 STRIKE_CORRIDORS: list[tuple] = [
     # Strike — Bitcoin/Lightning Network remittance app.
@@ -355,6 +344,17 @@ WESTERN_UNION_CORRIDORS: list[tuple] = [
     ("EUR", "NGN",  6.00, 2880,  "Western Union — bank deposit, Nigeria"),
     ("EUR", "PHP",  5.00,  60,   "Western Union — bank or cash pickup, Philippines"),
     ("GBP", "INR",  4.00, 1440,  "Western Union — bank deposit, India"),
+    # Reverse corridors — sending FROM these countries to USD/EUR
+    ("MXN", "USD",  5.00,  60,   "Western Union — cash or bank, Mexico to USA"),
+    ("BRL", "USD",  5.50, 1440,  "Western Union — bank, Brazil to USA"),
+    ("COP", "USD",  5.20, 1440,  "Western Union — bank or cash, Colombia to USA"),
+    ("PHP", "USD",  5.00,  60,   "Western Union — cash or bank, Philippines to USA"),
+    ("INR", "USD",  4.50, 1440,  "Western Union — bank, India to USA"),
+    ("NGN", "USD",  6.00, 2880,  "Western Union — bank, Nigeria to USA"),
+    ("KES", "USD",  5.50, 1440,  "Western Union — bank or M-Pesa, Kenya to USA"),
+    ("GHS", "USD",  6.00, 2880,  "Western Union — bank, Ghana to USA"),
+    ("MXN", "EUR",  5.50,  60,   "Western Union — bank, Mexico to Europe"),
+    ("PHP", "EUR",  5.50,  60,   "Western Union — bank, Philippines to Europe"),
 ]
 
 MONEYGRAM_CORRIDORS: list[tuple] = [
@@ -373,6 +373,15 @@ MONEYGRAM_CORRIDORS: list[tuple] = [
     ("EUR", "MXN",  4.80,  30,   "MoneyGram — cash pickup or bank, Mexico"),
     ("EUR", "PHP",  4.50,  60,   "MoneyGram — bank or cash pickup, Philippines"),
     ("GBP", "INR",  4.20, 1440,  "MoneyGram — bank deposit, India"),
+    # Reverse corridors — sending FROM these countries to USD/EUR
+    ("MXN", "USD",  4.80,  60,   "MoneyGram — cash or bank, Mexico to USA"),
+    ("BRL", "USD",  5.50, 1440,  "MoneyGram — bank, Brazil to USA"),
+    ("COP", "USD",  5.00, 1440,  "MoneyGram — bank or cash, Colombia to USA"),
+    ("PHP", "USD",  4.80,  60,   "MoneyGram — cash or bank, Philippines to USA"),
+    ("INR", "USD",  4.50, 1440,  "MoneyGram — bank, India to USA"),
+    ("NGN", "USD",  6.20, 2880,  "MoneyGram — bank, Nigeria to USA"),
+    ("KES", "USD",  5.50, 1440,  "MoneyGram — bank or mobile money, Kenya to USA"),
+    ("MXN", "EUR",  5.20,  60,   "MoneyGram — bank, Mexico to Europe"),
 ]
 
 CURRENCYFAIR_CORRIDORS: list[tuple] = [
@@ -464,22 +473,31 @@ ALL_STATIC_PROVIDERS = [
 ]
 
 
-# ── Rate fetch (shared cache) ───────────────────────────────────────────────
-_rate_cache: dict[str, dict] = {}
+# ── Rate fetch (shared cache with TTL) ─────────────────────────────────────
+import time
+
+_rate_cache: dict[str, tuple[float, dict]] = {}  # base → (timestamp, rates)
+_RATE_CACHE_TTL = 300  # 5 minutes
 
 
 async def _fetch_rates(base: str, client: httpx.AsyncClient) -> dict[str, float]:
+    now = time.monotonic()
     if base in _rate_cache:
-        return _rate_cache[base]
+        cached_at, rates = _rate_cache[base]
+        if now - cached_at < _RATE_CACHE_TTL:
+            return rates
     try:
         r = await client.get(RATES_URL.format(base=base), timeout=5)
         data = r.json()
         if data.get("result") == "success":
             rates = data.get("rates", {})
-            _rate_cache[base] = rates
+            _rate_cache[base] = (now, rates)
             return rates
     except Exception as e:
         logger.warning(f"Remittance adapter rate fetch failed for {base}: {e}")
+        # Return stale cache if available
+        if base in _rate_cache:
+            return _rate_cache[base][1]
     return {}
 
 

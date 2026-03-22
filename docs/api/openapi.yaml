@@ -7,18 +7,36 @@ info:
     Coinnect finds the cheapest path to send money between any two currencies,
     across traditional remittance services, crypto exchanges, and P2P platforms.
 
-    This API is free to use, requires no authentication, and returns no user data.
-    It is designed to be called by humans, bots, and AI agents alike.
-  version: 0.1.0
+    **Non-profit. No affiliate fees. No custody. Free forever.**
+
+    ## Authentication
+
+    Most endpoints are free and require no authentication. For higher rate limits,
+    generate a free API key via `POST /v1/keys` and pass it as `X-Api-Key` header.
+
+    ## Rate Limits
+
+    | Tier | Requests/day | Requests/hour | How to get |
+    |------|-------------|---------------|------------|
+    | Anonymous | 20 | 50 | No key needed |
+    | Free | 1,000 | 100 | `POST /v1/keys` |
+    | Agent | 5,000 | 200 | `POST /v1/keys` (for bots) |
+    | Pro | 50,000 | 2,000 | Contact us |
+
+    ## Open Data
+
+    Historical rate snapshots are available under CC-BY 4.0 via `/v1/snapshot/daily`.
+  version: 2026.03.22.1
   contact:
     name: Coinnect
     url: https://coinnect.bot
+    email: miguel@coinnect.bot
   license:
     name: MIT
 
 servers:
-  - url: https://api.coinnect.bot/v1
-    description: Production (forthcoming)
+  - url: https://coinnect.bot/v1
+    description: Production
 
 paths:
   /quote:
@@ -29,7 +47,7 @@ paths:
         ranked by total cost. Each route may involve multiple steps across
         different exchanges.
 
-        This endpoint is safe to call from AI agents as a tool/function.
+        Safe to call from AI agents as a tool/function.
       operationId: getQuote
       parameters:
         - name: from
@@ -53,14 +71,6 @@ paths:
           schema:
             type: number
             example: 500
-        - name: priority
-          in: query
-          required: false
-          description: Optimize for cost (default) or speed
-          schema:
-            type: string
-            enum: [cost, speed]
-            default: cost
       responses:
         '200':
           description: Ranked list of transfer routes
@@ -68,58 +78,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/QuoteResponse'
-              example:
-                from: USD
-                to: NGN
-                amount: 500
-                generated_at: "2026-05-01T10:00:00Z"
-                routes:
-                  - rank: 1
-                    label: Cheapest
-                    total_cost_pct: 1.4
-                    total_time_minutes: 60
-                    you_send: 500.00
-                    they_receive: 762450
-                    they_receive_currency: NGN
-                    vs_western_union_saving_usd: 21.50
-                    steps:
-                      - step: 1
-                        from: USD
-                        to: USDC
-                        via: Kraken
-                        fee_pct: 0.5
-                        estimated_minutes: 10
-                        instructions: "Buy USDC on Kraken with your USD balance"
-                      - step: 2
-                        from: USDC
-                        to: NGN
-                        via: Yellow Card
-                        fee_pct: 0.9
-                        estimated_minutes: 50
-                        instructions: "Send USDC to Yellow Card, recipient receives NGN"
-                  - rank: 2
-                    label: Fastest
-                    total_cost_pct: 3.8
-                    total_time_minutes: 10
-                    you_send: 500.00
-                    they_receive: 731200
-                    they_receive_currency: NGN
-                    steps:
-                      - step: 1
-                        from: USD
-                        to: NGN
-                        via: Western Union
-                        fee_pct: 3.8
-                        estimated_minutes: 10
-                        instructions: "Send via Western Union online"
+        '404':
+          description: No routes found for this corridor
+        '429':
+          description: Rate limit exceeded
+        '503':
+          description: Exchange data temporarily unavailable
 
   /exchanges:
     get:
-      summary: List all integrated exchanges
+      summary: List integrated exchanges
       operationId: listExchanges
       responses:
         '200':
-          description: List of exchanges
+          description: List of exchanges with type and API info
           content:
             application/json:
               schema:
@@ -132,11 +104,137 @@ paths:
 
   /corridors:
     get:
-      summary: List supported currency corridors
+      summary: List active currency corridors
       operationId: listCorridors
       responses:
         '200':
-          description: Supported from/to currency pairs
+          description: Most commonly used currency pairs with provider paths
+
+  /history:
+    get:
+      summary: Historical fee rates for a corridor
+      description: |
+        Returns time-series of the best route's fee% and received amount.
+        Snapshots captured every 3 minutes for key corridors.
+      operationId: getHistory
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            example: USD
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            example: MXN
+        - name: days
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 365
+        - name: minutes
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 15
+            maximum: 43200
+      responses:
+        '200':
+          description: Time-series data with stats (min/max/avg fee)
+
+  /history/providers:
+    get:
+      summary: Per-provider rate history
+      description: |
+        Compare historical cost_pct per provider for a corridor.
+        E.g., Wise vs Binance P2P vs Strike over time for USD→MXN.
+      operationId: getProviderHistory
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: days
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 365
+        - name: minutes
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 15
+            maximum: 43200
+      responses:
+        '200':
+          description: Per-provider time-series keyed by provider name
+
+  /snapshot/daily:
+    get:
+      summary: Full daily rate snapshot (CSV) — open data
+      description: |
+        Download a full-day CSV of best-route rates for all tracked corridors.
+        Each row = one 3-minute capture. Free, no key required.
+        License: CC-BY 4.0. Cite as: Coinnect Open Rate Data (coinnect.bot).
+      operationId: snapshotDaily
+      parameters:
+        - name: date
+          in: query
+          required: false
+          description: "YYYY-MM-DD, defaults to today UTC"
+          schema:
+            type: string
+            example: "2026-03-22"
+      responses:
+        '200':
+          description: CSV file download
+          content:
+            text/csv:
+              schema:
+                type: string
+        '404':
+          description: No data for the requested date
+
+  /snapshot/meta:
+    get:
+      summary: Available daily snapshots — open data
+      description: List available dates with row counts for bulk download.
+      operationId: snapshotMeta
+      responses:
+        '200':
+          description: Dataset metadata and available dates
+
+  /snapshot/{snapshot_id}:
+    get:
+      summary: Permalink for a specific rate snapshot
+      description: Returns the full route data for a specific snapshot ID (immutable).
+      operationId: snapshotPermalink
+      parameters:
+        - name: snapshot_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Full snapshot data with routes
+        '404':
+          description: Snapshot not found
 
   /health:
     get:
@@ -150,17 +248,64 @@ paths:
               example:
                 ok: true
                 status: live
+                version: "2026.03.22.1"
                 exchanges_online: 9
-                last_rate_refresh: "2026-05-01T09:58:00Z"
+                checked_at: "2026-03-22T10:00:00+00:00"
+
+  /keys:
+    post:
+      summary: Generate a self-serve API key
+      description: |
+        Generate an API key instantly — no signup, no email, no password.
+        The key is issued in the **free** tier (1,000 req/day, 100/hr).
+        Store it safely: it cannot be recovered if lost.
+      operationId: createKey
+      parameters:
+        - name: label
+          in: query
+          required: false
+          description: Optional label for the key (max 80 chars)
+          schema:
+            type: string
+            maxLength: 80
+      responses:
+        '200':
+          description: API key created
+          content:
+            application/json:
+              example:
+                api_key: "cn_abc123..."
+                tier: free
+                limit_per_day: 1000
+                limit_per_hour: 100
+                message: "Store this key — it cannot be recovered."
+
+  /keys/usage:
+    get:
+      summary: Check usage for a key
+      description: Returns today's request count and remaining quota.
+      operationId: keyUsage
+      parameters:
+        - name: X-Api-Key
+          in: header
+          required: true
+          description: Your Coinnect API key (cn_...)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usage stats for the key
+        '404':
+          description: Key not found
 
 components:
   schemas:
     QuoteResponse:
       type: object
       properties:
-        from:
+        from_currency:
           type: string
-        to:
+        to_currency:
           type: string
         amount:
           type: number
@@ -199,9 +344,9 @@ components:
       properties:
         step:
           type: integer
-        from:
+        from_currency:
           type: string
-        to:
+        to_currency:
           type: string
         via:
           type: string
@@ -212,6 +357,12 @@ components:
         instructions:
           type: string
           description: Human-readable step instructions
+        min_amount:
+          type: number
+          nullable: true
+        max_amount:
+          type: number
+          nullable: true
 
     Exchange:
       type: object
@@ -220,12 +371,8 @@ components:
           type: string
         type:
           type: string
-          enum: [traditional_remittance, crypto_exchange, p2p_platform]
-        regions:
-          type: array
-          items:
-            type: string
-        api_documented:
-          type: boolean
-        regulated:
-          type: boolean
+          enum: [crypto_exchange, fiat_transfer, crypto_to_fiat]
+        api:
+          type: string
+        region:
+          type: string

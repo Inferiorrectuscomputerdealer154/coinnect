@@ -4,6 +4,8 @@ FastAPI routes — /v1/quote, /v1/exchanges, /v1/corridors, /v1/health, /v1/hist
 """
 
 import asyncio
+import time
+from collections import defaultdict
 from datetime import datetime, UTC
 
 from fastapi import APIRouter, Query, HTTPException, Header, Request
@@ -359,21 +361,24 @@ async def snapshot_meta():
 
 @router.get("/health", summary="API health check")
 async def health():
-    from coinnect.db.history import DB_PATH
     return {
         "ok": True,
         "status": "live",
         "version": "2026.03.22.1",
         "exchanges_online": len(SUPPORTED_EXCHANGES) + 2,
-        "history_db": str(DB_PATH),
         "checked_at": datetime.now(UTC).isoformat(),
     }
 
 
 # ── API Key endpoints ─────────────────────────────────────────────────────────
 
+# Rate limit key creation: max 5 keys per IP per hour
+_key_create_timestamps: dict[str, list[float]] = defaultdict(list)
+_KEY_CREATE_MAX_PER_HOUR = 5
+
+
 @router.post("/keys", summary="Generate a self-serve API key", tags=["API Keys"])
-async def create_key(label: str | None = Query(None, max_length=80)):
+async def create_key(request: Request, label: str | None = Query(None, max_length=80)):
     """
     Generate an API key instantly — no signup, no email, no password.
 
@@ -385,6 +390,15 @@ async def create_key(label: str | None = Query(None, max_length=80)):
     curl -H "X-Api-Key: cn_..." https://coinnect.bot/v1/quote?from=USD&to=MXN&amount=500
     ```
     """
+    # Rate limit key creation by IP
+    ip = _get_client_ip(request)
+    now = time.monotonic()
+    timestamps = _key_create_timestamps[ip]
+    _key_create_timestamps[ip] = [t for t in timestamps if now - t < 3600]
+    if len(_key_create_timestamps[ip]) >= _KEY_CREATE_MAX_PER_HOUR:
+        raise HTTPException(429, "Too many keys created — max 5 per hour. Try again later.")
+    _key_create_timestamps[ip].append(now)
+
     from coinnect.db.keys import create_key as _create_key, TIER_LIMITS
     api_key = _create_key(tier="free", label=label)
     limits = TIER_LIMITS["free"]

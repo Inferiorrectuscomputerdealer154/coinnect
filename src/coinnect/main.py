@@ -3,6 +3,7 @@ Coinnect API — entry point
 """
 
 import asyncio
+import html
 import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -135,6 +136,14 @@ async def security_headers(request: Request, call_next):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "geolocation=(), camera=(), microphone=()"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://www.googletagmanager.com; "
+        "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; "
+        "style-src 'self' 'unsafe-inline'; "
+        "img-src 'self' data:; "
+        "frame-ancestors 'none'"
+    )
     if "Via" in response.headers:
         del response.headers["Via"]
     return response
@@ -190,9 +199,9 @@ async def snapshot_page(snapshot_id: int):
     if not snap:
         return HTMLResponse("<html><body><h2>Snapshot not found</h2><p><a href='/'>← Back</a></p></body></html>", status_code=404)
 
-    ts = snap.get("captured_at", "")
-    from_c = snap.get("from_currency", "")
-    to_c = snap.get("to_currency", "")
+    ts = html.escape(str(snap.get("captured_at", "")))
+    from_c = html.escape(str(snap.get("from_currency", "")))
+    to_c = html.escape(str(snap.get("to_currency", "")))
     amount = snap.get("amount", 0)
     routes = snap.get("routes", [])
 
@@ -203,10 +212,10 @@ async def snapshot_page(snapshot_id: int):
 
     rows_html = ""
     for i, r in enumerate(routes):
-        via = r.get("via", "—")
+        via = html.escape(str(r.get("via", "—")))
         cost = r.get("total_cost_pct", 0)
         recv = r.get("they_receive", 0)
-        label = r.get("label", f"Option {i+1}")
+        label = html.escape(str(r.get("label", f"Option {i+1}")))
         mins = r.get("total_time_minutes", 0)
         h = mins // 60
         m = mins % 60

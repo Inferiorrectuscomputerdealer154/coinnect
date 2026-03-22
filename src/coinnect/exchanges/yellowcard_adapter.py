@@ -37,22 +37,30 @@ YELLOWCARD_CORRIDORS: list[tuple] = [
 
 RATES_URL = "https://open.er-api.com/v6/latest/{base}"
 
-# Cache keyed by base currency
-_rate_cache: dict[str, dict] = {}
+# Cache keyed by base currency, with TTL
+import time
+
+_rate_cache: dict[str, tuple[float, dict]] = {}  # base → (timestamp, rates)
+_RATE_CACHE_TTL = 300  # 5 minutes
 
 
 async def _fetch_rates(base: str, client: httpx.AsyncClient) -> dict[str, float]:
+    now = time.monotonic()
     if base in _rate_cache:
-        return _rate_cache[base]
+        cached_at, rates = _rate_cache[base]
+        if now - cached_at < _RATE_CACHE_TTL:
+            return rates
     try:
         r = await client.get(RATES_URL.format(base=base), timeout=5)
         data = r.json()
         if data.get("result") == "success":
             rates = data.get("rates", {})
-            _rate_cache[base] = rates
+            _rate_cache[base] = (now, rates)
             return rates
     except Exception as e:
         logger.warning(f"Yellow Card rate fetch failed for {base}: {e}")
+        if base in _rate_cache:
+            return _rate_cache[base][1]
     return {}
 
 

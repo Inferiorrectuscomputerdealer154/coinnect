@@ -116,15 +116,18 @@ def find_routes(
     start: str,
     end: str,
     amount: float,
-    max_routes: int = 12,
+    max_routes: int = 30,
     max_steps: int = 3,
 ) -> list[tuple[float, float, list[Edge]]]:
     """
-    Find diverse routes — collects all direct single-step routes, then uses
+    Find diverse routes — collects ALL direct single-step routes, then uses
     Dijkstra for multi-step paths (cost and time optimized). Merges and deduplicates.
     Returns list of (total_cost_pct, amount_received, path).
+
+    All direct routes are always included (so baseline providers like WU/MG
+    always appear). The max_routes cap only trims multi-step combinations.
     """
-    # 1. All direct routes (single-step, any provider) — sorted by cost
+    # 1. All direct routes (single-step, any provider) — ALL included, sorted by cost
     direct: list[tuple[float, float, list[Edge]]] = []
     for edge in graph.get(start, []):
         if edge.to_currency == end:
@@ -138,15 +141,24 @@ def find_routes(
     multi_step = [r for r in by_cost + by_time if len(r[2]) > 1]
 
     # 3. Merge, deduplicating by path signature
+    #    Direct routes go first (all of them), then multi-step up to max_routes total
     seen: set[tuple] = set()
     merged = []
-    for cost, received, path in direct + multi_step:
+    for cost, received, path in direct:
         sig = tuple((e.from_currency, e.to_currency, e.via) for e in path)
         if sig not in seen:
             seen.add(sig)
             merged.append((cost, received, path))
 
-    return merged[:max_routes]
+    for cost, received, path in multi_step:
+        if len(merged) >= max_routes:
+            break
+        sig = tuple((e.from_currency, e.to_currency, e.via) for e in path)
+        if sig not in seen:
+            seen.add(sig)
+            merged.append((cost, received, path))
+
+    return merged
 
 
 def build_quote(
