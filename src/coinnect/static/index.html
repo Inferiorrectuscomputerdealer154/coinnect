@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coinnect — The open routing layer for global money</title>
-  <meta name="description" content="Find the cheapest path to send money anywhere. Free API for humans and AI agents. Non-profit, no affiliate fees, no KYC.">
+  <title>Coinnect — The free open map for global money</title>
+  <meta name="description" content="Find the cheapest path to move money anywhere. Free API for humans and AI agents. Non-profit, no affiliate fees.">
 
   <!-- Prevent theme flash -->
   <script>if(localStorage.theme==='light')document.documentElement.classList.remove('dark');else document.documentElement.classList.add('dark');</script>
@@ -18,6 +18,8 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-CKBJHEVM2X"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CKBJHEVM2X');</script>
 
+  <script src="/static/i18n.js?v=2026.03.21.2"></script>
+  <script>initLang();</script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={darkMode:'class'};</script>
 
@@ -35,6 +37,7 @@
     details>summary{list-style:none;cursor:pointer;}
     details>summary::-webkit-details-marker{display:none;}
     .filter-btn.active{background:rgb(6 182 212/0.15);border-color:rgb(6 182 212/0.6);color:#06b6d4;}
+    .hist-period.active{background:rgb(6 182 212/0.15);border-color:rgb(6 182 212/0.6);color:#06b6d4;}
     /* Sparkline */
     .sparkline-svg{overflow:visible;}
     /* Hero tabs */
@@ -55,7 +58,7 @@
 
     <!-- Logo -->
     <a href="/" class="flex items-center gap-2.5 shrink-0">
-      <img src="/static/logo.svg" alt="Coinnect" class="logo-plug h-9 w-auto" />
+      <img src="/static/logo.svg" alt="Coinnect" class="logo-plug h-10 w-auto" />
       <span class="font-bold text-base tracking-tight">Coinnect</span>
       <span class="pill text-cyan-600 dark:text-cyan-400 border-cyan-200 dark:border-cyan-800 bg-cyan-50 dark:bg-cyan-950/50 hidden sm:inline-flex">beta</span>
     </a>
@@ -64,7 +67,8 @@
     <nav class="hidden md:flex items-center gap-1">
       <a href="/docs" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">API docs</a>
       <a href="/whitepaper" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">Whitepaper</a>
-      <a href="https://github.com/miguelvalenciav" target="_blank" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">GitHub</a>
+      <a href="#pricing" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'});return false;" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"><s>Pricing</s> <span class="text-xs text-green-500 font-medium">free</span></a>
+      <a href="#" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">GitHub</a>
       <a href="#donate" onclick="document.getElementById('donateSection').scrollIntoView({behavior:'smooth'});return false;"
          class="text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 px-3 py-1.5 rounded-lg transition-all ml-1">
         ❤️ Support
@@ -74,6 +78,31 @@
     <div class="flex items-center gap-2">
       <a href="#donate" onclick="document.getElementById('donateSection').scrollIntoView({behavior:'smooth'});return false;"
          class="md:hidden text-xs font-medium text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800 rounded-lg px-2.5 py-1.5 hover:bg-cyan-50 dark:hover:bg-cyan-950/50 transition-colors">❤️</a>
+      <!-- Language picker -->
+      <div id="langPicker" class="relative">
+        <button id="langBtn" onclick="toggleLangDropdown()"
+          class="h-8 px-2 rounded-lg flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors whitespace-nowrap">
+          🌐 <span class="hidden sm:inline">Language</span> <span class="text-gray-400 text-xs">▾</span>
+        </button>
+        <div id="langDropdown" class="hidden absolute right-0 top-10 z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl py-1 min-w-[160px]">
+          <div class="px-3 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Language</div>
+          <button onclick="setLang('en')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇺🇸 English</button>
+          <button onclick="setLang('es')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇲🇽 Español</button>
+          <button onclick="setLang('pt')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇧🇷 Português</button>
+          <button onclick="setLang('fr')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇫🇷 Français</button>
+          <button onclick="setLang('ar')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇸🇦 العربية</button>
+          <button onclick="setLang('hi')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇮🇳 हिन्दी</button>
+          <button onclick="setLang('bn')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇧🇩 বাংলা</button>
+          <button onclick="setLang('id')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇮🇩 Indonesia</button>
+          <button onclick="setLang('ja')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇯🇵 日本語</button>
+          <button onclick="setLang('de')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇩🇪 Deutsch</button>
+          <button onclick="setLang('tl')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇵🇭 Filipino</button>
+          <button onclick="setLang('vi')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇻🇳 Tiếng Việt</button>
+          <button onclick="setLang('th')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇹🇭 ภาษาไทย</button>
+          <button onclick="setLang('sw')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇰🇪 Kiswahili</button>
+          <button onclick="setLang('ur')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇵🇰 اردو</button>
+        </div>
+      </div>
       <button onclick="toggleTheme()" id="themeBtn"
         class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
         <span id="themeIcon" class="text-sm"></span>
@@ -81,6 +110,10 @@
     </div>
   </div>
 </header>
+<!-- Free banner -->
+<div class="w-full bg-green-50 dark:bg-green-950/40 border-b border-green-100 dark:border-green-900/50 px-4 py-1.5 text-center text-xs text-green-700 dark:text-green-400 font-medium">
+  ✦ Free for personal use · Always · <a href="#pricing" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'});return false;" class="underline underline-offset-2 opacity-70 hover:opacity-100">Learn more</a>
+</div>
 
 <!-- ── Hero: dual audience ────────────────────────────────────────────────── -->
 <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
@@ -88,13 +121,15 @@
 
     <!-- Headline -->
     <div class="text-center mb-6">
-      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight mb-2" data-i18n-html="hero_h1">
         The open routing layer for <span class="gradient-text">global money</span>
       </h1>
-      <p class="text-gray-500 dark:text-gray-400 text-sm max-w-xl mx-auto">
+      <p class="text-gray-500 dark:text-gray-400 text-sm max-w-xl mx-auto" data-i18n="hero_sub">
         Finds the cheapest multi-step path between any two currencies — fiat, crypto, P2P.
         No affiliate fees. No custody. No KYC. Free forever.
       </p>
+      <!-- Rotating tagline -->
+      <p class="mt-3 text-base text-cyan-600 dark:text-cyan-400 font-medium" id="taglineRotator"></p>
     </div>
 
     <!-- Dual audience tabs -->
@@ -102,19 +137,19 @@
       <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-gray-50 dark:bg-gray-800/50">
         <div class="flex items-center gap-2 mb-2">
           <span class="text-lg">👤</span>
-          <span class="font-semibold text-sm text-gray-900 dark:text-white">For humans</span>
+          <span class="font-semibold text-sm text-gray-900 dark:text-white" data-i18n="for_humans">For humans</span>
         </div>
         <ul class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-          <li>→ Pick currencies &amp; amount</li>
-          <li>→ Compare all routes instantly</li>
-          <li>→ See step-by-step instructions</li>
-          <li>→ Know exactly how much arrives</li>
+          <li data-i18n="h_1">→ Pick currencies &amp; amount</li>
+          <li data-i18n="h_2">→ Compare all routes instantly</li>
+          <li data-i18n="h_3">→ See step-by-step instructions</li>
+          <li data-i18n="h_4">→ Know exactly how much arrives</li>
         </ul>
       </div>
       <div class="border border-cyan-200 dark:border-cyan-800/60 rounded-xl p-4 bg-cyan-50/50 dark:bg-cyan-950/20">
         <div class="flex items-center gap-2 mb-2">
           <span class="text-lg">🤖</span>
-          <span class="font-semibold text-sm text-gray-900 dark:text-white">For AI agents</span>
+          <span class="font-semibold text-sm text-gray-900 dark:text-white" data-i18n="for_agents">For AI agents</span>
         </div>
         <ul class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
           <li>→ <code class="text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/50 px-1 rounded">GET /v1/quote</code> — no auth</li>
@@ -128,12 +163,12 @@
     <!-- Search form -->
     <div class="flex flex-wrap gap-3 items-end justify-center">
       <div>
-        <label class="block text-xs text-gray-400 mb-1 uppercase tracking-wide">Amount</label>
+        <label class="block text-xs text-gray-400 mb-1 uppercase tracking-wide" data-i18n="label_amount">Amount</label>
         <input id="amount" type="number" value="1" min="0.00001" step="any"
           class="w-28 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2.5 text-gray-900 dark:text-white text-base font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500">
       </div>
       <div>
-        <label class="block text-xs text-gray-400 mb-1 uppercase tracking-wide">From</label>
+        <label class="block text-xs text-gray-400 mb-1 uppercase tracking-wide" data-i18n="label_from">From</label>
         <select id="from" class="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500">
           <optgroup label="Crypto">
             <option value="BTC">₿ BTC — Bitcoin</option>
@@ -177,7 +212,7 @@
       </div>
       <div class="text-gray-400 pb-2.5 text-lg">→</div>
       <div>
-        <label class="block text-xs text-gray-400 mb-1 uppercase tracking-wide">To</label>
+        <label class="block text-xs text-gray-400 mb-1 uppercase tracking-wide" data-i18n="label_to">To</label>
         <select id="to" class="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500">
           <optgroup label="Latin America">
             <option value="MXN">🇲🇽 MXN — Mexico</option>
@@ -203,6 +238,10 @@
             <option value="GHS">🇬🇭 GHS — Ghana</option>
             <option value="TZS">🇹🇿 TZS — Tanzania</option>
             <option value="UGX">🇺🇬 UGX — Uganda</option>
+            <option value="ZAR">🇿🇦 ZAR — South Africa</option>
+          </optgroup>
+          <optgroup label="Venezuela">
+            <option value="VES">🇻🇪 VES — Venezuela</option>
           </optgroup>
           <optgroup label="Major Fiat">
             <option value="USD">🇺🇸 USD</option>
@@ -219,7 +258,7 @@
         </select>
       </div>
       <button id="searchBtn" onclick="getQuote()"
-        class="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 disabled:opacity-50 text-white font-semibold px-6 py-2.5 rounded-lg transition-all text-sm shadow-sm">
+        class="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 disabled:opacity-50 text-white font-semibold px-6 py-2.5 rounded-lg transition-all text-sm shadow-sm" data-i18n="btn_find">
         Find routes →
       </button>
     </div>
@@ -229,7 +268,7 @@
       <details class="group">
         <summary class="flex items-center gap-2 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer select-none">
           <span class="transition-transform group-open:rotate-90">▶</span>
-          <span>Agent / API quickstart</span>
+          <span data-i18n="quickstart">Agent / API quickstart</span>
         </summary>
         <div class="mt-3 bg-gray-900 dark:bg-gray-800 rounded-xl p-4 font-mono text-xs text-gray-300 space-y-2">
           <div><span class="text-gray-500"># REST — no auth required</span></div>
@@ -249,41 +288,224 @@
   <!-- Filters bar -->
   <div id="filtersBar" class="hidden mb-5">
     <div class="flex flex-wrap items-center gap-2">
-      <span class="text-xs text-gray-400 mr-1">Filter:</span>
-      <button class="filter-btn active text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all" data-filter="all" onclick="setFilter('all')">All</button>
-      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="cheap" onclick="setFilter('cheap')">💰 Cheapest first</button>
-      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="fast" onclick="setFilter('fast')">⚡ Fastest first</button>
-      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="nocrypto" onclick="setFilter('nocrypto')">🏦 Fiat only</button>
-      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="crypto" onclick="setFilter('crypto')">🔗 Crypto routes</button>
-      <div class="ml-auto flex items-center gap-3">
+      <span class="text-xs text-gray-400 mr-1" data-i18n="filter_label">Filter:</span>
+      <button class="filter-btn active text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all" data-filter="all" onclick="setFilter('all')" data-i18n="filter_all">All</button>
+      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="cheap" onclick="setFilter('cheap')" data-i18n="filter_cheap">💰 Cheapest first</button>
+      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="fast" onclick="setFilter('fast')" data-i18n="filter_fast">⚡ Fastest first</button>
+      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="nocrypto" onclick="setFilter('nocrypto')" data-i18n="filter_nocrypto">🏦 Fiat only</button>
+      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="crypto" onclick="setFilter('crypto')" data-i18n="filter_crypto">🔗 Crypto routes</button>
+      <div class="ml-auto flex items-center gap-2">
+        <button onclick="openFeedback('corridor')" class="text-xs px-2.5 py-1.5 rounded-full border border-cyan-300 dark:border-cyan-700 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 transition-all font-medium" data-i18n="suggest_corridor">+ Suggest corridor</button>
+        <button onclick="openFeedback('bug')" class="text-xs px-2.5 py-1.5 rounded-full border border-amber-300 dark:border-amber-700 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all font-medium" data-i18n="report_bug">🐛 Report bug</button>
         <div id="routeCount" class="text-xs text-gray-400"></div>
         <div id="rateAge" class="text-xs text-gray-400 hidden">🟢 <span id="rateAgeText"></span></div>
+        <!-- View toggle -->
+        <div class="flex border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden text-xs">
+          <button id="viewCards" onclick="setView('cards')" class="px-2 py-1 bg-cyan-500 text-white transition-colors" title="Card view">☰</button>
+          <button id="viewTable" onclick="setView('table')" class="px-2 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Table view">⊞</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Sparkline history banner -->
+  <!-- Table view container -->
+  <div id="resultsTableWrap" class="hidden mb-5 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+    <table id="resultsTable" class="w-full text-xs">
+      <thead>
+        <tr class="bg-gray-50 dark:bg-gray-800 text-left text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+          <th class="px-4 py-3 font-semibold">#</th>
+          <th class="px-4 py-3 font-semibold">Provider(s)</th>
+          <th class="px-4 py-3 font-semibold text-right">Cost</th>
+          <th class="px-4 py-3 font-semibold text-right">Time</th>
+          <th class="px-4 py-3 font-semibold text-right">They receive</th>
+          <th class="px-4 py-3 font-semibold text-right">Rate</th>
+          <th class="px-4 py-3 font-semibold text-center">Steps</th>
+        </tr>
+      </thead>
+      <tbody id="resultsTableBody" class="divide-y divide-gray-100 dark:divide-gray-800"></tbody>
+    </table>
+  </div>
+
+  <!-- History charts panel -->
   <div id="historyBar" class="hidden mb-5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
-    <div class="flex items-center justify-between mb-2">
-      <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Best route fee — last 7 days</span>
-      <span id="histStats" class="text-xs text-gray-400"></span>
+    <!-- Header row: title + period buttons -->
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+      <span id="histTitle" class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide" data-i18n="hist_title">Exchange rate history</span>
+      <div class="flex gap-1">
+        <button class="hist-period active text-xs border border-gray-300 dark:border-gray-700 rounded-full px-2.5 py-1 transition-all" data-min="15">15m</button>
+        <button class="hist-period text-xs border border-gray-300 dark:border-gray-700 rounded-full px-2.5 py-1 transition-all text-gray-500 dark:text-gray-400" data-min="60">1h</button>
+        <button class="hist-period text-xs border border-gray-300 dark:border-gray-700 rounded-full px-2.5 py-1 transition-all text-gray-500 dark:text-gray-400" data-min="1440">1d</button>
+        <button class="hist-period text-xs border border-gray-300 dark:border-gray-700 rounded-full px-2.5 py-1 transition-all text-gray-500 dark:text-gray-400" data-min="10080">7d</button>
+        <button class="hist-period text-xs border border-gray-300 dark:border-gray-700 rounded-full px-2.5 py-1 transition-all text-gray-500 dark:text-gray-400" data-min="40320">28d</button>
+        <button class="hist-period text-xs border border-gray-300 dark:border-gray-700 rounded-full px-2.5 py-1 transition-all text-gray-500 dark:text-gray-400" data-min="525600">1y</button>
+      </div>
     </div>
-    <div id="sparklineWrap" class="h-12"></div>
+    <!-- Two charts side by side -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <div class="flex items-center justify-between mb-1">
+          <span id="chartALabel" class="text-xs text-gray-400 font-mono"></span>
+          <span id="chartAStats" class="text-xs text-gray-400"></span>
+        </div>
+        <div id="sparklineA" class="h-16"></div>
+      </div>
+      <div>
+        <div class="flex items-center justify-between mb-1">
+          <span id="chartBLabel" class="text-xs text-gray-400 font-mono"></span>
+          <span id="chartBStats" class="text-xs text-gray-400"></span>
+        </div>
+        <div id="sparklineB" class="h-16"></div>
+      </div>
+    </div>
   </div>
 
   <div id="results"></div>
 </div>
 
+<!-- ── Pricing ─────────────────────────────────────────────────────────────── -->
+<section id="pricing" class="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 px-5 py-14">
+  <div class="max-w-4xl mx-auto">
+    <div class="text-center mb-10">
+      <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2" data-i18n-html="pricing_title"><s>Pricing</s></h2>
+      <p class="text-gray-500 dark:text-gray-400 text-sm max-w-md mx-auto" data-i18n-html="pricing_sub">
+        Free forever for personal use.<sup class="text-cyan-500 font-bold">*</sup>
+        No credit card. No sign-up. No affiliate fees — ever.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+
+      <!-- Anonymous -->
+      <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+        <div class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3" data-i18n="anon">Anonymous</div>
+        <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">Free</div>
+        <div class="text-xs text-gray-400 mb-5" data-i18n="anon_sub">No key needed</div>
+        <ul class="space-y-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
+          <li class="flex gap-2"><span class="text-green-500">✓</span>20 searches / day</li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>5 searches / hour</li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>All corridors</li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>Full route detail</li>
+          <li class="flex gap-2"><span class="text-gray-300 dark:text-gray-600">–</span>No usage dashboard</li>
+        </ul>
+        <div class="text-xs text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2 font-mono">
+          curl /v1/quote?from=USD&amp;to=MXN
+        </div>
+      </div>
+
+      <!-- Builder (featured) -->
+      <div class="bg-white dark:bg-gray-900 border-2 border-cyan-400 dark:border-cyan-500 rounded-2xl p-6 relative shadow-lg shadow-cyan-500/10">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span class="bg-cyan-500 text-white text-xs font-bold px-3 py-1 rounded-full" data-i18n="most_popular">Most popular</span>
+        </div>
+        <div class="text-xs font-semibold uppercase tracking-widest text-cyan-500 mb-3" data-i18n="builder">Builder</div>
+        <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">Free</div>
+        <div class="text-xs text-gray-400 mb-5" data-i18n="builder_sub">Self-serve key · no signup</div>
+        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300 mb-6">
+          <li class="flex gap-2"><span class="text-green-500">✓</span><strong>1,000 searches / day</strong></li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>100 / hour</li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>All corridors</li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>Full route detail</li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>Usage dashboard</li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>GitHub support</li>
+        </ul>
+        <button onclick="showKeyGenerator()"
+          class="w-full bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-sm py-2.5 rounded-xl transition-colors mb-2">
+          <span data-i18n="get_key">Get free API key →</span>
+        </button>
+        <p class="text-center text-xs text-gray-400">
+          <span data-i18n="support_free">Free because of</span>
+          <button onclick="document.getElementById('donateSection').scrollIntoView({behavior:'smooth'})" class="text-cyan-500 hover:underline" data-i18n="donor_link">donor support ❤️</button>
+        </p>
+      </div>
+
+      <!-- Agent -->
+      <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+        <div class="text-xs font-semibold uppercase tracking-widest text-violet-500 mb-3">Agent 🤖</div>
+        <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">Free</div>
+        <div class="text-xs text-gray-400 mb-5">For AI bots & automated scripts</div>
+        <ul class="space-y-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
+          <li class="flex gap-2"><span class="text-green-500">✓</span><strong>5,000 searches / day</strong></li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>200 / hour</li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>All corridors</li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>MCP server access</li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>Usage dashboard</li>
+        </ul>
+        <a href="mailto:miguel@coinnect.bot?subject=Agent%20key%20request"
+          class="block w-full text-center border border-violet-300 dark:border-violet-700 text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-950/30 font-semibold text-sm py-2.5 rounded-xl transition-colors">
+          Contact for agent key →
+        </a>
+      </div>
+
+      <!-- Self-hosted -->
+      <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+        <div class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3" data-i18n="selfhost">Self-hosted</div>
+        <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">Free</div>
+        <div class="text-xs text-gray-400 mb-5" data-i18n="selfhost_sub">MIT license · deploy anywhere</div>
+        <ul class="space-y-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
+          <li class="flex gap-2"><span class="text-green-500">✓</span><strong>Unlimited</strong></li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>Full source code</li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>Add your own adapters</li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>No telemetry</li>
+          <li class="flex gap-2"><span class="text-green-500">✓</span>Docker / systemd ready</li>
+        </ul>
+        <a href="https://github.com/coinnect-dev/coinnect" target="_blank" rel="noopener noreferrer"
+          class="block w-full text-center border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-semibold text-sm py-2.5 rounded-xl transition-colors">
+          View on GitHub →
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Asterisk disclaimer -->
+    <p class="text-center text-xs text-gray-400 dark:text-gray-600 max-w-xl mx-auto">
+      <sup class="text-cyan-500 font-bold">*</sup>
+      <span data-i18n="free_forever_note">"Free forever" means Coinnect will never charge for the service tiers above. Rate limits exist to prevent abuse and ensure fair access for everyone.</span>
+    </p>
+
+    <!-- Miguel's personal note -->
+    <div class="max-w-xl mx-auto mt-5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl p-5">
+      <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed" data-i18n-html="miguel_p1">This started as my unemployment project. It's still maintained by one person — me, Miguel.</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mt-3" data-i18n-html="miguel_p2">If this grew useful to you and you'd like to help connect me with a foundation or institution that supports open financial infrastructure, I'd love to hear from you. <a href="mailto:miguel@coinnect.bot" class="text-cyan-500 hover:underline">miguel@coinnect.bot</a> · Have a nice day (or night, wherever you are). 🌍</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mt-3" id="miguelPs" data-i18n-html="miguel_ps">P.S. — I'd also love to get involved in a forestry project. I genuinely love nature. If you have a piece of land you'd like to replant, reach out — let's think of a plan to get the resources together. 🌱</p>
+    </div>
+
+    <!-- Key generator (inline, hidden by default) -->
+    <div id="keyGenerator" class="hidden mt-8 max-w-lg mx-auto bg-white dark:bg-gray-900 border border-cyan-200 dark:border-cyan-800 rounded-2xl p-6">
+      <h3 class="font-semibold text-gray-900 dark:text-white mb-1" data-i18n="key_title">Get your API key</h3>
+      <p class="text-xs text-gray-400 mb-4" data-i18n="key_sub">No email. No account. Instant.</p>
+      <div class="mb-4">
+        <label class="text-xs text-gray-400 mb-1 block" data-i18n="key_label">Label (optional)</label>
+        <input id="keyLabel" type="text" placeholder="e.g. my-bot, claude-agent, dashboard"
+          class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500">
+      </div>
+      <button onclick="generateKey()"
+        class="w-full bg-cyan-500 hover:bg-cyan-400 text-white font-semibold text-sm py-2.5 rounded-xl transition-colors mb-3">
+        Generate key
+      </button>
+      <div id="keyResult" class="hidden">
+        <div class="bg-gray-950 rounded-xl p-4 font-mono text-xs text-cyan-400 break-all mb-2" id="keyValue"></div>
+        <button onclick="copyKey()" class="text-xs text-gray-400 hover:text-cyan-500 transition-colors">⎘ Copy to clipboard</button>
+        <p class="text-xs text-amber-500 dark:text-amber-400 mt-2">
+          Save this key — it cannot be recovered. Use it as:<br>
+          <span class="font-mono">X-Api-Key: [your-key]</span>
+        </p>
+      </div>
+      <div id="keyError" class="hidden text-xs text-red-400 mt-2"></div>
+    </div>
+
+  </div>
+</section>
+
 <!-- ── Donate ──────────────────────────────────────────────────────────────── -->
 <section id="donateSection" class="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-5 py-12 mt-4">
   <div class="max-w-2xl mx-auto text-center">
     <div class="text-3xl mb-3">❤️</div>
-    <h2 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Keep Coinnect free &amp; unbiased</h2>
-    <p class="text-gray-500 dark:text-gray-400 text-sm mb-2 max-w-lg mx-auto">
+    <h2 class="text-xl font-bold mb-2 text-gray-900 dark:text-white" data-i18n="donate_title">Keep Coinnect free &amp; unbiased</h2>
+    <p class="text-gray-500 dark:text-gray-400 text-sm mb-2 max-w-lg mx-auto" data-i18n="donate_sub">
       No affiliate fees. No ads. No investors. We show the best route — not the most profitable one for us.
-      Infrastructure costs $28/mo. If this saved you money, consider supporting the project.
+      Non-profit · no affiliate fees · If this saved you money, consider supporting the project.
     </p>
-    <p class="text-gray-400 dark:text-gray-500 text-xs mb-8 max-w-lg mx-auto">
+    <p class="text-gray-400 dark:text-gray-500 text-xs mb-8 max-w-lg mx-auto" data-i18n="crypto_soon">
       Crypto donations coming soon (ETH / USDC / BTC).
     </p>
     <div class="grid grid-cols-3 gap-3 mb-8 text-left">
@@ -305,11 +527,11 @@
       </div>
     </div>
     <div class="flex flex-col sm:flex-row gap-3 justify-center">
-      <a href="https://github.com/sponsors/miguelvalenciav" target="_blank"
+      <a href="#"
          class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-semibold px-6 py-3 rounded-xl transition-all text-sm shadow-sm">
         ❤️ Sponsor on GitHub
       </a>
-      <a href="https://buymeacoffee.com/miguelvalenciav" target="_blank"
+      <a href="#"
          class="inline-flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium px-6 py-3 rounded-xl transition-colors text-sm">
         ☕ Buy me a coffee
       </a>
@@ -319,7 +541,7 @@
       </a>
     </div>
     <p class="mt-6 text-xs text-gray-400 dark:text-gray-600">
-      Open source · MIT license · $28/mo to run · Built by one person, for everyone sending money across borders
+      Open source · MIT license · Non-profit · Built by one person and his friend bot 🤖, for everyone sending money across borders
     </p>
   </div>
 </section>
@@ -329,11 +551,15 @@
   &nbsp;·&nbsp;
   <a href="/whitepaper" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">Whitepaper</a>
   &nbsp;·&nbsp;
-  <span>Rates refresh every 3 min</span>
+  <span data-i18n="footer_rates">Rates refresh every 3 min</span>
   &nbsp;·&nbsp;
-  <span>Coinnect never holds your funds</span>
+  <span data-i18n="footer_nofunds">Coinnect never holds your funds</span>
   &nbsp;·&nbsp;
-  <a href="/?notrack" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">No tracking</a>
+  <a href="/?notrack" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors" data-i18n="footer_notrack">No tracking</a>
+  &nbsp;·&nbsp;
+  <button onclick="openDisclaimer()" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors" data-i18n="footer_disclaimer">Disclaimer</button>
+  &nbsp;·&nbsp;
+  <span class="opacity-50">2026.03.21.1</span>
 </footer>
 
 <script>
@@ -345,6 +571,7 @@ const FLAGS={
   MXN:'🇲🇽',NGN:'🇳🇬',PHP:'🇵🇭',INR:'🇮🇳',ARS:'🇦🇷',BRL:'🇧🇷',
   COP:'🇨🇴',KES:'🇰🇪',GHS:'🇬🇭',IDR:'🇮🇩',VND:'🇻🇳',THB:'🇹🇭',
   BDT:'🇧🇩',PKR:'🇵🇰',LKR:'🇱🇰',NPR:'🇳🇵',PEN:'🇵🇪',TZS:'🇹🇿',UGX:'🇺🇬',
+  ZAR:'🇿🇦',VES:'🇻🇪',ZWL:'🇿🇼',MWK:'🇲🇼',ZMW:'🇿🇲',MZN:'🇲🇿',SZL:'🇸🇿',ARS:'🇦🇷',
   BTC:'₿',ETH:'Ξ',XRP:'✕',SOL:'◎',USDC:'◈',USDT:'◈'
 };
 
@@ -369,10 +596,90 @@ const REQS={
   'Wise':{sender:['Wise account','Government ID','Local bank account'],recipient:['Bank account in destination country'],kyc:'Required'},
   'Western Union':{sender:['Government ID','Cash or debit card'],recipient:['Show government ID at agent, or bank account'],kyc:'ID at pickup'},
   'MoneyGram':{sender:['Government ID','Cash, card, or online'],recipient:['Show government ID at agent'],kyc:'ID at pickup'},
+  'Remitly':{sender:['Remitly account','Government ID','Debit/credit card or bank account'],recipient:['Bank account, mobile money, or cash pickup location'],kyc:'Required'},
+  'WorldRemit':{sender:['WorldRemit account','Government ID'],recipient:['Bank account or mobile money number'],kyc:'Required'},
+  'Ria':{sender:['Ria account or visit agent','Government ID'],recipient:['Bank account or cash pickup at agent'],kyc:'ID at pickup or online'},
+  'Sendwave':{sender:['Sendwave app','US/UK/EU phone number','Government ID'],recipient:['Mobile money number (M-Pesa, MTN, etc.)'],kyc:'Required'},
+  'Xoom':{sender:['PayPal account','Government ID','Debit/credit card or bank'],recipient:['Bank account, mobile money, or cash pickup'],kyc:'Required'},
+  'Paysend':{sender:['Paysend account','Debit/credit card'],recipient:['Bank account or card number'],kyc:'Required'},
+  'OFX':{sender:['OFX account','Government ID','Bank account (min ~$250)'],recipient:['Bank account in destination country'],kyc:'Required'},
+  'TransferGo':{sender:['TransferGo account','Government ID','Bank account or card'],recipient:['Bank account in destination country'],kyc:'Required'},
+  'Skrill':{sender:['Skrill account','Government ID for high limits'],recipient:['Skrill wallet or bank account'],kyc:'For high limits'},
+  'Revolut':{sender:['Revolut account','Government ID'],recipient:['Revolut account or bank (SWIFT/SEPA)'],kyc:'Required'},
+  'Zinli':{sender:['Zinli account','US phone number or SSN for verification'],recipient:['Zinli wallet or bank account in destination country'],kyc:'Required'},
+  'Lemon Cash':{sender:['Lemon Cash app','Argentine DNI','Argentine bank account for ARS deposits'],recipient:['Crypto wallet address or Lemon Cash account'],kyc:'Required (DNI)'},
+  'Mukuru':{sender:['Government ID','Cash or bank transfer'],recipient:['Show government ID at agent, or mobile money number'],kyc:'ID at pickup'},
+  'Mama Money':{sender:['South African ID or passport','SA bank account or cash'],recipient:['Mobile money number or cash at agent location'],kyc:'Required'},
+  'Binance P2P':{sender:['Binance account','KYC (government ID + selfie)','Crypto or fiat in Binance wallet'],recipient:['Binance account or bank account (per trader terms)'],kyc:'Required on Binance'},
 };
 
-const FEATURED={'Cheapest':'💰','Balanced':'⚖️','Fastest':'⚡'};
+const FEATURED={'Cheapest':'💰','Fastest':'⚡'};
 const CRYPTO_EXCHANGES=new Set(['Binance','Kraken','Coinbase','Bitso','Kucoin','Huobi']);
+
+const GITHUB_REPO='https://github.com/coinnect-dev/coinnect';
+
+const EXCHANGE_DOMAIN={
+  'Binance':'binance.com','Kraken':'kraken.com','Coinbase':'coinbase.com',
+  'Bitso':'bitso.com','Yellow Card':'yellowcard.io','Wise':'wise.com',
+  'Western Union':'westernunion.com','MoneyGram':'moneygram.com',
+  'Kucoin':'kucoin.com','Huobi':'huobi.com',
+  'Remitly':'remitly.com','WorldRemit':'worldremit.com','Ria':'riamoneytransfer.com',
+  'Sendwave':'sendwave.com','Xoom':'xoom.com','Paysend':'paysend.com',
+  'OFX':'ofx.com','TransferGo':'transfergo.com','Skrill':'skrill.com',
+  'Revolut':'revolut.com','Zinli':'zinli.com','Lemon Cash':'lemon.me',
+  'Mukuru':'mukuru.com','Mama Money':'mamamoney.co.za','Binance P2P':'binance.com',
+  'Global66':'global66.com','Strike':'strike.me','XE':'xe.com',
+  'Atlantic Money':'atlantic.money','Intermex':'intermexonline.com','CurrencyFair':'currencyfair.com',
+};
+const PROVIDER_URL={
+  'Binance':'https://binance.com','Kraken':'https://kraken.com','Coinbase':'https://coinbase.com',
+  'Bitso':'https://bitso.com','Yellow Card':'https://yellowcard.io','Wise':'https://wise.com',
+  'Western Union':'https://westernunion.com','MoneyGram':'https://moneygram.com',
+  'Kucoin':'https://kucoin.com','Huobi':'https://huobi.com',
+  'Remitly':'https://remitly.com','WorldRemit':'https://worldremit.com','Ria':'https://riamoneytransfer.com',
+  'Sendwave':'https://sendwave.com','Xoom':'https://xoom.com','Paysend':'https://paysend.com',
+  'OFX':'https://ofx.com','TransferGo':'https://transfergo.com','Skrill':'https://skrill.com',
+  'Revolut':'https://revolut.com','Zinli':'https://zinli.com','Lemon Cash':'https://lemon.me',
+  'Mukuru':'https://mukuru.com','Mama Money':'https://mamamoney.co.za','Binance P2P':'https://binance.com',
+  'Global66':'https://global66.com','Strike':'https://strike.me','XE':'https://xe.com',
+  'Atlantic Money':'https://atlantic.money','Intermex':'https://intermexonline.com','CurrencyFair':'https://currencyfair.com',
+};
+
+// Color palette for letter-avatars (deterministic per provider name)
+const _AVATAR_COLORS=['#06b6d4','#8b5cf6','#f59e0b','#10b981','#ef4444','#3b82f6','#ec4899','#14b8a6'];
+function _avatarColor(name){
+  let h=0;for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))&0xffff;
+  return _AVATAR_COLORS[h%_AVATAR_COLORS.length];
+}
+function _mkAvatar(via,size){
+  const letter=(via||'?')[0].toUpperCase();
+  const color=_avatarColor(via||'');
+  const s=document.createElement('span');
+  s.style.cssText=`display:inline-flex;align-items:center;justify-content:center;width:${size}px;height:${size}px;border-radius:3px;background:${color};color:#fff;font-size:${Math.round(size*0.65)}px;font-weight:700;line-height:1;flex-shrink:0;vertical-align:middle;`;
+  s.textContent=letter;
+  return s;
+}
+function _imgFallback(el,via){
+  const size=parseInt(el.width)||14;
+  el.parentNode.replaceChild(_mkAvatar(via,size),el);
+}
+function exchangeLogo(via,size=14){
+  const d=EXCHANGE_DOMAIN[via];
+  if(!d){
+    const a=_mkAvatar(via,size);
+    return a.outerHTML;
+  }
+  return`<img src="https://www.google.com/s2/favicons?domain=${d}&sz=32" width="${size}" height="${size}" class="rounded-sm inline-block align-middle flex-shrink-0" style="vertical-align:middle" onerror="_imgFallback(this,'${via.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')" loading="lazy">`;
+}
+function viaWithLogos(vias,size=14){
+  return vias.map(v=>{
+    const url=PROVIDER_URL[v];
+    const inner=`${exchangeLogo(v,size)}<span>${v}</span>`;
+    return url
+      ?`<a href="${url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-cyan-600 dark:text-cyan-400 hover:underline transition-opacity">${inner}</a>`
+      :`<span class="inline-flex items-center gap-1">${inner}</span>`;
+  }).join('<span class="text-gray-300 dark:text-gray-600 mx-0.5">+</span>');
+}
 
 let _allRoutes=[];
 let _fromCur='',_toCur='',_quoteTime=null;
@@ -433,9 +740,173 @@ function applyLocaleDefaults(){
   document.getElementById('amount').value='100';
 }
 
+// ── View toggle (Cards / Table) ────────────────────────────────────────────
+let _activeView='cards';
+function setView(v){
+  _activeView=v;
+  const cardsDiv=document.getElementById('results');
+  const tableWrap=document.getElementById('resultsTableWrap');
+  const btnCards=document.getElementById('viewCards');
+  const btnTable=document.getElementById('viewTable');
+  if(v==='table'){
+    cardsDiv.classList.add('hidden');
+    tableWrap.classList.remove('hidden');
+    btnCards.className='px-2 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-xs';
+    btnTable.className='px-2 py-1 bg-cyan-500 text-white transition-colors text-xs';
+    renderTable(_allRoutes,_fromCur,_toCur);
+  } else {
+    tableWrap.classList.add('hidden');
+    cardsDiv.classList.remove('hidden');
+    btnCards.className='px-2 py-1 bg-cyan-500 text-white transition-colors text-xs';
+    btnTable.className='px-2 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-xs';
+  }
+}
+function renderTable(routes,from,to){
+  const tbody=document.getElementById('resultsTableBody');
+  if(!tbody||!routes.length)return;
+  const fmtMin=m=>m<60?`${m}m`:`${Math.round(m/60)}h`;
+  const isFeatured=r=>r.label==='Cheapest'||r.label==='Fastest';
+  tbody.innerHTML=routes.map(r=>{
+    const via=[...new Set(r.steps.map(s=>s.via))].join(' → ');
+    const rate=(r.they_receive/r.you_send).toFixed(4);
+    const featured=isFeatured(r);
+    const badge=featured?`<span class="inline-block ml-1 px-1.5 py-0.5 rounded text-[10px] font-bold ${r.label==='Cheapest'?'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400':'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400'}">${r.label}</span>`:'';
+    return`<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${featured?'font-medium':''}">
+      <td class="px-4 py-3 text-gray-400">${r.rank}</td>
+      <td class="px-4 py-3 text-gray-900 dark:text-white">${via}${badge}</td>
+      <td class="px-4 py-3 text-right ${r.total_cost_pct<1.5?'text-emerald-600 dark:text-emerald-400':r.total_cost_pct<3?'text-amber-600 dark:text-amber-400':'text-red-500'}">${r.total_cost_pct.toFixed(2)}%</td>
+      <td class="px-4 py-3 text-right text-gray-500 dark:text-gray-400">${fmtMin(r.total_time_minutes)}</td>
+      <td class="px-4 py-3 text-right text-gray-900 dark:text-white font-mono">${fmtNum(r.they_receive)} ${r.they_receive_currency}</td>
+      <td class="px-4 py-3 text-right text-gray-400 font-mono">${rate}</td>
+      <td class="px-4 py-3 text-center text-gray-400">${r.steps.length}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Feedback modal (bug report / corridor suggestion) ──────────────────────
+let _feedbackType='bug';
+function openFeedback(type){
+  _feedbackType=type;
+  const modal=document.getElementById('feedbackModal');
+  const title=document.getElementById('feedbackTitle');
+  const bugForm=document.getElementById('feedbackBugForm');
+  const corridorForm=document.getElementById('feedbackCorridorForm');
+  const thanks=document.getElementById('feedbackThanks');
+  const submitBtn=document.getElementById('feedbackSubmit');
+  thanks.classList.add('hidden');
+  submitBtn.disabled=false;
+  title.textContent=t(type==='bug'?'bug_title':'corridor_title');
+  bugForm.classList.toggle('hidden',type!=='bug');
+  corridorForm.classList.toggle('hidden',type!=='corridor');
+  if(type==='bug'){
+    // Pre-fill context badge
+    const ctx=document.getElementById('bugContext');
+    if(_fromCur&&_toCur){
+      const amt=_allRoutes.length?fmtNum(_allRoutes[0].you_send)+' '+_fromCur:'';
+      ctx.textContent=`${_fromCur} → ${_toCur}${amt?' · '+amt:''}`;
+      ctx.classList.remove('hidden');
+    } else {
+      ctx.classList.add('hidden');
+    }
+    // Reset rate error state
+    document.getElementById('bugIsRate').checked=false;
+    document.getElementById('bugRateSelector').classList.add('hidden');
+    document.getElementById('feedbackBugText').value='';
+  }
+  // Apply placeholder translations
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+    const v=t(el.dataset.i18nPlaceholder);
+    if(v)el.placeholder=v;
+  });
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+function toggleBugRateSelector(){
+  const isChecked=document.getElementById('bugIsRate').checked;
+  const sel=document.getElementById('bugRateSelector');
+  if(!isChecked||!_allRoutes.length){sel.classList.add('hidden');return;}
+  const header=`<div class="px-3 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-gray-800">${t('bug_rate_select')||'Which route looks wrong?'}</div>`;
+  const rows=_allRoutes.slice(0,10).map((r,i)=>{
+    const viaList=[...new Set(r.steps.map(s=>s.via))].join(' + ');
+    const rate=fmtRate(r.you_send,r.they_receive,_fromCur,_toCur);
+    return`<label class="flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer">
+      <input type="radio" name="bugRoute" value="${i}" class="accent-cyan-500 w-3.5 h-3.5 shrink-0 mt-0.5">
+      <div class="flex-1 min-w-0">
+        <div class="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">${viaList}</div>
+        <div class="text-xs text-gray-400 font-mono">${rate} · ${r.total_cost_pct.toFixed(2)}%</div>
+      </div>
+    </label>`;
+  }).join('');
+  sel.innerHTML=header+rows;
+  sel.classList.remove('hidden');
+}
+function closeFeedback(){
+  const modal=document.getElementById('feedbackModal');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+async function submitFeedback(){
+  const fp=Math.random().toString(36).slice(2)+Date.now().toString(36);
+  const submitBtn=document.getElementById('feedbackSubmit');
+  submitBtn.disabled=true;
+  let name,note;
+  if(_feedbackType==='bug'){
+    const isRate=document.getElementById('bugIsRate').checked;
+    let rateCtx='';
+    if(isRate){
+      const sel=document.querySelector('input[name="bugRoute"]:checked');
+      if(sel){
+        const r=_allRoutes[parseInt(sel.value)];
+        const viaList=[...new Set(r.steps.map(s=>s.via))].join('+');
+        const rate=fmtRate(r.you_send,r.they_receive,_fromCur,_toCur);
+        rateCtx=`[Rate error: ${viaList} — ${rate}] `;
+      } else {
+        rateCtx='[Rate error] ';
+      }
+    }
+    const searchCtx=_fromCur&&_toCur?`[${_fromCur}→${_toCur}] `:'';
+    const desc=document.getElementById('feedbackBugText').value.trim();
+    if(!desc&&!rateCtx){submitBtn.disabled=false;return;}
+    const full=rateCtx+searchCtx+desc;
+    name='🐛 Bug: '+full.slice(0,100);
+    note=full||undefined;
+  } else {
+    const from=(document.getElementById('feedbackFrom').value||'').trim().toUpperCase();
+    const to=(document.getElementById('feedbackTo').value||'').trim().toUpperCase();
+    if(!from||!to){submitBtn.disabled=false;return;}
+    name='🗺️ Corridor: '+from+' → '+to;
+    note=document.getElementById('feedbackNote').value.trim()||undefined;
+  }
+  if(_feedbackType==='bug'){
+    // Open GitHub issue pre-filled with context
+    const body=note||name;
+    const url=`${GITHUB_REPO}/issues/new?title=${encodeURIComponent(name)}&body=${encodeURIComponent(body)}&labels=bug`;
+    window.open(url,'_blank','noopener,noreferrer');
+    const thanks=document.getElementById('feedbackThanks');
+    thanks.textContent=t('thanks');
+    thanks.classList.remove('hidden');
+    setTimeout(closeFeedback,2000);
+    return;
+  }
+  try{
+    await fetch('/v1/suggestions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,note,fingerprint:fp}),
+    });
+    const thanks=document.getElementById('feedbackThanks');
+    thanks.textContent=t('thanks');
+    thanks.classList.remove('hidden');
+    setTimeout(closeFeedback,2000);
+  }catch(e){
+    submitBtn.disabled=false;
+  }
+}
+
 // ── Filters ────────────────────────────────────────────────────────────────
 function setFilter(f){
   _activeFilter=f;
+  trackEvent('filter_applied',{filter:f});
   document.querySelectorAll('.filter-btn').forEach(b=>{
     b.classList.toggle('active',b.dataset.filter===f);
     if(b.dataset.filter!==f)b.classList.add('text-gray-500','dark:text-gray-400');
@@ -453,57 +924,103 @@ function applyFilter(routes){
   return r;
 }
 
-// ── Sparkline chart ────────────────────────────────────────────────────────
-function renderSparkline(points){
-  const wrap=document.getElementById('sparklineWrap');
-  if(!points||points.length<2){wrap.innerHTML='<p class="text-xs text-gray-400 text-center pt-3">Not enough history yet — check back in a few minutes.</p>';return;}
+// ── History charts ──────────────────────────────────────────────────────────
+let _histFrom='',_histTo='',_histMinutes=15;
 
-  const fees=points.map(p=>p.best_cost_pct);
-  const minF=Math.min(...fees),maxF=Math.max(...fees);
-  const range=maxF-minF||0.01;
+function renderChart(wrapId,labelId,statsId,points,amount,fromC,toC,gradId){
+  const wrap=document.getElementById(wrapId);
+  const label=document.getElementById(labelId);
+  const statsEl=document.getElementById(statsId);
+  if(!points||points.length<2){
+    wrap.innerHTML=`<p class="text-xs text-gray-400 text-center pt-4">${t('hist_nodata')}</p>`;
+    label.textContent=`${fromC}/${toC}`;
+    statsEl.textContent='';
+    return;
+  }
+  // Rate = they_receive / amount (how much toC per 1 fromC)
+  const rates=points.map(p=>p.they_receive/(amount||1));
+  const minR=Math.min(...rates),maxR=Math.max(...rates);
+  const range=maxR-minR||maxR*0.001||0.01;
 
-  const W=wrap.clientWidth||600,H=48;
-  const pts=fees.map((f,i)=>{
-    const x=i/(fees.length-1)*W;
-    const y=H-((f-minF)/range)*(H-8)-2;
-    return`${x},${y}`;
-  }).join(' ');
+  const W=wrap.clientWidth||500,H=64;
+  const px=(i)=>i/(rates.length-1)*W;
+  const py=(r)=>H-((r-minR)/range)*(H-10)-4;
 
-  // Color: gradient from amber (high fee) to cyan (low fee)
-  const latestFee=fees[fees.length-1];
-  const isImproving=fees.length>3&&fees[fees.length-1]<fees[fees.length-4];
-  const lineColor=isImproving?'#06b6d4':'#f59e0b';
+  const pts=rates.map((r,i)=>`${px(i)},${py(r)}`).join(' ');
+  const latest=rates[rates.length-1];
+  const isUp=rates.length>3&&latest>rates[rates.length-4];
+  const col=isUp?'#22c55e':'#f59e0b';
 
   wrap.innerHTML=`
     <svg class="sparkline-svg w-full" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
       <defs>
-        <linearGradient id="spkGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="${lineColor}" stop-opacity="0.3"/>
-          <stop offset="100%" stop-color="${lineColor}" stop-opacity="0.02"/>
+        <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${col}" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="${col}" stop-opacity="0.01"/>
         </linearGradient>
       </defs>
-      <polyline points="${pts}" fill="none" stroke="${lineColor}" stroke-width="1.5" stroke-linejoin="round"/>
-      <polyline points="0,${H} ${pts} ${W},${H}" fill="url(#spkGrad)" stroke="none"/>
-      <circle cx="${fees.length>0?(fees.length-1)/(fees.length-1)*W:W}" cy="${H-((latestFee-minF)/range)*(H-8)-2}" r="3" fill="${lineColor}"/>
+      <polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1.5" stroke-linejoin="round"/>
+      <polyline points="0,${H} ${pts} ${W},${H}" fill="url(#${gradId})" stroke="none"/>
+      <circle cx="${px(rates.length-1)}" cy="${py(latest)}" r="3" fill="${col}"/>
     </svg>`;
+
+  // Currency symbols
+  const SYM={USD:'$',EUR:'€',GBP:'£',MXN:'$',BRL:'R$',COP:'$',ARS:'$',
+             PEN:'S/',PHP:'₱',INR:'₹',NGN:'₦',KES:'KSh',GHS:'₵',
+             JPY:'¥',CNY:'¥',THB:'฿',IDR:'Rp',VND:'₫',PKR:'₨',BDT:'৳',
+             BTC:'₿',ETH:'Ξ',USDC:'$',USDT:'$'};
+  const sym=(c)=>SYM[c]||'';
+
+  // Format rate nicely (auto-decimals)
+  const fmt=(v)=>v>=1000?v.toFixed(0):v>=10?v.toFixed(2):v>=1?v.toFixed(4):v.toFixed(6);
+  label.textContent=`${fromC}/${toC} · ${sym(toC)}${fmt(latest)}`;
+  statsEl.textContent=`${sym(toC)}${fmt(minR)}–${sym(toC)}${fmt(maxR)}`;
 }
 
-async function loadHistory(fromC,toC){
+async function loadHistory(fromC,toC,minutes){
+  _histFrom=fromC; _histTo=toC; _histMinutes=minutes||15;
   const bar=document.getElementById('historyBar');
   try{
-    const r=await fetch(`${API}/v1/history?from=${fromC}&to=${toC}&days=7`);
-    if(!r.ok)return;
-    const data=await r.json();
-    if(!data.points||data.points.length<2)return;
+    // Fetch both directions in parallel
+    const [rA,rB]=await Promise.all([
+      fetch(`${API}/v1/history?from=${fromC}&to=${toC}&minutes=${_histMinutes}`),
+      fetch(`${API}/v1/history?from=${toC}&to=${fromC}&minutes=${_histMinutes}`),
+    ]);
+    const [dA,dB]=await Promise.all([rA.json().catch(()=>null),rB.json().catch(()=>null)]);
+
+    const hasA=dA&&dA.points&&dA.points.length>=2;
+    const hasB=dB&&dB.points&&dB.points.length>=2;
+    if(!hasA&&!hasB){bar.classList.add('hidden');return;}
+
     bar.classList.remove('hidden');
-    renderSparkline(data.points);
-    const s=data.stats;
-    if(s&&s.points>0){
-      document.getElementById('histStats').textContent=
-        `${s.points} snapshots · min ${s.min_fee?.toFixed(2)}% · max ${s.max_fee?.toFixed(2)}% · avg ${s.avg_fee?.toFixed(2)}%`;
-    }
+
+    // Tracked corridors use amount=500 for most, 1 for BTC/ETH
+    const amt=(['BTC','ETH','XRP','SOL'].includes(fromC))?1:500;
+    const amtInv=(['BTC','ETH','XRP','SOL'].includes(toC))?1:500;
+
+    renderChart('sparklineA','chartALabel','chartAStats',
+      hasA?dA.points:null,amt,fromC,toC,'gradA');
+    renderChart('sparklineB','chartBLabel','chartBStats',
+      hasB?dB.points:null,amtInv,toC,fromC,'gradB');
+
+    document.getElementById('histTitle').textContent=`Rate history`;
   }catch(e){bar.classList.add('hidden');}
 }
+
+// Period button wiring (runs after DOM ready)
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.hist-period').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.hist-period').forEach(b=>{
+        b.classList.remove('active');
+        b.classList.add('text-gray-500','dark:text-gray-400');
+      });
+      btn.classList.add('active');
+      btn.classList.remove('text-gray-500','dark:text-gray-400');
+      if(_histFrom) loadHistory(_histFrom,_histTo,parseInt(btn.dataset.min));
+    });
+  });
+});
 
 // ── Loading state ──────────────────────────────────────────────────────────
 function loading(){
@@ -516,7 +1033,7 @@ function loading(){
         <div class="w-2 h-2 rounded-full bg-cyan-400 loading-dot"></div>
         <div class="w-2 h-2 rounded-full bg-cyan-400 loading-dot"></div>
       </div>
-      <p class="text-sm">Checking exchanges in real time...</p>
+      <p class="text-sm" data-i18n="loading">Checking exchanges in real time...</p>
     </div>`;
 }
 
@@ -546,15 +1063,15 @@ function renderReqs(steps,to){
     <div class="mt-4 grid grid-cols-2 gap-3">
       <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-800/40 rounded-xl p-3">
         <div class="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-2 flex items-center gap-1.5">
-          <span class="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[10px] font-bold">S</span>Sender needs
+          <span class="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-[10px] font-bold">S</span>${t('sender_needs')}
         </div>
-        ${senderItems.length?senderItems.map(r=>`<div class="flex gap-1.5 mb-1"><span class="text-blue-400 text-xs mt-0.5">•</span><span class="text-xs text-gray-600 dark:text-gray-300">${r}</span></div>`).join(''):'<span class="text-xs text-gray-400">No special requirements</span>'}
+        ${senderItems.length?senderItems.map(r=>`<div class="flex gap-1.5 mb-1"><span class="text-blue-400 text-xs mt-0.5">•</span><span class="text-xs text-gray-600 dark:text-gray-300">${r}</span></div>`).join(''):`<span class="text-xs text-gray-400">${t('no_reqs')}</span>`}
       </div>
       <div class="bg-violet-50 dark:bg-violet-950/30 border border-violet-100 dark:border-violet-800/40 rounded-xl p-3">
         <div class="text-xs font-semibold text-violet-700 dark:text-violet-400 mb-2 flex items-center gap-1.5">
-          <span class="w-4 h-4 rounded-full bg-violet-500 text-white flex items-center justify-center text-[10px] font-bold">R</span>Recipient needs
+          <span class="w-4 h-4 rounded-full bg-violet-500 text-white flex items-center justify-center text-[10px] font-bold">R</span>${t('recipient_needs')}
         </div>
-        ${recipientItems.length?recipientItems.map(r=>`<div class="flex gap-1.5 mb-1"><span class="text-violet-400 text-xs mt-0.5">•</span><span class="text-xs text-gray-600 dark:text-gray-300">${r}</span></div>`).join(''):'<span class="text-xs text-gray-400">No special requirements</span>'}
+        ${recipientItems.length?recipientItems.map(r=>`<div class="flex gap-1.5 mb-1"><span class="text-violet-400 text-xs mt-0.5">•</span><span class="text-xs text-gray-600 dark:text-gray-300">${r}</span></div>`).join(''):`<span class="text-xs text-gray-400">${t('no_reqs')}</span>`}
       </div>
     </div>`;
 }
@@ -564,14 +1081,14 @@ function renderSteps(steps,to){
   return steps.map((s,i)=>{
     const isSender=classes[i]==='sender';
     const circleClass=isSender?'bg-blue-100 dark:bg-blue-950/70 border-blue-300 dark:border-blue-700 text-blue-600 dark:text-blue-300':'bg-violet-100 dark:bg-violet-950/70 border-violet-300 dark:border-violet-700 text-violet-600 dark:text-violet-300';
-    const badge=isSender?'<span class="text-[10px] font-semibold text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded px-1 py-px">Sender</span>':'<span class="text-[10px] font-semibold text-violet-500 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/50 border border-violet-200 dark:border-violet-800 rounded px-1 py-px">Recipient</span>';
+    const badge=isSender?`<span class="text-[10px] font-semibold text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded px-1 py-px">${t('sender_badge')}</span>`:`<span class="text-[10px] font-semibold text-violet-500 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/50 border border-violet-200 dark:border-violet-800 rounded px-1 py-px">${t('recipient_badge')}</span>`;
     return`
     <div class="step-line relative pl-8 pb-3">
       <div class="absolute left-0 top-1 w-6 h-6 rounded-full ${circleClass} border flex items-center justify-center text-xs font-bold">${s.step}</div>
       <div class="flex flex-wrap items-center gap-1.5 mb-0.5">
         <span class="font-mono text-sm text-gray-900 dark:text-white">${flag(s.from_currency)} ${s.from_currency} → ${flag(s.to_currency)} ${s.to_currency}</span>
         <span class="text-xs text-gray-400">via</span>
-        <span class="text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-1.5 py-0.5">${s.via}</span>
+        ${PROVIDER_URL[s.via]?`<a href="${PROVIDER_URL[s.via]}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-1.5 py-0.5 hover:opacity-75 transition-opacity">${exchangeLogo(s.via,12)}${s.via}</a>`:`<span class="inline-flex items-center gap-1 text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded px-1.5 py-0.5">${exchangeLogo(s.via,12)}${s.via}</span>`}
         <span class="text-xs text-gray-400">${s.fee_pct}% · ${fmtTime(s.estimated_minutes)}</span>
         ${badge}
       </div>
@@ -586,18 +1103,18 @@ function transferBox(r,from,to){
   return`
     <div class="grid grid-cols-2 gap-0 divide-x divide-gray-100 dark:divide-gray-800">
       <div class="px-5 py-4">
-        <div class="text-xs text-gray-400 mb-1 uppercase tracking-wide">You send</div>
+        <div class="text-xs text-gray-400 mb-1 uppercase tracking-wide">${t('you_send')}</div>
         <div class="text-2xl font-bold font-mono text-gray-900 dark:text-white leading-tight">${fmtNum(r.you_send)}</div>
         <div class="text-sm text-gray-400 mt-0.5">${flag(from)} ${from}</div>
       </div>
       <div class="px-5 py-4 bg-cyan-50/60 dark:bg-cyan-950/20">
-        <div class="text-xs text-gray-400 mb-1 uppercase tracking-wide">They receive</div>
+        <div class="text-xs text-gray-400 mb-1 uppercase tracking-wide">${t('they_receive')}</div>
         <div class="text-2xl font-bold font-mono text-cyan-700 dark:text-cyan-300 leading-tight">${fmtNum(r.they_receive)}</div>
         <div class="text-sm text-gray-400 mt-0.5">${flag(to)} ${to}</div>
       </div>
     </div>
     <div class="px-5 py-2 bg-gray-50 dark:bg-gray-800/50 border-t border-b border-gray-100 dark:border-gray-800 flex items-center gap-2">
-      <span class="text-xs text-gray-400">Rate:</span>
+      <span class="text-xs text-gray-400">${t('rate')}</span>
       <span class="text-xs font-mono font-medium text-gray-700 dark:text-gray-200">${rate}</span>
     </div>`;
 }
@@ -613,20 +1130,21 @@ function renderFeaturedCard(r,from,to){
         <div class="flex items-center gap-2">
           <span>${emoji}</span>
           <span class="font-semibold text-sm text-gray-700 dark:text-gray-200">${r.label}</span>
-          ${isBest?'<span class="text-xs bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-700 rounded-full px-2 py-0.5">Best</span>':''}
+          ${isBest?`<span class="text-xs bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-700 rounded-full px-2 py-0.5">${t('best_badge')}</span>`:''}
         </div>
         <div class="flex items-center gap-3 text-xs text-gray-400">
           <span>🕐 ${fmtTime(r.total_time_minutes)}</span>
-          <span>${r.total_cost_pct.toFixed(2)}% fees</span>
+          <span>${r.total_cost_pct.toFixed(2)}${t('fees_pct')}</span>
         </div>
       </div>
       ${transferBox(r,from,to)}
-      <div class="px-5 py-2 bg-gray-50 dark:bg-gray-800/40 border-b border-gray-100 dark:border-gray-800">
-        <span class="text-xs text-gray-400">via ${viaList.join(' + ')}</span>
+      <div class="px-5 py-2 bg-gray-50 dark:bg-gray-800/40 border-b border-gray-100 dark:border-gray-800 flex items-center gap-1.5 text-xs text-gray-400">
+        <span>via</span>
+        ${viaWithLogos(viaList,14)}
       </div>
       <details class="group">
         <summary class="flex items-center justify-between px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors select-none">
-          <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Steps &amp; requirements</span>
+          <span class="text-xs font-medium text-gray-500 dark:text-gray-400">${t('steps_reqs')}</span>
           <span class="text-gray-400 text-xs transition-transform group-open:rotate-180">▼</span>
         </summary>
         <div class="px-5 pb-5">
@@ -641,10 +1159,10 @@ function renderCompactRow(r,from,to){
   const viaList=[...new Set(r.steps.map(s=>s.via))];
   const rate=fmtRate(r.you_send,r.they_receive,from,to);
   return`
-    <details class="group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+    <details class="group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden" ontoggle="if(this.open)trackEvent('route_expanded',{label:'${r.label}',via:'${[...new Set(r.steps.map(s=>s.via))].join('+')}',rank:${r.rank}})">
       <summary class="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
         <div class="w-20 shrink-0"><span class="text-sm font-medium text-gray-600 dark:text-gray-300">${r.label}</span></div>
-        <div class="flex-1 text-xs text-gray-400 hidden sm:block">via ${viaList.join(' + ')}</div>
+        <div class="flex-1 flex items-center gap-1 text-xs text-gray-400 hidden sm:block">via ${viaWithLogos(viaList,13)}</div>
         <div class="flex items-center gap-6">
           <div class="text-right hidden md:block">
             <div class="text-xs font-mono text-gray-500">${fmtNum(r.you_send)} <span class="text-gray-400">${from}</span></div>
@@ -659,15 +1177,15 @@ function renderCompactRow(r,from,to){
       <div class="border-t border-gray-100 dark:border-gray-800">
         <div class="grid grid-cols-2 divide-x divide-gray-100 dark:divide-gray-800">
           <div class="px-5 py-3">
-            <div class="text-xs text-gray-400 mb-0.5">You send</div>
+            <div class="text-xs text-gray-400 mb-0.5">${t('you_send')}</div>
             <div class="font-mono font-bold text-gray-900 dark:text-white">${fmtNum(r.you_send)} <span class="text-gray-400 text-sm font-normal">${from}</span></div>
           </div>
           <div class="px-5 py-3">
-            <div class="text-xs text-gray-400 mb-0.5">They receive</div>
+            <div class="text-xs text-gray-400 mb-0.5">${t('they_receive')}</div>
             <div class="font-mono font-bold text-cyan-700 dark:text-cyan-300">${fmtNum(r.they_receive)} <span class="text-gray-400 text-sm font-normal">${to}</span></div>
           </div>
         </div>
-        <div class="px-5 py-2 bg-gray-50 dark:bg-gray-800/40 text-xs font-mono text-gray-500">Rate: ${rate}</div>
+        <div class="px-5 py-2 bg-gray-50 dark:bg-gray-800/40 text-xs font-mono text-gray-500">${t('rate')} ${rate}</div>
         <div class="px-5 py-4">${renderSteps(r.steps,to)}</div>
         <div class="px-5 pb-5">${renderReqs(r.steps,to)}</div>
       </div>
@@ -684,8 +1202,8 @@ function renderSavings(routes,amount,from){
     <div class="mb-5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-700/40 rounded-xl px-4 py-3 flex items-center gap-3">
       <span class="text-2xl">💸</span>
       <div>
-        <div class="text-emerald-700 dark:text-emerald-400 font-semibold text-sm">Save ~${from} ${saved} vs Western Union</div>
-        <div class="text-gray-500 text-xs">Best route ${best.total_cost_pct.toFixed(2)}% · Western Union ${wu.total_cost_pct.toFixed(2)}%</div>
+        <div class="text-emerald-700 dark:text-emerald-400 font-semibold text-sm">${t('save_vs_wu').replace('{from}',from).replace('{saved}',saved)}</div>
+        <div class="text-gray-500 text-xs">${t('best_route')} ${best.total_cost_pct.toFixed(2)}% · Western Union ${wu.total_cost_pct.toFixed(2)}%</div>
       </div>
     </div>`;
 }
@@ -698,7 +1216,7 @@ function renderResults(routes,from,to){
     document.getElementById('results').innerHTML=`
       <div class="text-center py-12 text-gray-400 border border-gray-200 dark:border-gray-800 rounded-xl">
         <div class="text-2xl mb-2">🔍</div>
-        <div class="text-sm">No routes match this filter</div>
+        <div class="text-sm">${t('no_filter_routes')}</div>
       </div>`;
     return;
   }
@@ -709,13 +1227,16 @@ function renderResults(routes,from,to){
 
   if(_activeFilter!=='all'&&featured.length===0){featured=filtered.slice(0,3);extras=filtered.slice(3);}
 
+  // Re-number "Option N" labels to reflect filtered position
+  extras=extras.map((r,i)=>({...r,label:`Option ${i+1}`}));
+
   // Rate freshness badge
   if(_quoteTime){
     const ageSec=Math.round((Date.now()-_quoteTime)/1000);
     const ageEl=document.getElementById('rateAge');
     const ageText=document.getElementById('rateAgeText');
     ageEl.classList.remove('hidden');
-    ageText.textContent=ageSec<10?'Live rates':`Rates ${ageSec}s ago`;
+    ageText.textContent=ageSec<10?t('live_rates'):t('rates_ago').replace('{sec}',ageSec);
   }
 
   document.getElementById('results').innerHTML=`
@@ -725,11 +1246,11 @@ function renderResults(routes,from,to){
     </div>
     ${extras.length?`
       <div>
-        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">More options</div>
+        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">${t('more_options')}</div>
         <div class="flex flex-col gap-2">${extras.map(r=>renderCompactRow(r,from,to)).join('')}</div>
       </div>`:''}
     <div class="mt-6 text-center text-xs text-gray-400 dark:text-gray-600">
-      Coinnect shows routes — it never executes transfers or holds funds. Each exchange handles its own KYC.
+      ${t('footer_note')}
     </div>`;
 }
 
@@ -747,6 +1268,7 @@ async function getQuote(){
     else b.classList.remove('text-gray-500','dark:text-gray-400');
   });
 
+  trackEvent('quote_requested',{from_currency:from,to_currency:to,amount,corridor:`${from}_${to}`});
   loading();
   document.getElementById('searchBtn').disabled=true;
 
@@ -760,9 +1282,11 @@ async function getQuote(){
     document.getElementById('filtersBar').classList.remove('hidden');
     document.getElementById('routeCount').textContent=`${_allRoutes.length} routes`;
     renderResults(_allRoutes,from,to);
+    if(_activeView==='table')renderTable(_allRoutes,from,to);
 
-    // Load history in background
-    loadHistory(from,to);
+    // Load history in background (active period or default 15m)
+    const activePeriod=document.querySelector('.hist-period.active');
+    loadHistory(from,to,activePeriod?parseInt(activePeriod.dataset.min):15);
   }catch(e){
     document.getElementById('results').innerHTML=`
       <div class="text-center py-12 text-gray-400 border border-gray-200 dark:border-gray-800 rounded-xl">
@@ -776,15 +1300,181 @@ async function getQuote(){
 }
 
 function openDonate(platform,amount){
-  if(platform==='github')window.open('https://github.com/sponsors/miguelvalenciav','_blank');
-  else window.open('https://buymeacoffee.com/miguelvalenciav','_blank');
+  // Links pending until May 1st
+  void platform; void amount;
+}
+
+// ── GA4 event helpers ───────────────────────────────────────────────────────
+function trackEvent(name, params){
+  if(typeof gtag==='function')gtag('event',name,params);
+}
+
+// ── Pricing / key generator ─────────────────────────────────────────────────
+function showKeyGenerator(){
+  const el=document.getElementById('keyGenerator');
+  el.classList.remove('hidden');
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  trackEvent('key_generator_opened',{});
+}
+
+let _generatedKey='';
+async function generateKey(){
+  const label=document.getElementById('keyLabel').value.trim();
+  const resultEl=document.getElementById('keyResult');
+  const errorEl=document.getElementById('keyError');
+  const btn=document.querySelector('#keyGenerator button[onclick="generateKey()"]');
+  resultEl.classList.add('hidden');
+  errorEl.classList.add('hidden');
+  btn.textContent=t('key_generating');
+  btn.disabled=true;
+  try{
+    const url=`${API}/v1/keys`+(label?`?label=${encodeURIComponent(label)}`:'');
+    const res=await fetch(url,{method:'POST'});
+    const data=await res.json();
+    if(data.api_key){
+      _generatedKey=data.api_key;
+      document.getElementById('keyValue').textContent=data.api_key;
+      resultEl.classList.remove('hidden');
+      trackEvent('api_key_generated',{tier:data.tier});
+    }else{
+      throw new Error(data.detail||'Unknown error');
+    }
+  }catch(e){
+    errorEl.textContent=t('key_error');
+    errorEl.classList.remove('hidden');
+  }finally{
+    btn.textContent=t('key_gen');
+    btn.disabled=false;
+  }
+}
+
+function copyKey(){
+  if(!_generatedKey)return;
+  navigator.clipboard.writeText(_generatedKey).then(()=>{
+    const btn=document.querySelector('#keyGenerator button[onclick="copyKey()"]');
+    btn.textContent=t('key_copied');
+    setTimeout(()=>btn.textContent=t('key_copy'),2000);
+  });
 }
 
 window.onload=()=>{
   updateThemeIcon();
   applyLocaleDefaults();
+  applyLang();
+  initTaglineRotator();
   getQuote();
+  initCookieBanner();
 };
+
+// ── Cookie consent ──────────────────────────────────────────────────────────
+function initCookieBanner(){
+  if(localStorage.getItem('cookie_consent'))return;
+  document.getElementById('cookieBanner').classList.remove('hidden');
+}
+function acceptCookies(){
+  localStorage.setItem('cookie_consent','accepted');
+  document.getElementById('cookieBanner').classList.add('hidden');
+}
+function declineCookies(){
+  localStorage.setItem('cookie_consent','declined');
+  localStorage.setItem('ga_optout','1');
+  window['ga-disable-G-CKBJHEVM2X']=true;
+  document.getElementById('cookieBanner').classList.add('hidden');
+}
+
+// ── Disclaimer modal ────────────────────────────────────────────────────────
+function openDisclaimer(){document.getElementById('disclaimerModal').classList.remove('hidden')}
+function closeDisclaimer(){document.getElementById('disclaimerModal').classList.add('hidden')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDisclaimer();});
 </script>
+
+<!-- ── Cookie banner ──────────────────────────────────────────────────────── -->
+<div id="cookieBanner" class="hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-5 py-4 shadow-lg">
+  <div class="max-w-5xl mx-auto flex flex-wrap items-center gap-4 justify-between">
+    <div class="text-sm text-gray-600 dark:text-gray-300 flex-1 min-w-[260px]">
+      <span data-i18n="cookie_text">We use Google Analytics to understand how people use Coinnect. No personal data is sold.</span>
+      <button onclick="openDisclaimer()" class="underline text-cyan-600 dark:text-cyan-400 hover:no-underline ml-1" data-i18n="footer_disclaimer">Disclaimer & Terms</button>
+    </div>
+    <div class="flex gap-2 shrink-0">
+      <button onclick="declineCookies()"
+        class="text-xs border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" data-i18n="cookie_decline">
+        Decline analytics
+      </button>
+      <button onclick="acceptCookies()"
+        class="text-xs bg-cyan-500 hover:bg-cyan-400 text-white font-medium px-4 py-2 rounded-lg transition-colors" data-i18n="cookie_accept">
+        Accept
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Feedback modal (bug report / corridor suggestion) ──── -->
+<div id="feedbackModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onclick="if(event.target===this)closeFeedback()">
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md p-6 border border-gray-200 dark:border-gray-700">
+    <h3 id="feedbackTitle" class="text-lg font-semibold text-gray-900 dark:text-white mb-4"></h3>
+    <div id="feedbackBugForm">
+      <!-- Context badge -->
+      <div id="bugContext" class="hidden mb-3 px-3 py-2 bg-gray-50 dark:bg-gray-800 rounded-lg text-xs text-gray-500 dark:text-gray-400 font-mono"></div>
+      <!-- Rate error? -->
+      <label class="flex items-center gap-2 mb-3 cursor-pointer select-none">
+        <input type="checkbox" id="bugIsRate" onchange="toggleBugRateSelector()" class="w-4 h-4 accent-cyan-500 cursor-pointer">
+        <span class="text-sm text-gray-700 dark:text-gray-300" data-i18n="bug_rate_q">Is this a rate error?</span>
+      </label>
+      <!-- Route selector (shown when rate error is checked) -->
+      <div id="bugRateSelector" class="hidden mb-3 rounded-xl border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-800 overflow-hidden">
+        <div class="px-3 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-gray-800" data-i18n="bug_rate_select">Which route looks wrong?</div>
+      </div>
+      <!-- Freetext -->
+      <textarea id="feedbackBugText" rows="3" class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500 resize-none" data-i18n-placeholder="bug_placeholder"></textarea>
+    </div>
+    <div id="feedbackCorridorForm" class="hidden space-y-3">
+      <input id="feedbackFrom" type="text" maxlength="10" class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500" data-i18n-placeholder="corridor_from">
+      <input id="feedbackTo" type="text" maxlength="10" class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500" data-i18n-placeholder="corridor_to">
+      <input id="feedbackNote" type="text" maxlength="200" class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500" data-i18n-placeholder="corridor_note">
+    </div>
+    <p id="feedbackThanks" class="hidden text-sm text-cyan-600 dark:text-cyan-400 mt-3 font-medium"></p>
+    <div class="flex gap-3 mt-5">
+      <button onclick="closeFeedback()" class="flex-1 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" data-i18n="cancel">Cancel</button>
+      <button id="feedbackSubmit" onclick="submitFeedback()" class="flex-1 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-white text-sm font-medium transition-colors" data-i18n="submit">Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Disclaimer modal ───────────────────────────────────────────────────── -->
+<div id="disclaimerModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onclick="if(event.target===this)closeDisclaimer()">
+  <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto shadow-2xl">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+      <h2 class="font-semibold text-gray-900 dark:text-white" data-i18n="disc_title">Disclaimer & Terms of Use</h2>
+      <button onclick="closeDisclaimer()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl leading-none">&times;</button>
+    </div>
+    <div class="px-6 py-5 space-y-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+      <div>
+        <div class="font-semibold text-gray-900 dark:text-white mb-1" data-i18n="disc_rate_h">Rate accuracy</div>
+        <p data-i18n="disc_rate">Exchange rates and fees shown on Coinnect are sourced from provider APIs and published pricing pages. Rates update approximately every 3 minutes for live sources. For providers without a public API, fees are based on published pricing and marked with "~est." — these are estimates and may not reflect the exact rate you will receive.</p>
+      </div>
+      <div>
+        <div class="font-semibold text-gray-900 dark:text-white mb-1" data-i18n="disc_liability_h">No liability</div>
+        <p data-i18n="disc_liability">Coinnect is an information service only. We do not execute transfers, hold funds, or act as a financial intermediary. We make no warranty, express or implied, about the accuracy, completeness, or timeliness of the rates displayed. Any financial decision made based on information shown on this site is at your sole risk. Coinnect and its operators accept no responsibility or liability for any loss or damage arising from reliance on this information.</p>
+      </div>
+      <div>
+        <div class="font-semibold text-gray-900 dark:text-white mb-1" data-i18n="disc_verify_h">Always verify</div>
+        <p data-i18n="disc_verify">Before executing any transfer, verify the current rate and fees directly with the provider on their official website or app. Rates can change in seconds, and providers may apply different fees based on your account type, payment method, or jurisdiction.</p>
+      </div>
+      <div>
+        <div class="font-semibold text-gray-900 dark:text-white mb-1" data-i18n="disc_analytics_h">Analytics & cookies</div>
+        <p data-i18n-html="disc_analytics">We use Google Analytics (GA4) to understand aggregate usage patterns. No personal financial data is transmitted to GA4. You can opt out at any time by visiting <a href="/?notrack" class="text-cyan-600 dark:text-cyan-400 underline">coinnect.bot/?notrack</a> or by clicking "Decline analytics" on the cookie banner.</p>
+      </div>
+      <div>
+        <div class="font-semibold text-gray-900 dark:text-white mb-1" data-i18n="disc_affil_h">No affiliation</div>
+        <p data-i18n="disc_affil">Coinnect is not affiliated with, endorsed by, or sponsored by any of the providers listed. Provider names and logos are trademarks of their respective owners.</p>
+      </div>
+    </div>
+    <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center">
+      <a href="/whitepaper" class="text-xs text-cyan-600 dark:text-cyan-400 hover:underline">Read whitepaper</a>
+      <button onclick="closeDisclaimer()" class="text-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 px-5 py-2 rounded-lg transition-colors" data-i18n="close">Close</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

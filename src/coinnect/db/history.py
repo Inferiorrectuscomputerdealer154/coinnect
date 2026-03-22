@@ -35,6 +35,10 @@ TRACKED_CORRIDORS = [
     ("ETH", "USD", 1),
     ("USDC", "MXN", 500),
     ("USDC", "NGN", 500),
+    # Inverse corridors for dual-chart
+    ("MXN", "USD", 5000),
+    ("BRL", "USD", 2000),
+    ("NGN", "USD", 500000),
 ]
 
 
@@ -106,30 +110,42 @@ async def record_snapshot(from_currency: str, to_currency: str, amount: float, r
     await loop.run_in_executor(None, _write_snapshot, from_currency, to_currency, amount, routes)
 
 
-def get_history(from_currency: str, to_currency: str, days: int = 7) -> list[dict]:
-    """Return time-series of best route for a corridor."""
+def _normalize_ts(col: str) -> str:
+    """SQLite expression to normalize ISO timestamps to comparable format.
+
+    Stored timestamps have 'T' separator and '+00:00' suffix which breaks
+    SQLite string comparisons against datetime('now'). We strip to 19 chars
+    and replace 'T' with a space to match SQLite's datetime() output format.
+    """
+    return f"replace(substr({col}, 1, 19), 'T', ' ')"
+
+
+def get_history(from_currency: str, to_currency: str, minutes_back: int = 10080) -> list[dict]:
+    """Return time-series of best route for a corridor. minutes_back default = 7 days."""
     conn = _connect()
+    ts = _normalize_ts("captured_at")
     try:
-        rows = conn.execute("""
+        rows = conn.execute(f"""
             SELECT captured_at, best_cost_pct, they_receive, best_via, best_time_min
             FROM rate_snapshots
             WHERE from_currency = ?
               AND to_currency   = ?
-              AND captured_at  >= datetime('now', ? || ' days')
+              AND {ts} >= datetime('now', ? || ' minutes')
             ORDER BY captured_at ASC
-        """, (from_currency, to_currency, f"-{days}")).fetchall()
+        """, (from_currency, to_currency, f"-{minutes_back}")).fetchall()
         return [dict(r) for r in rows]
     finally:
         conn.close()
 
 
-def get_stats(from_currency: str, to_currency: str, days: int = 7) -> dict:
-    """Return min/max/avg fee for a corridor over the last N days."""
+def get_stats(from_currency: str, to_currency: str, minutes_back: int = 10080) -> dict:
+    """Return min/max/avg fee for a corridor over the last N minutes."""
     conn = _connect()
+    ts = _normalize_ts("captured_at")
     try:
-        row = conn.execute("""
+        row = conn.execute(f"""
             SELECT
-                COUNT(*)         AS points,
+                COUNT(*)            AS points,
                 MIN(best_cost_pct)  AS min_fee,
                 MAX(best_cost_pct)  AS max_fee,
                 AVG(best_cost_pct)  AS avg_fee,
@@ -138,8 +154,8 @@ def get_stats(from_currency: str, to_currency: str, days: int = 7) -> dict:
             FROM rate_snapshots
             WHERE from_currency = ?
               AND to_currency   = ?
-              AND captured_at  >= datetime('now', ? || ' days')
-        """, (from_currency, to_currency, f"-{days}")).fetchone()
+              AND {ts} >= datetime('now', ? || ' minutes')
+        """, (from_currency, to_currency, f"-{minutes_back}")).fetchone()
         return dict(row) if row else {}
     finally:
         conn.close()
@@ -149,9 +165,10 @@ def prune_old(keep_days: int = 30) -> int:
     """Delete snapshots older than keep_days. Returns rows deleted."""
     conn = _connect()
     try:
-        cur = conn.execute("""
+        ts = _normalize_ts("captured_at")
+        cur = conn.execute(f"""
             DELETE FROM rate_snapshots
-            WHERE captured_at < datetime('now', ? || ' days')
+            WHERE {ts} < datetime('now', ? || ' days')
         """, (f"-{keep_days}",))
         conn.commit()
         return cur.rowcount

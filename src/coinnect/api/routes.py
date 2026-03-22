@@ -1,19 +1,62 @@
 """
-FastAPI routes — /v1/quote, /v1/exchanges, /v1/corridors, /v1/health, /v1/history
+FastAPI routes — /v1/quote, /v1/exchanges, /v1/corridors, /v1/health, /v1/history,
+                 /v1/keys (POST), /v1/keys/usage (GET, X-Api-Key header)
 """
 
 import asyncio
 from datetime import datetime, UTC
 
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Header, Request
 from pydantic import BaseModel
 
 from coinnect.exchanges.ccxt_adapter import get_all_edges, SUPPORTED_EXCHANGES
 from coinnect.exchanges.wise_adapter import get_wise_edges, get_traditional_edges
 from coinnect.exchanges.yellowcard_adapter import get_yellowcard_edges
-from coinnect.routing.engine import build_quote, QuoteResult
+from coinnect.routing.engine import build_quote
 
 router = APIRouter(prefix="/v1")
+
+
+def _get_client_ip(request: Request) -> str:
+    """Extract real client IP — respects Cloudflare CF-Connecting-IP, then X-Forwarded-For."""
+    cf_ip = request.headers.get("CF-Connecting-IP")
+    if cf_ip:
+        return cf_ip.strip()
+    xff = request.headers.get("X-Forwarded-For")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+
+def _rate_limit_error(info: dict) -> HTTPException:
+    """Build a 429 with a helpful human-readable message."""
+    tier   = info.get("tier", "anonymous")
+    limit  = info.get("limit", 0)
+    reason = info.get("reason", "limit_reached")
+
+    if reason == "hourly_limit":
+        detail = (
+            f"You can only make {limit} searches per hour on the {tier} plan. "
+            "Try again at the top of the next hour. "
+            "Get a free API key at coinnect.bot/#pricing — 1,000/day, 100/hour, no signup."
+        )
+    elif reason == "daily_limit":
+        detail = (
+            f"You can only make {limit} searches per day on the {tier} plan. "
+            "Try again tomorrow. "
+            "Get a free API key at coinnect.bot/#pricing — 1,000/day, no signup."
+        )
+    else:
+        detail = "Rate limit reached. Get a free API key at coinnect.bot/#pricing — no signup required."
+
+    return HTTPException(status_code=429, detail=detail)
+
+
+async def _log_search(from_c, to_c, amount, routes_found, api_key, user_agent, source):
+    import asyncio as _aio
+    loop = _aio.get_event_loop()
+    from coinnect.db.analytics import log_search
+    await loop.run_in_executor(None, log_search, from_c, to_c, amount, routes_found, api_key, user_agent, source)
 
 
 # ── Response models ────────────────────────────────────────────────────────────
@@ -26,6 +69,8 @@ class StepOut(BaseModel):
     fee_pct: float
     estimated_minutes: int
     instructions: str
+    min_amount: float | None = None
+    max_amount: float | None = None
 
 
 class RouteOut(BaseModel):
@@ -51,9 +96,12 @@ class QuoteOut(BaseModel):
 
 @router.get("/quote", response_model=QuoteOut, summary="Get ranked transfer routes")
 async def quote(
+    request: Request,
     from_: str = Query(..., alias="from", description="Source currency, e.g. USD"),
     to: str = Query(..., description="Destination currency, e.g. NGN"),
     amount: float = Query(..., gt=0, description="Amount in source currency"),
+    x_api_key: str | None = Header(None),
+    user_agent: str | None = Header(None),
 ):
     """
     Find the cheapest routes to send money from one currency to another.
@@ -67,13 +115,28 @@ async def quote(
     from_ = from_.upper()
     to = to.upper()
 
-    crypto_edges, wise_edges, trad_edges, yc_edges = await asyncio.gather(
+    # ── Rate limiting ────────────────────────────────────────────────────────
+    from coinnect.db.keys import check_rate_limit, check_anonymous
+    if x_api_key:
+        allowed, info = check_rate_limit(x_api_key)
+        if not allowed:
+            raise _rate_limit_error(info)
+    else:
+        ip = _get_client_ip(request)
+        allowed, info = check_anonymous(ip)
+        if not allowed:
+            raise _rate_limit_error(info)
+
+    # ── Fetch edges & build quote ────────────────────────────────────────────
+    from coinnect.exchanges.remittance_adapter import get_remittance_edges
+    crypto_edges, wise_edges, trad_edges, yc_edges, remit_edges = await asyncio.gather(
         get_all_edges(),
         get_wise_edges(),
         get_traditional_edges(),
         get_yellowcard_edges(),
+        get_remittance_edges(),
     )
-    all_edges = crypto_edges + wise_edges + trad_edges + yc_edges
+    all_edges = crypto_edges + wise_edges + trad_edges + yc_edges + remit_edges
 
     if not all_edges:
         raise HTTPException(503, "Exchange data temporarily unavailable")
@@ -87,6 +150,9 @@ async def quote(
             "This corridor may not be supported yet. "
             "Check /v1/corridors for supported pairs."
         )
+
+    source = "api" if x_api_key else "web"
+    asyncio.create_task(_log_search(from_, to, amount, len(result.routes), x_api_key, user_agent, source))
 
     return QuoteOut(
         from_currency=result.from_currency,
@@ -146,21 +212,27 @@ async def corridors():
 async def history(
     from_: str = Query(..., alias="from", description="Source currency, e.g. USD"),
     to: str = Query(..., description="Destination currency, e.g. NGN"),
-    days: int = Query(7, ge=1, le=30, description="Number of days of history"),
+    days: int = Query(None, ge=1, le=365),
+    minutes: int = Query(None, ge=15, le=43200),
 ):
     """
-    Returns time-series of the best route's fee% and received amount for a currency corridor.
-
-    Snapshots are captured automatically every 3 minutes for key corridors.
-    Use this to display sparkline charts or detect fee trends.
+    Returns time-series of the best route's fee% and received amount for a corridor.
+    Snapshots captured every 3 minutes for key corridors.
     """
     from coinnect.db.history import get_history, get_stats
-    points = get_history(from_.upper(), to.upper(), days)
-    stats = get_stats(from_.upper(), to.upper(), days)
+    if minutes is not None:
+        minutes_back = minutes
+    elif days is not None:
+        minutes_back = days * 24 * 60
+    else:
+        minutes_back = 7 * 24 * 60
+
+    points = get_history(from_.upper(), to.upper(), minutes_back)
+    stats = get_stats(from_.upper(), to.upper(), minutes_back)
     return {
         "from_currency": from_.upper(),
         "to_currency": to.upper(),
-        "days": days,
+        "minutes": minutes_back,
         "points": points,
         "stats": stats,
     }
@@ -172,8 +244,49 @@ async def health():
     return {
         "ok": True,
         "status": "live",
-        "version": "0.3.0",
-        "exchanges_online": len(SUPPORTED_EXCHANGES) + 2,  # +Bitso +YellowCard
+        "version": "2026.03.21.1",
+        "exchanges_online": len(SUPPORTED_EXCHANGES) + 2,
         "history_db": str(DB_PATH),
         "checked_at": datetime.now(UTC).isoformat(),
     }
+
+
+# ── API Key endpoints ─────────────────────────────────────────────────────────
+
+@router.post("/keys", summary="Generate a self-serve API key", tags=["API Keys"])
+async def create_key(label: str | None = Query(None, max_length=80)):
+    """
+    Generate an API key instantly — no signup, no email, no password.
+
+    The key is issued in the **free** tier (1,000 requests/day, 100/hour).
+    Store it safely: it cannot be recovered if lost (generate a new one).
+
+    Use it as the `X-Api-Key` header:
+    ```
+    curl -H "X-Api-Key: cn_..." https://coinnect.bot/v1/quote?from=USD&to=MXN&amount=500
+    ```
+    """
+    from coinnect.db.keys import create_key as _create_key, TIER_LIMITS
+    api_key = _create_key(tier="free", label=label)
+    limits = TIER_LIMITS["free"]
+    return {
+        "api_key": api_key,
+        "tier": "free",
+        "limit_per_day": limits["day"],
+        "limit_per_hour": limits["hour"],
+        "message": "Store this key — it cannot be recovered. Generate a new one if lost.",
+        "usage": "GET /v1/keys/usage  with header  X-Api-Key: <your key>",
+    }
+
+
+@router.get("/keys/usage", summary="Check usage for a key", tags=["API Keys"])
+async def key_usage(x_api_key: str = Header(..., description="Your Coinnect API key (cn_...)")):
+    """
+    Returns today's request count and remaining quota.
+    Pass the key in the `X-Api-Key` header — never in the URL.
+    """
+    from coinnect.db.keys import get_usage
+    result = get_usage(x_api_key)
+    if "error" in result:
+        raise HTTPException(404, "Key not found")
+    return result

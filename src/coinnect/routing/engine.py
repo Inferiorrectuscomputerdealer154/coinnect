@@ -17,6 +17,8 @@ class Step:
     fee_pct: float
     estimated_minutes: int
     instructions: str
+    min_amount: float = 0.01
+    max_amount: float = 1_000_000.0
 
 
 @dataclass
@@ -50,6 +52,8 @@ class Edge:
     estimated_minutes: int
     instructions: str = ""
     exchange_rate: float = 1.0  # units of to_currency per 1 from_currency
+    min_amount: float = 0.01    # minimum send amount in from_currency
+    max_amount: float = 1_000_000.0  # maximum send amount in from_currency
 
 
 def build_graph(edges: list[Edge]) -> dict[str, list[Edge]]:
@@ -112,20 +116,31 @@ def find_routes(
     start: str,
     end: str,
     amount: float,
-    max_routes: int = 8,
+    max_routes: int = 12,
     max_steps: int = 3,
 ) -> list[tuple[float, float, list[Edge]]]:
     """
-    Find diverse routes — runs Dijkstra twice (by cost, by time) and merges.
+    Find diverse routes — collects all direct single-step routes, then uses
+    Dijkstra for multi-step paths (cost and time optimized). Merges and deduplicates.
     Returns list of (total_cost_pct, amount_received, path).
     """
+    # 1. All direct routes (single-step, any provider) — sorted by cost
+    direct: list[tuple[float, float, list[Edge]]] = []
+    for edge in graph.get(start, []):
+        if edge.to_currency == end:
+            received = amount * edge.exchange_rate * (1 - edge.fee_pct / 100)
+            direct.append((edge.fee_pct, received, [edge]))
+    direct.sort(key=lambda x: x[0])
+
+    # 2. Multi-step routes via Dijkstra (max_steps >= 2)
     by_cost = _dijkstra(graph, start, end, amount, optimize="cost", max_routes=5, max_steps=max_steps)
     by_time = _dijkstra(graph, start, end, amount, optimize="time", max_routes=3, max_steps=max_steps)
+    multi_step = [r for r in by_cost + by_time if len(r[2]) > 1]
 
-    # Merge, deduplicating by path signature (set of via names per step)
+    # 3. Merge, deduplicating by path signature
     seen: set[tuple] = set()
     merged = []
-    for cost, received, path in by_cost + by_time:
+    for cost, received, path in direct + multi_step:
         sig = tuple((e.from_currency, e.to_currency, e.via) for e in path)
         if sig not in seen:
             seen.add(sig)
@@ -140,7 +155,9 @@ def build_quote(
     to_currency: str,
     amount: float,
 ) -> QuoteResult:
-    graph = build_graph(edges)
+    # Filter edges to only those compatible with the requested amount
+    valid_edges = [e for e in edges if e.min_amount <= amount <= e.max_amount]
+    graph = build_graph(valid_edges)
     raw_routes = find_routes(graph, from_currency, to_currency, amount)
 
     if not raw_routes:
@@ -156,27 +173,16 @@ def build_quote(
     cheapest_idx = min(range(len(raw_routes)), key=lambda i: raw_routes[i][0])
     fastest_idx = min(range(len(raw_routes)), key=lambda i: sum(e.estimated_minutes for e in raw_routes[i][2]))
 
-    # Balanced: best normalized cost*0.6 + time*0.4 score, excluding already-labeled
-    max_cost = max(r[0] for r in raw_routes) or 1
-    max_time = max(sum(e.estimated_minutes for e in r[2]) for r in raw_routes) or 1
+    # Assign labels: Cheapest + Fastest featured, rest as Option N
+    featured_indices = []
+    for idx in [cheapest_idx, fastest_idx]:
+        if idx not in featured_indices:
+            featured_indices.append(idx)
 
-    def balance_score(i):
-        cost_n = raw_routes[i][0] / max_cost
-        time_n = sum(e.estimated_minutes for e in raw_routes[i][2]) / max_time
-        return cost_n * 0.6 + time_n * 0.4
-
-    used = {cheapest_idx, fastest_idx}
-    remaining = [i for i in range(len(raw_routes)) if i not in used]
-    balanced_idx = min(remaining, key=balance_score) if remaining else cheapest_idx
-
-    # Assign labels: featured first, then extras
-    featured_order = []
-    for idx in [cheapest_idx, balanced_idx, fastest_idx]:
-        if idx not in [x[0] for x in featured_order]:
-            featured_order.append((idx, ["Cheapest", "Balanced", "Fastest"][len(featured_order)]))
-
-    extra_indices = [i for i in range(len(raw_routes)) if i not in {x[0] for x in featured_order}]
-    all_ordered = featured_order + [(i, f"Option {j+4}") for j, i in enumerate(extra_indices)]
+    labels = ["Cheapest", "Fastest"]
+    featured_order = [(idx, labels[i]) for i, idx in enumerate(featured_indices)]
+    extra_indices = [i for i in range(len(raw_routes)) if i not in set(featured_indices)]
+    all_ordered = featured_order + [(i, f"Option {j+1}") for j, i in enumerate(extra_indices)]
 
     routes = []
     for rank, (raw_idx, label) in enumerate(all_ordered, start=1):
@@ -191,6 +197,8 @@ def build_quote(
                 fee_pct=e.fee_pct,
                 estimated_minutes=e.estimated_minutes,
                 instructions=e.instructions or f"Convert {e.from_currency} to {e.to_currency} via {e.via}",
+                min_amount=e.min_amount,
+                max_amount=e.max_amount,
             )
             for j, e in enumerate(path)
         ]

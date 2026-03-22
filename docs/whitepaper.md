@@ -1,9 +1,9 @@
 # Coinnect: The Open Route Guide for Global Money
 
-**Version:** 0.3 (Draft — March 2026)
+**Version:** 0.1 (March 2026)
 **Author:** [Miguel V.](https://www.linkedin.com/in/miguelvalenciav/)
 **Domain:** coinnect.bot
-**Status:** Pre-launch white paper
+**Status:** Live — public beta
 
 ---
 
@@ -49,7 +49,6 @@ The deeper problem isn't just cost — it's fragmentation. Global money doesn't 
 - **GCash** (Philippines) — 80 million users, telco-backed, entirely self-contained
 - **bKash** (Bangladesh) — 65 million users, the financial backbone of an entire country
 - **UPI** (India) — a government protocol with 400 million users across PhonePe, Paytm, Google Pay
-- **Alipay / WeChat Pay** (China) — over a billion users combined, accessible only with a Chinese bank account
 - **Wave** (West Africa) — Senegal, Mali, Côte d'Ivoire, growing fast
 - **El Dorado** (Latin America) — digital dollar P2P network built to work around local currency instability
 
@@ -89,17 +88,11 @@ Coinnect aggregates real-time pricing data from exchanges, calculates all viable
       "total_time_minutes": 60,
       "steps": [
         {"from": "USD", "to": "USDC", "via": "Kraken",     "fee_pct": 0.5},
-        {"from": "USDC", "to": "NGN",  "via": "YellowCard", "fee_pct": 0.9}
+        {"from": "USDC", "to": "NGN",  "via": "Yellow Card", "fee_pct": 0.9}
       ],
       "you_send": 500.00,
-      "they_receive_NGN": 762450,
-      "vs_direct_saving_usd": 21.50
-    },
-    {
-      "rank": 2,
-      "label": "Fastest (15 min)",
-      "total_cost_pct": 2.1,
-      ...
+      "they_receive": 762450,
+      "they_receive_currency": "NGN"
     }
   ]
 }
@@ -113,23 +106,21 @@ The internet moves data through routers. Routers don't read your emails. They do
 
 Coinnect is the router for money. It doesn't touch the transfer. It finds the path.
 
-Think of it as a universal adapter: when you travel, you don't rebuild the electrical grid of each country — you carry a small device that translates between them. Coinnect is that adapter for the fragmented global payment landscape. Every closed ecosystem stays exactly as it is. Coinnect just knows how to move value between all of them.
-
 **The value is in the information, not the transaction.** And because Coinnect never touches transactions, it needs no money transmitter license, holds no regulatory risk, and has no reason — structural or financial — to favor any ecosystem over another.
 
 ### 2.3 For humans and machines
 
 Coinnect has two interfaces built from day one:
 
-**For humans:** A simple web interface at coinnect.bot. Enter amount, origin currency, destination currency. Get a ranked table of routes. Click any route for step-by-step instructions. No account required.
+**For humans:** A simple web interface at coinnect.bot. Enter amount, origin currency, destination currency. Get a ranked list of routes with exchange logos, step-by-step instructions, and requirements. No account required.
 
 **For machines:** A public REST API returning the same data as JSON. Any AI agent, chatbot, or automated system can query Coinnect as a tool and route payments optimally without human intervention.
 
 ```
-GET https://api.coinnect.bot/v1/quote?from=USD&to=NGN&amount=500
+GET https://coinnect.bot/v1/quote?from=USD&to=NGN&amount=500
 ```
 
-This is the infrastructure layer that today doesn't exist: an open, neutral, machine-readable exchange router.
+**For agents (MCP):** A Model Context Protocol server (`python -m coinnect.mcp_server`) exposes three tools — `coinnect_quote`, `coinnect_corridors`, `coinnect_explain_route` — compatible with Claude Code, Claude Desktop, and any MCP client.
 
 ---
 
@@ -147,20 +138,11 @@ Coinnect is funded entirely by voluntary donations from users who save money usi
 
 No advertising. No affiliate fees. No investor expectations. No exit.
 
-### 3.3 Infrastructure cost
+### 3.3 Infrastructure
 
-Coinnect is designed to run at minimal cost:
+Coinnect is designed to run at minimal cost. The current deployment runs on a single Linux server serving the FastAPI application, SQLite databases for rate history and analytics, and the static web frontend. No serverless, no CDN required at current scale.
 
-| Layer | Service | Cost/month |
-|-------|---------|-----------|
-| API + cron jobs | Cloudflare Workers | $5 |
-| Quote engine (2 regions) | Fly.io shared instances | ~$14 |
-| Rate cache | Upstash Redis (serverless) | $0–10 |
-| Analytics | Turso (SQLite edge) | $0–8 |
-| Frontend | Cloudflare Pages | $0 |
-| **Total** | | **$28–37/mo** |
-
-At $28/month of infrastructure, Coinnect can serve hundreds of thousands of users per month. A single $25 monthly donor covers the entire server cost. This is not a sustainability risk — it is a structural advantage over any VC-backed competitor that needs to monetize at scale.
+As traffic grows, the architecture is trivially horizontally scalable: the quote engine is stateless, the SQLite history store can be migrated to libSQL/Turso for edge distribution, and the static frontend can be moved to any CDN.
 
 ### 3.4 Transparent compensation
 
@@ -168,33 +150,59 @@ The founder's compensation and all operational expenses are published publicly. 
 
 ---
 
-## 4. Exchanges — Inclusion Criteria
+## 4. Providers — Inclusion Criteria
 
-Coinnect includes any exchange that meets three criteria:
+Coinnect includes providers that meet these criteria:
 
-1. **Has a public, documented API** — we can query rates programmatically
-2. **Is regulated in at least one jurisdiction** — reduces counterparty risk for users
-3. **Has no credible fraud or insolvency history** — basic user protection
+1. **Publicly documented pricing** — either via a real-time API or published fee tables
+2. **Regulated in at least one jurisdiction** — reduces counterparty risk for users
+3. **No credible fraud or insolvency history** — basic user protection
 
-We do not charge exchanges to be listed. We do not accept payment for rankings. Any exchange that meets the criteria is included. Any exchange that fails the criteria is excluded — regardless of who they are.
+We do not charge providers to be listed. We do not accept payment for rankings. Any provider that meets the criteria is included; any that fails is excluded — regardless of who they are.
 
-### 4.1 Launch exchange set (MVP)
+Providers without a live public API are included with fees sourced from their published pricing pages, clearly labeled as **~estimated** in route instructions. Users are always advised to verify on the provider's official site before transacting.
 
-| Exchange | Type | Corridors | Notes |
-|----------|------|-----------|-------|
-| Western Union | Traditional remittance | 200+ countries | The expensive baseline — showing the comparison |
-| MoneyGram | Traditional remittance | 200+ countries | Same — their pricing validates the problem |
-| Wise | Fiat transfer | 80+ currencies | Best mid-tier fiat option |
-| Coinbase | Crypto exchange | USD, EUR, major crypto | Regulated, excellent API, US anchor |
-| Kraken | Crypto exchange | USD, EUR, major crypto | Regulated, reliable |
-| Binance | Crypto exchange | Global | Largest liquidity, USDC routing |
-| Bitso | LatAm crypto | MXN, ARS, BRL, USD | Leading LatAm exchange |
-| Yellow Card | Africa crypto | NGN, GHS, KES, ZAR | Africa's leading regulated exchange |
-| Lemon Cash | LatAm crypto | ARS | Argentina-native |
+### 4.1 Integrated providers (as of March 2026)
+
+**Crypto exchanges (live rates via CCXT):**
+
+| Provider | Type | Key corridors |
+|----------|------|---------------|
+| Binance | Crypto exchange | Global, largest USDC/USDT liquidity |
+| Kraken | Crypto exchange | USD, EUR, major crypto |
+| Coinbase | Crypto exchange | USD, EUR, regulated US anchor |
+| Bitso | LatAm crypto | MXN, ARS, BRL — SPEI delivery |
+
+**Specialized fiat/crypto bridges:**
+
+| Provider | Type | Key corridors |
+|----------|------|---------------|
+| Yellow Card | Africa crypto→fiat | NGN, GHS, KES, UGX, TZS, ZAR, XAF, RWF |
+| Wise | Global fiat transfer | 80+ currencies, live rate API |
+
+**Remittance networks (estimated fees from published pricing):**
+
+| Provider | Coverage | Est. fee range | Notes |
+|----------|----------|----------------|-------|
+| Remitly | 170+ countries | 1.2–3.8% | Strong LatAm, Asia, Africa |
+| WorldRemit | 130+ countries | 2.2–4.2% | Strong Africa |
+| Ria | 165+ countries | 2.8–4.5% | 490k+ agent locations |
+| Sendwave | Africa, W. Africa | 1.5–2.0% | No transfer fee, FX spread only |
+| Xoom (PayPal) | 160+ countries | 2.8–5.0% | Large US diaspora user base |
+| Paysend | 160+ countries | 2.0–3.6% | Card-to-card delivery |
+| OFX | Major currencies | 0.5–0.7% | Best for large transfers (min ~$250) |
+| TransferGo | Europe focus | 1.1–2.5% | Eastern Europe corridors |
+| Skrill | 120+ countries | 2.7–4.5% | E-wallet, gaming/freelancer use |
+| Revolut | Global (app) | 1.1–2.0% | Standard plan limits apply |
+
+**Comparison baseline:**
+
+| Provider | Type | Notes |
+|----------|------|-------|
+| Western Union | Traditional | ~200 countries, cash or bank |
+| MoneyGram | Traditional | ~200 countries, cash or bank |
 
 **Why include Western Union and MoneyGram?** Because the comparison only makes sense when you can see the full spectrum. When Coinnect shows that a USDC route saves you $22 versus Western Union on the same corridor, the value proposition is immediate and concrete. We include them not to attack them — but because completeness is honesty.
-
-More exchanges added as APIs are verified and criteria confirmed.
 
 ---
 
@@ -207,63 +215,103 @@ At its core, Coinnect runs a shortest-path algorithm across a live graph where:
 - **Edges** = exchange pairs with real-time fee and rate data
 - **Weight** = total cost (fees + spread) or total time, depending on user preference
 
-The engine refreshes rates every few minutes via exchange APIs and caches results for performance.
+The engine uses a two-phase approach:
 
-### 5.2 API design
+1. **Direct routes** — all single-step provider edges for the requested corridor are collected and ranked by cost. This ensures every provider is surfaced, not just the cheapest one.
+2. **Multi-step routes** — two Dijkstra runs (cost-optimized and time-optimized) find the best multi-hop paths (e.g., USD → USDC via Coinbase → NGN via Yellow Card).
 
-The API is designed to be consumed by both developers and AI agents:
+Results are merged, deduplicated by path signature, and returned as up to 12 ranked routes. The top three receive featured labels (Cheapest, Balanced, Fastest); the rest appear as numbered options.
+
+### 5.2 Rate refresh
+
+Exchange rates refresh every 3 minutes via a background asyncio task. Rates are sourced from:
+- **CCXT** for crypto exchange pairs (Binance, Kraken, Coinbase, Bitso)
+- **open.er-api.com** for fiat cross-rates (free, no auth, ~hourly updates)
+- **Provider pricing pages** for static remittance corridors (updated manually)
+
+### 5.3 Rate history
+
+Every 3-minute refresh stores a snapshot for 18 tracked corridors in a SQLite database. This powers the dual sparkline charts on the web UI, showing how the effective exchange rate (not just the fee %) has moved over 15m / 1h / 1d / 7d / 28d / 1y windows.
+
+The timestamp comparison bug common in SQLite (ISO 8601 with timezone vs. `datetime('now')` format mismatch) is handled by normalizing stored timestamps to `YYYY-MM-DD HH:MM:SS` format before comparison.
+
+### 5.4 API design
 
 ```
-GET  /v1/quote         — Get ranked routes for a transfer
-GET  /v1/exchanges     — List all integrated exchanges
-GET  /v1/corridors     — Most active currency pairs
-GET  /v1/health        — API status
+GET  /v1/quote              — Ranked routes for a transfer
+GET  /v1/history            — Time-series rate data for a corridor (?from=&to=&minutes=)
+GET  /v1/exchanges          — List all integrated providers
+GET  /v1/corridors          — Most active currency pairs
+GET  /v1/health             — API status
+POST /v1/keys               — Generate a self-serve API key (no signup)
+GET  /v1/keys/{key}/usage   — Today's usage for a key
+GET  /v1/suggestions        — Community-submitted provider suggestions
+POST /v1/suggestions        — Submit a new provider suggestion
+POST /v1/suggestions/{id}/upvote — Upvote (fingerprint-gated, one vote per device)
 ```
 
-Full OpenAPI specification published at launch. Any AI agent (Claude, GPT, Gemini, or local models) can call these endpoints as tools.
+Full OpenAPI specification available at `/docs`.
 
-### 5.3 Machine-readable by design
+### 5.5 API keys — userless by design
 
-Coinnect is built for the emerging world of autonomous agents making financial decisions. This requires speaking the languages that machines already use.
+Coinnect's key system is deliberately stateless on the user side:
 
-**The standards Coinnect supports:**
+- `POST /v1/keys` generates a `cn_...` UUID key instantly — no email, no account, no OAuth
+- The key is stored in SQLite with a tier (`free`: 1,000 req/day) and optional label
+- Rate counting is in-memory (O(1) per request, dict keyed by API key)
+- Memory is backed by SQLite and survives restarts via cache warm-up
+- Lost key? Generate a new one. No recovery, no support ticket.
 
-| Standard | What it is | Who uses it |
-|----------|-----------|-------------|
-| **OpenAPI 3.0** | Machine-readable API specification | All HTTP clients, any language |
-| **JSON Schema** | Data structure validation | Universal |
-| **OpenAI Tool format** | Function definition for AI agents | GPT-4, GPT-4o and compatible |
-| **Anthropic Tool Use** | Same concept, Claude's format | Claude 3+ |
-| **MCP (Model Context Protocol)** | Anthropic's emerging standard for AI↔tool connections | Claude Code, early adopters |
+Anonymous access (no key) allows 100 req/day. Key holders get 1,000 req/day. Self-hosters get unlimited.
 
-Any AI agent that can make an HTTP request can use Coinnect today. Any agent built on major AI frameworks (LangChain, LlamaIndex, AutoGen) can use it as a tool with a single function definition.
+### 5.6 Machine-readable by design
 
-**Example tool definition (OpenAI/Claude format):**
-```json
-{
-  "name": "coinnect_quote",
-  "description": "Find the cheapest routes to send money between currencies. Returns ranked routes with fees, exchange rates, and step-by-step instructions.",
-  "parameters": {
-    "from_currency": "string — ISO 4217 code (USD, MXN, NGN...)",
-    "to_currency": "string — ISO 4217 code",
-    "amount": "number — amount in from_currency"
-  }
-}
+Coinnect is built for the emerging world of autonomous agents making financial decisions.
+
+| Standard | What it is | Supported |
+|----------|-----------|-----------|
+| **OpenAPI 3.0** | Machine-readable API spec | ✓ `/docs` |
+| **JSON Schema** | Data structure validation | ✓ |
+| **MCP (Model Context Protocol)** | AI↔tool connections | ✓ `coinnect.mcp_server` |
+| **OpenAI Tool format** | Function definition for AI agents | ✓ compatible |
+| **Anthropic Tool Use** | Claude's tool format | ✓ compatible |
+| **llms.txt** | Site summary for LLM crawlers | Planned |
+
+**Example MCP tool call:**
+```
+User: "I need to send $500 to my sister in Kenya."
+Agent: → calls coinnect_quote(from="USD", to="KES", amount=500)
+Agent: "The cheapest route is via Coinbase + Yellow Card at 1.3% total cost,
+        delivering ~66,500 KES in about 20 minutes. Sendwave is also a great
+        option at 1.5% with no transfer fee."
 ```
 
-A user tells an AI agent: _"I need to send $500 to my sister in Kenya."_ The agent calls `coinnect_quote`, receives the ranked routes as JSON, and responds in natural language with the best option. No human needs to open a browser.
+### 5.7 No custody, no KYC
 
-This is the machine gap Coinnect fills: not payment execution, but **payment intelligence** — freely available, openly documented, permanently neutral.
+Coinnect never holds funds, never processes payments, and never collects user identity information. Each provider handles its own KYC requirements. Coinnect is purely informational — legally and technically.
 
-### 5.4 No custody, no KYC
+### 5.8 Backoffice & observability
 
-Coinnect never holds funds, never processes payments, and never collects user identity information. Each exchange handles its own KYC requirements. Coinnect is purely informational — legally and technically.
+A password-protected admin panel at `/admin` provides:
+- **Search analytics** — total queries today, split by web vs. API, top corridors, 7-day trend
+- **Provider management** — pause or re-enable any provider without a code deploy
+- **Recent searches** — last 50 queries with corridor, amount, and source
+
+Every `/v1/quote` call is logged asynchronously (non-blocking) to the analytics SQLite table, capturing corridor, amount, API key prefix, source type, and route count.
 
 ---
 
-## 6. Legal & Regulatory
+## 6. Disclaimer & Rate Accuracy
 
-### 6.1 What Coinnect is not
+Exchange rates and fees displayed on Coinnect are sourced from provider APIs and published pricing pages. Live-rate providers (Binance, Kraken, Coinbase, Bitso, Wise, Yellow Card) refresh every 3 minutes. Estimated-fee providers (labeled **~est.**) use manually verified fee ranges from published pricing.
+
+**Coinnect makes no warranty about rate accuracy.** Rates change in seconds. Always verify the current rate directly with the provider before executing any transfer. Coinnect is an information service only — it does not execute transfers, hold funds, or act as a financial intermediary. Any decision made based on information shown here is at the user's sole risk.
+
+---
+
+## 7. Legal & Regulatory
+
+### 7.1 What Coinnect is not
 
 Coinnect is a **price comparison and routing information service**. It is not:
 
@@ -273,36 +321,30 @@ Coinnect is a **price comparison and routing information service**. It is not:
 - A financial advisor
 - A custodian of any kind
 
-Coinnect never holds user funds, never processes transactions, and never has access to user wallets or accounts. Every transfer is executed entirely by the third-party exchange the user chooses to use, under that exchange's own regulatory framework.
-
-### 6.2 Regulatory classification
+### 7.2 Regulatory classification
 
 In most jurisdictions, a service that provides publicly available pricing information and routing recommendations — without executing, facilitating, or touching transactions — does not require a money services business (MSB) license or equivalent.
 
 This mirrors the legal position of price comparison services like Google Flights (which shows flight prices without being an airline) or Monito (which compares transfer fees without being a remittance service).
 
-Users are responsible for complying with the regulations of their own jurisdiction and the KYC/AML requirements of each exchange they choose to use. Coinnect does not provide legal or financial advice.
+### 7.3 Data privacy
 
-### 6.3 Data privacy
-
-Coinnect does not collect personal information. Quote requests include only currency types and amounts — no user identity, no wallet addresses, no IP logging. Optional analytics (GA4, opt-out available via `/?notrack`) collect only aggregate usage patterns.
+Coinnect does not collect personal information. Quote requests include only currency types and amounts. Analytics logs capture aggregate usage (corridor, amount range, source type) but no user identity, wallet addresses, or IP addresses in persistent storage. Optional GA4 analytics can be opted out via `/?notrack`.
 
 ---
 
-## 7. Roadmap
+## 8. Roadmap
 
 | Phase | Timeline | Milestone |
 |-------|----------|-----------|
-| 0 — Foundation | March 2026 | White paper, GitHub repo, coinnect.bot live |
-| 1 — MVP | April 2026 | Quote API live, 8 exchanges, USD/MXN/BRL/ARS/NGN/PHP/KES |
-| 2 — Public launch | May 1, 2026 | Web UI, public API, MCP server, donation wallet |
-| 3 — Community | Q3 2026 | User-contributed exchange reviews, rate accuracy feedback |
-| 4 — Ecosystem | Q4 2026 | Stellar anchors (M-Pesa, Wave, GCash), `pip install coinnect-tool` |
-| 5 — Global | 2027 | 30+ exchanges, 50+ currencies, Africa + Asia full coverage |
+| Public launch | Q2 2026 | GitHub repo public, rate limiting enforced, Remitly live API |
+| Community | Q3 2026 | Provider suggestion board, rate accuracy feedback, user reviews |
+| Ecosystem | Q4 2026 | Stellar anchors (M-Pesa, Wave, GCash), `pip install coinnect-tool` |
+| Global | 2027 | 30+ providers, 60+ currencies, Africa + Asia full coverage |
 
 ---
 
-## 8. The Founder
+## 9. The Founder
 
 [Miguel V.](https://www.linkedin.com/in/miguelvalenciav/) built Coinnect because the problem is real, the solution is simple, and nobody was building it without a business model attached.
 
@@ -312,7 +354,7 @@ He intends to do this for as long as it is useful.
 
 ---
 
-## 9. Vision
+## 10. Vision
 
 Before GPS, every driver carried a road atlas. It didn't drive. It didn't own the roads. It had no preference for which highway you took. You trusted it precisely because it had no stake in your route — it just knew every path and showed you all of them.
 
@@ -328,5 +370,5 @@ Eventually: machines consult it automatically, and money moves at its natural co
 
 ---
 
-*This document is version 0.3. It will be updated publicly as the project develops.*
-*All feedback welcome at miguel@coinnect.bot*
+*This document is version 0.4. Updated as the project evolves.*
+*Feedback: miguel@coinnect.bot*
