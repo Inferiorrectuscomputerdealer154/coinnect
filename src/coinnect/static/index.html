@@ -18,7 +18,7 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-CKBJHEVM2X"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CKBJHEVM2X');</script>
 
-  <script src="/static/i18n.js?v=2026.03.21.2"></script>
+  <script src="/static/i18n.js?v=2026.03.21.3"></script>
   <script>initLang();</script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={darkMode:'class'};</script>
@@ -347,14 +347,26 @@
           <span id="chartALabel" class="text-xs text-gray-400 font-mono"></span>
           <span id="chartAStats" class="text-xs text-gray-400"></span>
         </div>
-        <div id="sparklineA" class="h-16"></div>
+        <div id="sparklineA" class="h-32"></div>
       </div>
       <div>
         <div class="flex items-center justify-between mb-1">
           <span id="chartBLabel" class="text-xs text-gray-400 font-mono"></span>
           <span id="chartBStats" class="text-xs text-gray-400"></span>
         </div>
-        <div id="sparklineB" class="h-16"></div>
+        <div id="sparklineB" class="h-32"></div>
+      </div>
+    </div>
+    <!-- Corridor comparison -->
+    <div class="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Compare corridors</span>
+        <span class="text-xs text-gray-400">— fee % over time</span>
+      </div>
+      <div id="corridorCheckboxes" class="flex flex-wrap gap-x-3 gap-y-1.5 mb-3"></div>
+      <div id="multiChartWrap" class="hidden">
+        <div id="multiChartLegend" class="flex flex-wrap gap-x-4 gap-y-1 mb-2 text-xs"></div>
+        <div id="multiChart" class="h-40"></div>
       </div>
     </div>
   </div>
@@ -559,7 +571,7 @@
   &nbsp;·&nbsp;
   <button onclick="openDisclaimer()" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors" data-i18n="footer_disclaimer">Disclaimer</button>
   &nbsp;·&nbsp;
-  <span class="opacity-50">2026.03.21.1</span>
+  <span class="opacity-50">2026.03.21.3</span>
 </footer>
 
 <script>
@@ -942,7 +954,7 @@ function renderChart(wrapId,labelId,statsId,points,amount,fromC,toC,gradId){
   const minR=Math.min(...rates),maxR=Math.max(...rates);
   const range=maxR-minR||maxR*0.001||0.01;
 
-  const W=wrap.clientWidth||500,H=64;
+  const W=wrap.clientWidth||500,H=128;
   const px=(i)=>i/(rates.length-1)*W;
   const py=(r)=>H-((r-minR)/range)*(H-10)-4;
 
@@ -1007,8 +1019,91 @@ async function loadHistory(fromC,toC,minutes){
   }catch(e){bar.classList.add('hidden');}
 }
 
+// ── Multi-corridor comparison chart ───────────────────────────────────────
+const COMPARE_CORRIDORS=[
+  {from:'USD',to:'MXN',amt:500,label:'USD→MXN'},
+  {from:'USD',to:'BRL',amt:500,label:'USD→BRL'},
+  {from:'USD',to:'NGN',amt:500,label:'USD→NGN'},
+  {from:'USD',to:'KES',amt:500,label:'USD→KES'},
+  {from:'USD',to:'PHP',amt:500,label:'USD→PHP'},
+  {from:'USD',to:'INR',amt:500,label:'USD→INR'},
+  {from:'USD',to:'GHS',amt:500,label:'USD→GHS'},
+  {from:'USD',to:'ARS',amt:500,label:'USD→ARS'},
+  {from:'MXN',to:'USD',amt:5000,label:'MXN→USD'},
+];
+const COMPARE_COLORS=['#06b6d4','#f59e0b','#8b5cf6','#10b981','#ef4444','#3b82f6','#ec4899','#f97316','#14b8a6'];
+let _checkedCorridors=new Set();
+
+function initCorridorCheckboxes(){
+  const wrap=document.getElementById('corridorCheckboxes');
+  if(!wrap)return;
+  wrap.innerHTML=COMPARE_CORRIDORS.map((c,i)=>`
+    <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+      <input type="checkbox" class="corridor-cb w-3.5 h-3.5 rounded accent-cyan-500"
+        data-idx="${i}" onchange="toggleCorridor(${i})">
+      <span class="text-xs font-mono" style="color:${COMPARE_COLORS[i]}">${c.label}</span>
+    </label>`).join('');
+}
+
+async function toggleCorridor(idx){
+  const cb=document.querySelector(`.corridor-cb[data-idx="${idx}"]`);
+  if(cb.checked)_checkedCorridors.add(idx); else _checkedCorridors.delete(idx);
+  await renderMultiChart();
+}
+
+async function renderMultiChart(){
+  const wrap=document.getElementById('multiChartWrap');
+  const chartEl=document.getElementById('multiChart');
+  const legend=document.getElementById('multiChartLegend');
+  if(_checkedCorridors.size===0){wrap.classList.add('hidden');return;}
+  wrap.classList.remove('hidden');
+  chartEl.innerHTML=`<div class="text-xs text-gray-400 text-center pt-6">Loading…</div>`;
+
+  const mins=_histMinutes||10080;
+  const selected=[..._checkedCorridors].map(i=>COMPARE_CORRIDORS[i]);
+
+  const results=await Promise.all(selected.map(c=>
+    fetch(`${API}/v1/history?from=${c.from}&to=${c.to}&minutes=${mins}`)
+      .then(r=>r.json()).catch(()=>null)
+  ));
+
+  // Build series: each = array of {t, pct} sorted by time
+  const series=results.map((d,i)=>{
+    if(!d||!d.points||d.points.length<2)return null;
+    return d.points.map(p=>({t:new Date(p.captured_at).getTime(),pct:p.best_cost_pct}));
+  });
+
+  const valid=series.map((s,i)=>s?{s,c:COMPARE_CORRIDORS[[..._checkedCorridors][i]],col:COMPARE_COLORS[[..._checkedCorridors][i]]}:null).filter(Boolean);
+  if(!valid.length){chartEl.innerHTML=`<p class="text-xs text-gray-400 text-center pt-6">${t('hist_nodata')}</p>`;return;}
+
+  // Global time range + pct range
+  const allT=valid.flatMap(v=>v.s.map(p=>p.t));
+  const allP=valid.flatMap(v=>v.s.map(p=>p.pct));
+  const minT=Math.min(...allT),maxT=Math.max(...allT);
+  const minP=Math.min(...allP),maxP=Math.max(...allP);
+  const rangeP=(maxP-minP)||0.5;
+
+  const W=chartEl.clientWidth||700,H=160;
+  const px=t=>((t-minT)/(maxT-minT||1))*W;
+  const py=p=>H-((p-minP)/rangeP)*(H-12)-4;
+
+  const polylines=valid.map(v=>{
+    const pts=v.s.map(p=>`${px(p.t).toFixed(1)},${py(p.pct).toFixed(1)}`).join(' ');
+    return`<polyline points="${pts}" fill="none" stroke="${v.col}" stroke-width="1.8" stroke-linejoin="round" opacity="0.9"/>`;
+  }).join('');
+
+  // Y axis labels
+  const yLabels=[minP,(minP+maxP)/2,maxP].map(v=>`
+    <text x="2" y="${py(v).toFixed(1)}" font-size="9" fill="#9ca3af" dominant-baseline="middle">${v.toFixed(2)}%</text>`).join('');
+
+  chartEl.innerHTML=`<svg class="w-full" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${polylines}${yLabels}</svg>`;
+
+  legend.innerHTML=valid.map(v=>`<span style="color:${v.col}" class="font-mono">${v.c.label} <span class="text-gray-400 font-sans">${v.s[v.s.length-1].pct.toFixed(2)}%</span></span>`).join('');
+}
+
 // Period button wiring (runs after DOM ready)
 document.addEventListener('DOMContentLoaded',()=>{
+  initCorridorCheckboxes();
   document.querySelectorAll('.hist-period').forEach(btn=>{
     btn.addEventListener('click',()=>{
       document.querySelectorAll('.hist-period').forEach(b=>{
@@ -1017,7 +1112,9 @@ document.addEventListener('DOMContentLoaded',()=>{
       });
       btn.classList.add('active');
       btn.classList.remove('text-gray-500','dark:text-gray-400');
-      if(_histFrom) loadHistory(_histFrom,_histTo,parseInt(btn.dataset.min));
+      _histMinutes=parseInt(btn.dataset.min);
+      if(_histFrom) loadHistory(_histFrom,_histTo,_histMinutes);
+      if(_checkedCorridors.size>0) renderMultiChart();
     });
   });
 });
@@ -1208,6 +1305,34 @@ function renderSavings(routes,amount,from){
     </div>`;
 }
 
+function renderExtrasWithTies(extras,from,to){
+  // Group consecutive routes within 0.1% of each other as "tied"
+  const TIE_THRESHOLD=0.1;
+  const groups=[];
+  let i=0;
+  while(i<extras.length){
+    const group=[extras[i]];
+    while(i+1<extras.length && Math.abs(extras[i+1].total_cost_pct-extras[i].total_cost_pct)<=TIE_THRESHOLD){
+      i++;
+      group.push(extras[i]);
+    }
+    groups.push(group);
+    i++;
+  }
+  return groups.map(group=>{
+    if(group.length===1) return renderCompactRow(group[0],from,to);
+    // Tied group — show side by side in a 2-col (or more) grid with a "=" badge
+    return`<div class="relative">
+      <div class="absolute -top-2 left-1/2 -translate-x-1/2 z-10">
+        <span class="bg-cyan-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">= tied ${group[0].total_cost_pct.toFixed(2)}%</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-${Math.min(group.length,3)} gap-2 pt-2">
+        ${group.map(r=>renderCompactRow(r,from,to)).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
 function renderResults(routes,from,to){
   const filtered=applyFilter(routes);
   document.getElementById('routeCount').textContent=`${filtered.length} route${filtered.length!==1?'s':''}`;
@@ -1247,7 +1372,7 @@ function renderResults(routes,from,to){
     ${extras.length?`
       <div>
         <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">${t('more_options')}</div>
-        <div class="flex flex-col gap-2">${extras.map(r=>renderCompactRow(r,from,to)).join('')}</div>
+        <div class="flex flex-col gap-2">${renderExtrasWithTies(extras,from,to)}</div>
       </div>`:''}
     <div class="mt-6 text-center text-xs text-gray-400 dark:text-gray-600">
       ${t('footer_note')}
