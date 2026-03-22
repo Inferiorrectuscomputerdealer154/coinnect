@@ -1,9 +1,12 @@
 """
 Direct API adapters — live rates from exchanges without CCXT support.
-Bitso (LatAm), Buda (Chile/Colombia/Peru), CoinGecko (emerging market reference).
+Bitso (LatAm), Buda (Chile/Colombia/Peru), CoinGecko (emerging market reference),
+Flutterwave (African corridors).
 """
 
+import asyncio
 import logging
+import os
 import time
 
 import httpx
@@ -20,6 +23,7 @@ _coingecko_cache: dict = {"edges": [], "ts": 0.0}
 _strike_cache: dict = {"edges": [], "ts": 0.0}
 _frankfurter_cache: dict = {"edges": [], "ts": 0.0}
 _currencyapi_cache: dict = {"edges": [], "ts": 0.0}
+_flutterwave_cache: dict = {"edges": [], "ts": 0.0}
 
 BITSO_TTL = 180       # 3 minutes
 BUDA_TTL = 180        # 3 minutes
@@ -27,6 +31,7 @@ COINGECKO_TTL = 300   # 5 minutes
 STRIKE_TTL = 180      # 3 minutes
 FRANKFURTER_TTL = 1800  # 30 minutes (ECB updates daily)
 CURRENCYAPI_TTL = 1800  # 30 minutes
+FLUTTERWAVE_TTL = 300   # 5 minutes
 
 HEADERS = {"User-Agent": "Coinnect/1.0 (coinnect.bot)"}
 
@@ -391,5 +396,89 @@ async def get_currencyapi_edges() -> list[Edge]:
     except Exception as e:
         logger.warning(f"CurrencyAPI adapter failed: {e}")
         return _currencyapi_cache["edges"]
+
+    return edges
+
+
+# ── Flutterwave (African corridors) ─────────────────────────────────────────
+
+FLUTTERWAVE_CORRIDORS = [
+    # (from, to, amount) — amount=500 for fiat, amount=1 for crypto
+    ("USD", "NGN", 500), ("USD", "GHS", 500), ("USD", "KES", 500),
+    ("USD", "ZAR", 500), ("USD", "UGX", 500), ("USD", "TZS", 500),
+    ("USD", "RWF", 500),
+    ("EUR", "NGN", 500), ("EUR", "GHS", 500), ("EUR", "KES", 500),
+    ("GBP", "NGN", 500), ("GBP", "KES", 500),
+    # Reverse corridors
+    ("NGN", "USD", 500), ("KES", "USD", 500), ("GHS", "USD", 500),
+    ("ZAR", "USD", 500),
+]
+FLUTTERWAVE_FEE_PCT = 1.5  # estimated spread vs mid-market
+
+
+async def _fetch_flutterwave_rate(
+    client: httpx.AsyncClient, from_c: str, to_c: str, amount: int,
+) -> Edge | None:
+    """Fetch a single corridor rate from Flutterwave."""
+    try:
+        resp = await client.get(
+            "https://api.flutterwave.com/v3/rates",
+            params={"from": from_c, "to": to_c, "amount": amount},
+        )
+        resp.raise_for_status()
+        body = resp.json()
+        if body.get("status") != "success":
+            return None
+
+        rate = body.get("data", {}).get("rate")
+        if not rate:
+            return None
+
+        return Edge(
+            from_currency=from_c,
+            to_currency=to_c,
+            via="Flutterwave",
+            fee_pct=FLUTTERWAVE_FEE_PCT,
+            estimated_minutes=30,
+            instructions="Flutterwave — bank transfer or mobile money",
+            exchange_rate=float(rate),
+        )
+    except Exception as e:
+        logger.debug(f"Flutterwave {from_c}→{to_c} failed: {e}")
+        return None
+
+
+async def get_flutterwave_edges() -> list[Edge]:
+    """Fetch live rates from Flutterwave for African corridors."""
+    api_key = os.environ.get("FLUTTERWAVE_PUBLIC_KEY")
+    if not api_key:
+        return []
+
+    now = time.monotonic()
+    if _flutterwave_cache["edges"] and (now - _flutterwave_cache["ts"]) < FLUTTERWAVE_TTL:
+        return _flutterwave_cache["edges"]
+
+    edges: list[Edge] = []
+    try:
+        headers = {**HEADERS, "Authorization": f"Bearer {api_key}"}
+        async with httpx.AsyncClient(headers=headers, timeout=20) as client:
+            results = await asyncio.gather(
+                *[
+                    _fetch_flutterwave_rate(client, fc, tc, amt)
+                    for fc, tc, amt in FLUTTERWAVE_CORRIDORS
+                ],
+                return_exceptions=True,
+            )
+
+        for result in results:
+            if isinstance(result, Edge):
+                edges.append(result)
+
+        _flutterwave_cache["edges"] = edges
+        _flutterwave_cache["ts"] = now
+        logger.info(f"Flutterwave: loaded {len(edges)} edges from {len(FLUTTERWAVE_CORRIDORS)} corridors")
+    except Exception as e:
+        logger.warning(f"Flutterwave adapter failed: {e}")
+        return _flutterwave_cache["edges"]  # stale cache on error
 
     return edges
