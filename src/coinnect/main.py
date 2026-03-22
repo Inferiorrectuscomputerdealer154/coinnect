@@ -151,6 +151,20 @@ async def root():
     return FileResponse(STATIC_DIR / "index.html")
 
 
+@app.get("/sitemap.xml", include_in_schema=False)
+async def sitemap():
+    return FileResponse(STATIC_DIR / "sitemap.xml", media_type="application/xml")
+
+
+@app.get("/robots.txt", include_in_schema=False)
+async def robots():
+    return PlainTextResponse(
+        "User-agent: *\n"
+        "Allow: /\n"
+        "Sitemap: https://coinnect.bot/sitemap.xml\n"
+    )
+
+
 @app.get("/llms.txt", include_in_schema=False)
 async def llms_txt():
     return FileResponse(STATIC_DIR / "llms.txt", media_type="text/plain")
