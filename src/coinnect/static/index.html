@@ -634,19 +634,19 @@
     <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-1">25+ providers compared</h2>
     <p class="text-xs text-gray-400 mb-6">Every search checks all providers in real time. No affiliate fees, no hidden markup.</p>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-      <!-- Live rates -->
+      <!-- API rates -->
       <div>
         <div class="flex items-center gap-2 mb-3">
           <span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
-          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Live rates</span>
+          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">API rates</span>
         </div>
         <div id="providersLive" class="flex flex-wrap gap-2"></div>
       </div>
-      <!-- Estimated rates -->
+      <!-- Estimated -->
       <div>
         <div class="flex items-center gap-2 mb-3">
           <span class="w-2 h-2 rounded-full bg-yellow-400 inline-block"></span>
-          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Estimated rates</span>
+          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Estimated</span>
         </div>
         <div id="providersEstimated" class="flex flex-wrap gap-2"></div>
       </div>
@@ -738,8 +738,8 @@ function esc(s){if(s==null)return'';const d=document.createElement('div');d.text
 const LIVE_PROVIDERS=new Set(['Binance','Kraken','Coinbase','Bitso','Luno','Mercado Bitcoin','Bitstamp','Gemini','Wise','Yellow Card']);
 function rateBadge(via){
   return LIVE_PROVIDERS.has(via)
-    ?'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">LIVE</span>'
-    :'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">~EST</span>';
+    ?'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">API RATE</span>'
+    :'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">ESTIMATED</span>';
 }
 function viaBadges(steps){return[...new Set(steps.map(s=>s.via))].map(v=>rateBadge(v)).join('');}
 
