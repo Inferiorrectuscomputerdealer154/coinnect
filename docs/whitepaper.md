@@ -370,10 +370,13 @@ Coinnect does not collect personal information. Quote requests include only curr
 
 | Phase | Timeline | Milestone |
 |-------|----------|-----------|
-| Public beta | Q1 2026 ✓ | GitHub public, open data API, rate history, snapshot permalinks |
-| Community | Q2 2026 | x402 pay-per-use API (USDC/Base), PWA, provider suggestion board |
-| Ecosystem | Q4 2026 | Stellar anchors (M-Pesa, Wave, GCash), `pip install coinnect-tool` |
-| Global | 2027 | 30+ providers, 60+ currencies, Africa + Asia full coverage |
+| Launch | Q1 2026 ✓ | 8 live exchanges, 19 remittance providers, MCP server, open data API |
+| Trust & Accuracy | April 2026 | More LIVE providers, community rate verification, deep-links, delivery filters |
+| Community | May-June 2026 | x402 micropayments (USDC/Base), MTP (Machine Tipping Protocol), Pro API tier |
+| Ecosystem | Q3-Q4 2026 | Stellar anchors, DEX aggregators, MRP v1.0 formal spec, PyPI/npm SDKs |
+| Global | 2027 | 50+ providers, 100+ currencies, legal entity, working group |
+
+Full roadmap with detailed milestones: [`docs/ROADMAP.md`](./ROADMAP.md)
 
 ---
 
