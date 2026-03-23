@@ -650,29 +650,11 @@
   </div>
 </section>
 
-<!-- ── Community suggestions ──────────────────────────────────────────────── -->
-<section id="suggestSection" class="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 px-5 py-10 mt-0">
-  <div class="max-w-2xl mx-auto">
-    <div class="flex items-center justify-between mb-1">
-      <h2 class="text-lg font-bold text-gray-900 dark:text-white">Community requests</h2>
-      <span class="text-xs text-gray-400">Vote for corridors or providers you want added</span>
-    </div>
-    <p class="text-xs text-gray-400 mb-5">Most voted requests get prioritized. If a provider is shown as restricted, it means we investigated but it has API/legal limitations.</p>
-    <div id="suggestionsList" class="space-y-2 mb-6">
-      <div class="text-xs text-gray-400 py-4 text-center">Loading…</div>
-    </div>
-    <!-- Submit form -->
-    <details class="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-      <summary class="px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors select-none">+ Suggest a provider or corridor</summary>
-      <div class="px-4 py-4 space-y-3 border-t border-gray-200 dark:border-gray-700">
-        <input id="sgName" type="text" maxlength="100" placeholder="Provider or corridor name (e.g. 'Wise USD→CLP' or 'Nequi')" class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500">
-        <input id="sgNote" type="text" maxlength="200" placeholder="Why? (optional)" class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500">
-        <div class="flex gap-3">
-          <button onclick="submitSuggestion()" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white text-sm font-medium rounded-lg transition-colors">Submit</button>
-          <span id="sgMsg" class="text-sm text-cyan-600 dark:text-cyan-400 self-center hidden"></span>
-        </div>
-      </div>
-    </details>
+<!-- ── Community suggestions (moved to /suggest) ──────────────────────────── -->
+<section class="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 px-5 py-8">
+  <div class="max-w-2xl mx-auto text-center">
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Missing a corridor or provider?</p>
+    <a href="/suggest" class="inline-block text-sm border border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-5 py-2 rounded-lg hover:border-cyan-500 hover:text-cyan-500 transition-colors">Suggest &amp; vote on new routes →</a>
   </div>
 </section>
 
