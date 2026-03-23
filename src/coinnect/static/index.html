@@ -1651,7 +1651,7 @@ function renderExtrasWithTies(extras,from,to){
       <div class="absolute -top-2 left-1/2 -translate-x-1/2 z-10">
         <span class="bg-cyan-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">= tied ${group[0].total_cost_pct.toFixed(2)}%</span>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-${Math.min(group.length,3)} gap-2 pt-2">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
         ${group.map(r=>renderCompactRow(r,from,to)).join('')}
       </div>
     </div>`;
@@ -1720,7 +1720,7 @@ function renderResults(routes,from,to){
 
   document.getElementById('results').innerHTML=`
     ${renderSavings(filtered,parseFloat(document.getElementById('amount').value),from)}
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5 pt-2">
+    <div class="flex flex-col gap-3 mb-5 pt-2">
       ${featuredHtml}
     </div>
     ${(()=>{
