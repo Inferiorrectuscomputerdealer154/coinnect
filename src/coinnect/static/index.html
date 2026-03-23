@@ -849,6 +849,13 @@ function rateBadge(via){
   return'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-200 dark:border-amber-800">ESTIMATED</span>';
 }
 function viaBadges(steps){return[...new Set(steps.map(s=>s.via))].map(v=>rateBadge(v)).join('');}
+function routeDataType(steps){
+  const allLive=steps.every(s=>LIVE_PROVIDERS.has(s.via));
+  const someLive=steps.some(s=>LIVE_PROVIDERS.has(s.via));
+  if(allLive)return'<span class="text-[9px] text-emerald-500">All rates from live APIs</span>';
+  if(someLive)return'<span class="text-[9px] text-amber-500">Mixed: some live, some estimated</span>';
+  return'<span class="text-[9px] text-amber-500">Rates based on published fee tables</span>';
+}
 
 // ── Currency metadata ──────────────────────────────────────────────────────
 const FLAGS={
@@ -1623,6 +1630,9 @@ function renderFeaturedCard(r,from,to,insideTied=false){
           <div class="text-xs text-gray-400">${feeStr} (${feePctStr}%)</div>
         </div>
       </div>
+      <div class="px-5 py-1.5 border-t border-gray-100 dark:border-gray-800">
+        ${routeDataType(r.steps)}
+      </div>
       <details class="group">
         <summary class="flex items-center justify-between px-5 py-2.5 border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors select-none">
           <span class="text-xs text-gray-400">${t('steps_reqs')}</span>
@@ -1678,6 +1688,7 @@ function renderCompactRow(r,from,to){
           </div>
         </div>
         <div class="px-5 py-2 bg-gray-50 dark:bg-gray-800/40 text-xs font-mono text-gray-500">${t('rate')} ${rate}</div>
+        <div class="px-5 pt-3 mb-2">${routeDataType(r.steps)}</div>
         <div class="px-5 py-4">${renderSteps(r.steps,to)}</div>
         <div class="px-5 pb-5">${renderReqs(r.steps,to)}
           <div class="pt-2 text-right"><a href="#" onclick="reportRate('${from}','${to}','${viaList[0]}',${r.they_receive/r.you_send});return false;" class="text-[10px] text-gray-400 hover:text-cyan-500 transition-colors">Report real rate</a></div>
