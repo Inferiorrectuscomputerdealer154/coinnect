@@ -833,6 +833,11 @@ const REQS={
 };
 
 const FEATURED={'Cheapest':'','Fastest':''};
+function translateLabel(label){
+  if(label==='Cheapest')return t('tag_cheapest')||'Cheapest';
+  if(label==='Fastest')return t('tag_fastest')||'Fastest';
+  return label;
+}
 const CRYPTO_EXCHANGES=new Set(['Binance','Kraken','Coinbase','Bitso','Kucoin','Huobi']);
 
 const GITHUB_REPO='https://github.com/coinnect-dev/coinnect';
@@ -1028,7 +1033,7 @@ function renderTable(routes,from,to){
       ? `1 = ${effectiveRate.toFixed(4)}`
       : `1 = ${effectiveRate.toFixed(8).replace(/0+$/,'')}`;
     const featured=isFeatured(r);
-    const badge=featured?`<span class="inline-block ml-1 px-1.5 py-0.5 rounded text-[10px] font-bold ${r.label==='Cheapest'?'bg-gray-100 dark:bg-gray-800 text-emerald-600 dark:text-emerald-400':'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400'}">${esc(r.label)}</span>`:'';
+    const badge=featured?`<span class="inline-block ml-1 px-1.5 py-0.5 rounded text-[10px] font-bold ${r.label==='Cheapest'?'bg-gray-100 dark:bg-gray-800 text-emerald-600 dark:text-emerald-400':'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400'}">${esc(translateLabel(r.label))}</span>`:'';
     return`<tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors ${featured?'font-medium':''}">
       <td class="px-4 py-3 text-gray-400">${r.rank}</td>
       <td class="px-4 py-3 text-gray-900 dark:text-white">${viaLabel}${legBadge}${badge}</td>
@@ -1705,7 +1710,7 @@ function renderResults(routes,from,to){
   const tiedBlock=shuffled.length>1
     ? `<div class="relative">
         <div class="absolute -top-3 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap">
-          <span class="bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow">Best rate — ${shuffled.length} options at ${cheapest.total_cost_pct.toFixed(2)}%</span>
+          <span class="bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow">${t('tag_cheapest')||'Cheapest'} — ${shuffled.length} options at ${cheapest.total_cost_pct.toFixed(2)}%</span>
         </div>
         <div class="pt-4 flex flex-col gap-2 border-2 border-emerald-400 dark:border-emerald-600 rounded-2xl p-3 bg-emerald-50/30 dark:bg-emerald-950/20">
           ${shuffled.map(r=>renderFeaturedCard(r,from,to,true)).join('')}
