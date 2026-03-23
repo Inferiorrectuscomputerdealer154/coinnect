@@ -42,6 +42,8 @@ async def _refresh_once(force: bool = False) -> int:
         get_flutterwave_edges,
         get_bluelytics_edges, get_dolarsi_edges, get_criptoya_edges,
         get_bcb_edges, get_trm_edges, get_lirarate_edges,
+        get_yadio_edges, get_valr_edges, get_coindcx_edges,
+        get_wazirx_edges, get_satoshitango_edges, get_floatrates_edges,
     )
     from coinnect.routing.engine import build_quote
 
@@ -51,6 +53,8 @@ async def _refresh_once(force: bool = False) -> int:
         strike_edges, frank_edges, curapi_edges, fw_edges,
         bluelytics_edges, dolarsi_edges, criptoya_edges,
         bcb_edges, trm_edges, lirarate_edges,
+        yadio_edges, valr_edges, coindcx_edges,
+        wazirx_edges, satoshitango_edges, floatrates_edges,
     ) = await asyncio.gather(
         get_all_edges(force_refresh=force),
         get_wise_edges(),
@@ -70,6 +74,12 @@ async def _refresh_once(force: bool = False) -> int:
         get_bcb_edges(),
         get_trm_edges(),
         get_lirarate_edges(),
+        get_yadio_edges(),
+        get_valr_edges(),
+        get_coindcx_edges(),
+        get_wazirx_edges(),
+        get_satoshitango_edges(),
+        get_floatrates_edges(),
     )
     all_edges = (
         crypto_edges + wise_edges + trad_edges + yc_edges + remit_edges
@@ -77,6 +87,8 @@ async def _refresh_once(force: bool = False) -> int:
         + strike_edges + frank_edges + curapi_edges + fw_edges
         + bluelytics_edges + dolarsi_edges + criptoya_edges
         + bcb_edges + trm_edges + lirarate_edges
+        + yadio_edges + valr_edges + coindcx_edges
+        + wazirx_edges + satoshitango_edges + floatrates_edges
     )
 
     if not all_edges:
@@ -245,6 +257,8 @@ async def _get_all_edges_cached() -> list:
         get_flutterwave_edges,
         get_bluelytics_edges, get_dolarsi_edges, get_criptoya_edges,
         get_bcb_edges, get_trm_edges, get_lirarate_edges,
+        get_yadio_edges, get_valr_edges, get_coindcx_edges,
+        get_wazirx_edges, get_satoshitango_edges, get_floatrates_edges,
     )
     results = await asyncio.gather(
         get_all_edges(),
@@ -265,6 +279,12 @@ async def _get_all_edges_cached() -> list:
         get_bcb_edges(),
         get_trm_edges(),
         get_lirarate_edges(),
+        get_yadio_edges(),
+        get_valr_edges(),
+        get_coindcx_edges(),
+        get_wazirx_edges(),
+        get_satoshitango_edges(),
+        get_floatrates_edges(),
     )
     all_edges = []
     for batch in results:

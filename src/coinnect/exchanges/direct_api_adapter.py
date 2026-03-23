@@ -1,7 +1,8 @@
 """
 Direct API adapters — live rates from exchanges without CCXT support.
 Bitso (LatAm), Buda (Chile/Colombia/Peru), CoinGecko (emerging market reference),
-Flutterwave (African corridors).
+Flutterwave (African corridors), Yadio (LatAm P2P), VALR (South Africa),
+CoinDCX/WazirX (India), SatoshiTango (Argentina), FloatRates (FX fallback).
 """
 
 import asyncio
@@ -31,6 +32,12 @@ _criptoya_cache: dict = {"edges": [], "ts": 0.0}
 _bcb_cache: dict = {"edges": [], "ts": 0.0}
 _trm_cache: dict = {"edges": [], "ts": 0.0}
 _lirarate_cache: dict = {"edges": [], "ts": 0.0}
+_yadio_cache: dict = {"edges": [], "ts": 0.0}
+_valr_cache: dict = {"edges": [], "ts": 0.0}
+_coindcx_cache: dict = {"edges": [], "ts": 0.0}
+_wazirx_cache: dict = {"edges": [], "ts": 0.0}
+_satoshitango_cache: dict = {"edges": [], "ts": 0.0}
+_floatrates_cache: dict = {"edges": [], "ts": 0.0}
 
 BITSO_TTL = 180       # 3 minutes
 BUDA_TTL = 180        # 3 minutes
@@ -45,6 +52,12 @@ CRIPTOYA_TTL = 300      # 5 minutes
 BCB_TTL = 3600          # 60 minutes (updates once daily)
 TRM_TTL = 3600          # 60 minutes
 LIRARATE_TTL = 1800     # 30 minutes
+YADIO_TTL = 300         # 5 minutes
+VALR_TTL = 180          # 3 minutes
+COINDCX_TTL = 180       # 3 minutes
+WAZIRX_TTL = 180        # 3 minutes
+SATOSHITANGO_TTL = 300  # 5 minutes
+FLOATRATES_TTL = 3600   # 60 minutes (daily data)
 
 HEADERS = {"User-Agent": "Coinnect/1.0 (coinnect.bot)"}
 
@@ -826,5 +839,356 @@ async def get_lirarate_edges() -> list[Edge]:
     except Exception as e:
         logger.warning(f"LiraRate adapter failed: {e}")
         return _lirarate_cache["edges"]
+
+    return edges
+
+
+# ── Yadio (LatAm P2P rates) ─────────────────────────────────────────────
+
+
+async def get_yadio_edges() -> list[Edge]:
+    """Fetch P2P/parallel market rates from Yadio (126 currencies, LatAm specialty)."""
+    now = time.monotonic()
+    if _yadio_cache["edges"] and (now - _yadio_cache["ts"]) < YADIO_TTL:
+        return _yadio_cache["edges"]
+
+    edges: list[Edge] = []
+    try:
+        async with httpx.AsyncClient(headers=HEADERS, timeout=15) as client:
+            # Fetch USD-based rates
+            resp_usd = await client.get("https://api.yadio.io/exrates/USD")
+            resp_usd.raise_for_status()
+            usd_data = resp_usd.json()
+
+            usd_rates = usd_data.get("USD", {})
+            for currency, rate in usd_rates.items():
+                if not rate or currency == "USD":
+                    continue
+                edges.append(Edge(
+                    from_currency="USD",
+                    to_currency=currency.upper(),
+                    via="Yadio (P2P)",
+                    fee_pct=0.0,
+                    estimated_minutes=0,
+                    instructions="P2P market rate — reference only",
+                    exchange_rate=float(rate),
+                ))
+
+            # Fetch EUR-based rates
+            resp_eur = await client.get("https://api.yadio.io/exrates/EUR")
+            resp_eur.raise_for_status()
+            eur_data = resp_eur.json()
+
+            eur_rates = eur_data.get("EUR", {})
+            for currency, rate in eur_rates.items():
+                if not rate or currency == "EUR":
+                    continue
+                edges.append(Edge(
+                    from_currency="EUR",
+                    to_currency=currency.upper(),
+                    via="Yadio (P2P)",
+                    fee_pct=0.0,
+                    estimated_minutes=0,
+                    instructions="P2P market rate — reference only",
+                    exchange_rate=float(rate),
+                ))
+
+        _yadio_cache["edges"] = edges
+        _yadio_cache["ts"] = now
+        logger.info(f"Yadio: loaded {len(edges)} P2P reference edges")
+    except Exception as e:
+        logger.warning(f"Yadio adapter failed: {e}")
+        return _yadio_cache["edges"]
+
+    return edges
+
+
+# ── VALR (South Africa) ─────────────────────────────────────────────────
+
+VALR_ZAR_PAIRS = {"BTCZAR", "ETHZAR", "USDCZAR", "USDTZAR"}
+VALR_FEE = 0.75
+
+
+async def get_valr_edges() -> list[Edge]:
+    """Fetch ZAR trading pairs from VALR (South Africa)."""
+    now = time.monotonic()
+    if _valr_cache["edges"] and (now - _valr_cache["ts"]) < VALR_TTL:
+        return _valr_cache["edges"]
+
+    edges: list[Edge] = []
+    try:
+        async with httpx.AsyncClient(headers=HEADERS, timeout=15) as client:
+            resp = await client.get("https://api.valr.com/v1/public/marketsummary")
+            resp.raise_for_status()
+            data = resp.json()
+
+        for item in data:
+            pair = item.get("currencyPair", "")
+            if pair not in VALR_ZAR_PAIRS:
+                continue
+            last = item.get("lastTradedPrice")
+            if not last:
+                continue
+            last = float(last)
+            if not last:
+                continue
+
+            # Split pair: e.g. "BTCZAR" → BTC, ZAR
+            base = pair[:-3]
+            quote = pair[-3:]
+
+            edges.append(Edge(
+                from_currency=base,
+                to_currency=quote,
+                via="VALR",
+                fee_pct=VALR_FEE,
+                estimated_minutes=15,
+                instructions=f"Sell {base} for {quote} on VALR",
+                exchange_rate=last,
+            ))
+            edges.append(Edge(
+                from_currency=quote,
+                to_currency=base,
+                via="VALR",
+                fee_pct=VALR_FEE,
+                estimated_minutes=15,
+                instructions=f"Buy {base} with {quote} on VALR",
+                exchange_rate=1.0 / last,
+            ))
+
+        _valr_cache["edges"] = edges
+        _valr_cache["ts"] = now
+        logger.info(f"VALR: loaded {len(edges)} edges")
+    except Exception as e:
+        logger.warning(f"VALR adapter failed: {e}")
+        return _valr_cache["edges"]
+
+    return edges
+
+
+# ── CoinDCX (India) ─────────────────────────────────────────────────────
+
+COINDCX_INR_MARKETS = {"BTCINR", "ETHINR", "USDTINR", "USDCINR"}
+COINDCX_FEE = 0.50
+
+
+async def get_coindcx_edges() -> list[Edge]:
+    """Fetch INR trading pairs from CoinDCX (India)."""
+    now = time.monotonic()
+    if _coindcx_cache["edges"] and (now - _coindcx_cache["ts"]) < COINDCX_TTL:
+        return _coindcx_cache["edges"]
+
+    edges: list[Edge] = []
+    try:
+        async with httpx.AsyncClient(headers=HEADERS, timeout=15) as client:
+            resp = await client.get("https://api.coindcx.com/exchange/ticker")
+            resp.raise_for_status()
+            data = resp.json()
+
+        for item in data:
+            market = item.get("market", "")
+            if market not in COINDCX_INR_MARKETS:
+                continue
+            last = item.get("last_price")
+            if not last:
+                continue
+            last = float(last)
+            if not last:
+                continue
+
+            # Split: "BTCINR" → BTC, INR
+            base = market[:-3]
+            quote = market[-3:]
+
+            edges.append(Edge(
+                from_currency=base,
+                to_currency=quote,
+                via="CoinDCX",
+                fee_pct=COINDCX_FEE,
+                estimated_minutes=15,
+                instructions=f"Sell {base} for {quote} on CoinDCX",
+                exchange_rate=last,
+            ))
+            edges.append(Edge(
+                from_currency=quote,
+                to_currency=base,
+                via="CoinDCX",
+                fee_pct=COINDCX_FEE,
+                estimated_minutes=15,
+                instructions=f"Buy {base} with {quote} on CoinDCX",
+                exchange_rate=1.0 / last,
+            ))
+
+        _coindcx_cache["edges"] = edges
+        _coindcx_cache["ts"] = now
+        logger.info(f"CoinDCX: loaded {len(edges)} edges")
+    except Exception as e:
+        logger.warning(f"CoinDCX adapter failed: {e}")
+        return _coindcx_cache["edges"]
+
+    return edges
+
+
+# ── WazirX (India) ───────────────────────────────────────────────────────
+
+WAZIRX_INR_SYMBOLS = {"btcinr", "ethinr", "usdtinr"}
+WAZIRX_FEE = 0.40
+
+
+async def get_wazirx_edges() -> list[Edge]:
+    """Fetch INR trading pairs from WazirX (India)."""
+    now = time.monotonic()
+    if _wazirx_cache["edges"] and (now - _wazirx_cache["ts"]) < WAZIRX_TTL:
+        return _wazirx_cache["edges"]
+
+    edges: list[Edge] = []
+    try:
+        async with httpx.AsyncClient(headers=HEADERS, timeout=15) as client:
+            resp = await client.get("https://api.wazirx.com/sapi/v1/tickers/24hr")
+            resp.raise_for_status()
+            data = resp.json()
+
+        for item in data:
+            symbol = item.get("symbol", "")
+            if symbol not in WAZIRX_INR_SYMBOLS:
+                continue
+            last = item.get("lastPrice")
+            if not last:
+                continue
+            last = float(last)
+            if not last:
+                continue
+
+            # Split: "btcinr" → BTC, INR
+            base = symbol[:-3].upper()
+            quote = symbol[-3:].upper()
+
+            edges.append(Edge(
+                from_currency=base,
+                to_currency=quote,
+                via="WazirX",
+                fee_pct=WAZIRX_FEE,
+                estimated_minutes=15,
+                instructions=f"Sell {base} for {quote} on WazirX",
+                exchange_rate=last,
+            ))
+            edges.append(Edge(
+                from_currency=quote,
+                to_currency=base,
+                via="WazirX",
+                fee_pct=WAZIRX_FEE,
+                estimated_minutes=15,
+                instructions=f"Buy {base} with {quote} on WazirX",
+                exchange_rate=1.0 / last,
+            ))
+
+        _wazirx_cache["edges"] = edges
+        _wazirx_cache["ts"] = now
+        logger.info(f"WazirX: loaded {len(edges)} edges")
+    except Exception as e:
+        logger.warning(f"WazirX adapter failed: {e}")
+        return _wazirx_cache["edges"]
+
+    return edges
+
+
+# ── SatoshiTango (Argentina) ─────────────────────────────────────────────
+
+SATOSHITANGO_ASSETS = ["BTC", "ETH", "USDT", "USDC", "DAI"]
+SATOSHITANGO_FEE = 1.0
+
+
+async def get_satoshitango_edges() -> list[Edge]:
+    """Fetch crypto/ARS rates from SatoshiTango (Argentina)."""
+    now = time.monotonic()
+    if _satoshitango_cache["edges"] and (now - _satoshitango_cache["ts"]) < SATOSHITANGO_TTL:
+        return _satoshitango_cache["edges"]
+
+    edges: list[Edge] = []
+    try:
+        async with httpx.AsyncClient(headers=HEADERS, timeout=15) as client:
+            resp = await client.get("https://api.satoshitango.com/v3/ticker/ARS")
+            resp.raise_for_status()
+            data = resp.json()
+
+        ticker = data.get("data", {}).get("ticker", {})
+        for asset in SATOSHITANGO_ASSETS:
+            info = ticker.get(asset)
+            if not info:
+                continue
+            ask = info.get("ask")
+            if not ask:
+                continue
+            rate = float(ask)
+            if not rate:
+                continue
+
+            edges.append(Edge(
+                from_currency=asset,
+                to_currency="ARS",
+                via="SatoshiTango",
+                fee_pct=SATOSHITANGO_FEE,
+                estimated_minutes=10,
+                instructions=f"Sell {asset} for ARS on SatoshiTango",
+                exchange_rate=rate,
+            ))
+            edges.append(Edge(
+                from_currency="ARS",
+                to_currency=asset,
+                via="SatoshiTango",
+                fee_pct=SATOSHITANGO_FEE,
+                estimated_minutes=10,
+                instructions=f"Buy {asset} with ARS on SatoshiTango",
+                exchange_rate=1.0 / rate,
+            ))
+
+        _satoshitango_cache["edges"] = edges
+        _satoshitango_cache["ts"] = now
+        logger.info(f"SatoshiTango: loaded {len(edges)} edges")
+    except Exception as e:
+        logger.warning(f"SatoshiTango adapter failed: {e}")
+        return _satoshitango_cache["edges"]
+
+    return edges
+
+
+# ── FloatRates (FX fallback) ─────────────────────────────────────────────
+
+
+async def get_floatrates_edges() -> list[Edge]:
+    """Fetch daily FX rates from FloatRates (additional fallback)."""
+    now = time.monotonic()
+    if _floatrates_cache["edges"] and (now - _floatrates_cache["ts"]) < FLOATRATES_TTL:
+        return _floatrates_cache["edges"]
+
+    edges: list[Edge] = []
+    try:
+        async with httpx.AsyncClient(headers=HEADERS, timeout=15) as client:
+            resp = await client.get("https://www.floatrates.com/daily/usd.json")
+            resp.raise_for_status()
+            data = resp.json()
+
+        for currency_lower, info in data.items():
+            if not isinstance(info, dict):
+                continue
+            rate = info.get("rate")
+            if not rate:
+                continue
+            edges.append(Edge(
+                from_currency="USD",
+                to_currency=currency_lower.upper(),
+                via="FloatRates",
+                fee_pct=0.0,
+                estimated_minutes=0,
+                instructions="Market reference rate — daily FX data",
+                exchange_rate=float(rate),
+            ))
+
+        _floatrates_cache["edges"] = edges
+        _floatrates_cache["ts"] = now
+        logger.info(f"FloatRates: loaded {len(edges)} reference edges")
+    except Exception as e:
+        logger.warning(f"FloatRates adapter failed: {e}")
+        return _floatrates_cache["edges"]
 
     return edges
