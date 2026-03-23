@@ -121,17 +121,40 @@ python -m coinnect.mcp_server
 
 ### 3.1 Quote engine
 
-The engine runs a shortest-path algorithm across a live graph:
+The engine models the global money transfer landscape as a **weighted directed graph**:
 
-- **Nodes** = currencies (USD, MXN, USDC, NGN, PHP…)
-- **Edges** = exchange pairs with real-time fee and rate data
-- **Weight** = total cost (fees + spread) or total time
+- **Nodes** = currencies (USD, MXN, USDC, NGN, BTC, ETB, XOF…)
+- **Edges** = conversion paths between currencies, each carrying: `exchange_rate`, `fee_pct`, `estimated_minutes`, and `provider`
+- **Weight** = total cost (compound fees + exchange rate spread) or total time
+
+![Routing Diagram](/static/routing-diagram.svg)
+
+#### Edge types
+
+| Type | Source | Fee | Badge | Example |
+|------|--------|-----|-------|---------|
+| **Live exchange** | CCXT order book, Wise API | Real bid/ask spread | LIVE | Binance BTC→MXN at 0.12% |
+| **Estimated provider** | Published fee tables | Static % | ESTIMATED | Remitly USD→NGN at ~3.5% |
+| **Market rate bridge** | FX reference APIs | ~0.5% spread | ESTIMATED | USD→ETB via CurrencyAPI |
+| **P2P market** | Binance P2P, Yadio | Median of offers | LIVE/REFERENCE | USDT→NGN at 0.3% |
+
+#### How paths are found
 
 Two-phase approach:
 1. **Direct routes** — all single-step provider edges for the corridor, ranked by cost.
-2. **Multi-hop routes** — two Dijkstra passes (cost-optimized, time-optimized) find paths up to **4 hops** (max_steps=4), like USD → USDC via Coinbase → NGN via Yellow Card.
+2. **Multi-hop routes** — two Dijkstra passes (cost-optimized, time-optimized) find paths up to **4 hops**, like: ZAR → BTC (VALR, 0.75%) → NGN (Binance, 0.12%) = 0.87% total — **75% cheaper** than a direct Remitly transfer at 3.5%.
 
-**Circular route prevention:** the engine skips any exchange already used in the current path, ensuring no provider appears twice in a single route.
+#### Bridge edges
+
+For exotic corridors where no direct provider exists (e.g., ZAR→ETB), the engine uses **bridge edges** from reference FX sources (CurrencyAPI, Frankfurter, FloatRates). These carry a conservative 0.5% spread estimate and are labeled ESTIMATED. When a real provider is added for that corridor, it automatically wins the ranking.
+
+This means Coinnect can route virtually **any fiat-to-fiat pair** through a combination of crypto exchanges and market rate bridges. The graph currently has 3,500+ edges covering 50+ currencies.
+
+#### Constraints
+
+- **Circular route prevention:** the engine skips any exchange already used in the current path, ensuring no provider appears twice.
+- **Amount filtering:** edges are filtered by `min_amount` and `max_amount` for the requested transfer size.
+- **Cost calculation:** compound formula per MRP spec: `total_cost = 1 - ∏(1 - fee_i/100)` — correctly handles multi-hop fee stacking.
 
 Results are merged, deduplicated by path signature, and returned as up to 30 ranked routes. Routes within 0.1% of each other are shown as tied.
 

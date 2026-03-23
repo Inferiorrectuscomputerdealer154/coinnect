@@ -352,10 +352,10 @@ async def get_frankfurter_edges() -> list[Edge]:
                 edges.append(Edge(
                     from_currency="USD",
                     to_currency=currency.upper(),
-                    via="ECB (reference)",
-                    fee_pct=0.0,
+                    via="Market rate",
+                    fee_pct=0.5,
                     estimated_minutes=0,
-                    instructions="ECB reference rate — not a transfer provider",
+                    instructions="Market rate conversion — verify actual cost with your bank or exchange (~est. 0.5% typical spread)",
                     exchange_rate=float(rate),
                 ))
 
@@ -370,10 +370,10 @@ async def get_frankfurter_edges() -> list[Edge]:
                 edges.append(Edge(
                     from_currency="EUR",
                     to_currency=currency.upper(),
-                    via="ECB (reference)",
-                    fee_pct=0.0,
+                    via="Market rate",
+                    fee_pct=0.5,
                     estimated_minutes=0,
-                    instructions="ECB reference rate — not a transfer provider",
+                    instructions="Market rate conversion — verify actual cost with your bank or exchange (~est. 0.5% typical spread)",
                     exchange_rate=float(rate),
                 ))
 
@@ -398,25 +398,48 @@ async def get_currencyapi_edges() -> list[Edge]:
 
     edges: list[Edge] = []
     try:
-        url = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json"
         async with httpx.AsyncClient(headers=HEADERS, timeout=15) as client:
-            resp = await client.get(url)
+            # Fetch USD-based rates
+            resp = await client.get(
+                "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json"
+            )
             resp.raise_for_status()
             data = resp.json()
 
-        rates = data.get("usd", {})
-        for currency, rate in rates.items():
-            if not rate or currency == "usd":
-                continue
-            edges.append(Edge(
-                from_currency="USD",
-                to_currency=currency.upper(),
-                via="Market rate",
-                fee_pct=0.0,
-                estimated_minutes=0,
-                instructions="Market reference rate",
-                exchange_rate=float(rate),
-            ))
+            rates = data.get("usd", {})
+            for currency, rate in rates.items():
+                if not rate or currency == "usd":
+                    continue
+                edges.append(Edge(
+                    from_currency="USD",
+                    to_currency=currency.upper(),
+                    via="Market rate",
+                    fee_pct=0.5,
+                    estimated_minutes=0,
+                    instructions="Market rate conversion — verify actual cost with your bank or exchange (~est. 0.5% typical spread)",
+                    exchange_rate=float(rate),
+                ))
+
+            # Fetch EUR-based rates for broader corridor coverage
+            resp_eur = await client.get(
+                "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json"
+            )
+            resp_eur.raise_for_status()
+            eur_data = resp_eur.json()
+
+            eur_rates = eur_data.get("eur", {})
+            for currency, rate in eur_rates.items():
+                if not rate or currency == "eur":
+                    continue
+                edges.append(Edge(
+                    from_currency="EUR",
+                    to_currency=currency.upper(),
+                    via="Market rate",
+                    fee_pct=0.5,
+                    estimated_minutes=0,
+                    instructions="Market rate conversion — verify actual cost with your bank or exchange (~est. 0.5% typical spread)",
+                    exchange_rate=float(rate),
+                ))
 
         _currencyapi_cache["edges"] = edges
         _currencyapi_cache["ts"] = now
@@ -870,9 +893,9 @@ async def get_yadio_edges() -> list[Edge]:
                     from_currency="USD",
                     to_currency=currency.upper(),
                     via="Yadio (P2P)",
-                    fee_pct=0.0,
+                    fee_pct=0.3,
                     estimated_minutes=0,
-                    instructions="P2P market rate — reference only",
+                    instructions="P2P market rate — verify actual cost with your local P2P provider (~est. 0.3% spread)",
                     exchange_rate=float(rate),
                 ))
 
@@ -889,9 +912,9 @@ async def get_yadio_edges() -> list[Edge]:
                     from_currency="EUR",
                     to_currency=currency.upper(),
                     via="Yadio (P2P)",
-                    fee_pct=0.0,
+                    fee_pct=0.3,
                     estimated_minutes=0,
-                    instructions="P2P market rate — reference only",
+                    instructions="P2P market rate — verify actual cost with your local P2P provider (~est. 0.3% spread)",
                     exchange_rate=float(rate),
                 ))
 
@@ -1179,10 +1202,10 @@ async def get_floatrates_edges() -> list[Edge]:
             edges.append(Edge(
                 from_currency="USD",
                 to_currency=currency_lower.upper(),
-                via="FloatRates",
-                fee_pct=0.0,
+                via="Market rate",
+                fee_pct=0.5,
                 estimated_minutes=0,
-                instructions="Market reference rate — daily FX data",
+                instructions="Market rate conversion — verify actual cost with your bank or exchange (~est. 0.5% typical spread)",
                 exchange_rate=float(rate),
             ))
 

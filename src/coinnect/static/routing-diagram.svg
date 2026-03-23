@@ -1,0 +1,141 @@
+<svg width="900" height="500" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, -apple-system, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#94a3b8"/>
+    </marker>
+    <marker id="arr-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#059669"/>
+    </marker>
+    <marker id="arr-cyan" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#0891b2"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="500" rx="16" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="450" y="32" text-anchor="middle" font-size="15" font-weight="700" fill="#111827">Coinnect Routing Engine — How Multi-Hop Paths Are Found</text>
+  <text x="450" y="50" text-anchor="middle" font-size="10" fill="#9ca3af">Weighted directed graph + Dijkstra's algorithm · Edges refreshed every 3 minutes</text>
+
+  <!-- ═══ CURRENCY NODES ═══ -->
+
+  <!-- Fiat Origin (left) -->
+  <circle cx="80" cy="160" r="32" fill="#fff" stroke="#0891b2" stroke-width="2.5"/>
+  <text x="80" y="156" text-anchor="middle" font-size="14" font-weight="700" fill="#0891b2">ZAR</text>
+  <text x="80" y="170" text-anchor="middle" font-size="8" fill="#9ca3af">South Africa</text>
+
+  <circle cx="80" cy="340" r="28" fill="#fff" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="80" y="336" text-anchor="middle" font-size="13" font-weight="600" fill="#374151">USD</text>
+  <text x="80" y="350" text-anchor="middle" font-size="8" fill="#9ca3af">US Dollar</text>
+
+  <!-- Crypto Bridge (center) -->
+  <circle cx="310" cy="130" r="28" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="310" y="126" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">BTC</text>
+  <text x="310" y="140" text-anchor="middle" font-size="8" fill="#9ca3af">Bitcoin</text>
+
+  <circle cx="310" cy="250" r="28" fill="#ecfeff" stroke="#06b6d4" stroke-width="1.5"/>
+  <text x="310" y="246" text-anchor="middle" font-size="12" font-weight="700" fill="#0e7490">USDT</text>
+  <text x="310" y="260" text-anchor="middle" font-size="8" fill="#9ca3af">Tether</text>
+
+  <circle cx="310" cy="370" r="28" fill="#ecfeff" stroke="#06b6d4" stroke-width="1.5"/>
+  <text x="310" y="366" text-anchor="middle" font-size="12" font-weight="700" fill="#0e7490">USDC</text>
+  <text x="310" y="380" text-anchor="middle" font-size="8" fill="#9ca3af">USD Coin</text>
+
+  <!-- Intermediate Fiat -->
+  <circle cx="540" cy="160" r="28" fill="#fff" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="540" y="156" text-anchor="middle" font-size="13" font-weight="600" fill="#374151">EUR</text>
+  <text x="540" y="170" text-anchor="middle" font-size="8" fill="#9ca3af">Euro</text>
+
+  <circle cx="540" cy="290" r="28" fill="#fff" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="540" y="286" text-anchor="middle" font-size="13" font-weight="600" fill="#374151">GBP</text>
+  <text x="540" y="300" text-anchor="middle" font-size="8" fill="#9ca3af">Pound</text>
+
+  <!-- Fiat Destination (right) -->
+  <circle cx="760" cy="160" r="32" fill="#f0fdf4" stroke="#059669" stroke-width="2.5"/>
+  <text x="760" y="156" text-anchor="middle" font-size="14" font-weight="700" fill="#059669">NGN</text>
+  <text x="760" y="170" text-anchor="middle" font-size="8" fill="#9ca3af">Nigeria</text>
+
+  <circle cx="760" cy="290" r="32" fill="#f0fdf4" stroke="#059669" stroke-width="2.5"/>
+  <text x="760" y="286" text-anchor="middle" font-size="14" font-weight="700" fill="#059669">KES</text>
+  <text x="760" y="300" text-anchor="middle" font-size="8" fill="#9ca3af">Kenya</text>
+
+  <circle cx="760" cy="400" r="28" fill="#f0fdf4" stroke="#059669" stroke-width="2"/>
+  <text x="760" y="396" text-anchor="middle" font-size="13" font-weight="600" fill="#059669">ETB</text>
+  <text x="760" y="410" text-anchor="middle" font-size="8" fill="#9ca3af">Ethiopia</text>
+
+  <!-- ═══ EDGES (arrows with labels) ═══ -->
+
+  <!-- ZAR → BTC (VALR) -->
+  <line x1="112" y1="148" x2="278" y2="135" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="190" y="132" text-anchor="middle" font-size="8" fill="#92400e" font-weight="600">VALR 0.75%</text>
+  <text x="190" y="142" text-anchor="middle" font-size="7" fill="#9ca3af">LIVE</text>
+
+  <!-- ZAR → USD (market rate) -->
+  <line x1="100" y1="190" x2="65" y2="310" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+  <text x="60" y="255" text-anchor="middle" font-size="7" fill="#9ca3af">Market 0.5%</text>
+
+  <!-- BTC → USDT (MEXC) -->
+  <line x1="310" y1="158" x2="310" y2="220" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="340" y="192" font-size="8" fill="#92400e" font-weight="600">MEXC 0%</text>
+
+  <!-- BTC → NGN (Binance) -->
+  <path d="M 338 130 Q 550 80 732 160" fill="none" stroke="#059669" stroke-width="2" marker-end="url(#arr-green)"/>
+  <text x="530" y="90" text-anchor="middle" font-size="8" fill="#059669" font-weight="600">Binance 0.12%</text>
+  <text x="530" y="100" text-anchor="middle" font-size="7" fill="#9ca3af">LIVE</text>
+
+  <!-- USDT → NGN (Yellow Card) -->
+  <line x1="338" y1="245" x2="728" y2="165" stroke="#059669" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <text x="530" y="195" text-anchor="middle" font-size="8" fill="#059669" font-weight="600">Yellow Card 0.9%</text>
+  <text x="530" y="205" text-anchor="middle" font-size="7" fill="#9ca3af">LIVE</text>
+
+  <!-- USDC → KES (via market) -->
+  <line x1="338" y1="370" x2="728" y2="295" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+  <text x="530" y="345" text-anchor="middle" font-size="7" fill="#9ca3af">Market rate 0.5%</text>
+
+  <!-- USD → NGN (Remitly ~est.) -->
+  <path d="M 108 335 Q 420 420 732 170" fill="none" stroke="#d97706" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr)"/>
+  <text x="420" y="430" text-anchor="middle" font-size="8" fill="#d97706" font-weight="600">Remitly ~est. 3.5%</text>
+
+  <!-- USD → KES (Sendwave ~est.) -->
+  <line x1="108" y1="345" x2="728" y2="290" stroke="#d97706" stroke-width="1" stroke-dasharray="6,3" marker-end="url(#arr)"/>
+  <text x="420" y="310" text-anchor="middle" font-size="8" fill="#d97706">Sendwave ~est. 2.8%</text>
+
+  <!-- GBP → KES (Nala) -->
+  <line x1="568" y1="290" x2="728" y2="290" stroke="#d97706" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr)"/>
+  <text x="648" y="282" text-anchor="middle" font-size="8" fill="#d97706" font-weight="600">Nala ~est. 1.5%</text>
+
+  <!-- USD → ETB (market bridge) -->
+  <path d="M 108 348 Q 420 460 732 405" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+  <text x="420" y="465" text-anchor="middle" font-size="7" fill="#9ca3af">Market rate 0.5% (bridge)</text>
+
+  <!-- ═══ OPTIMAL PATH HIGHLIGHT ═══ -->
+  <!-- ZAR → BTC → NGN = cheapest -->
+  <rect x="40" y="100" width="760" height="90" rx="12" fill="none" stroke="#059669" stroke-width="1.5" stroke-dasharray="8,4" opacity="0.3"/>
+
+  <!-- ═══ LEGEND ═══ -->
+  <rect x="30" y="455" width="840" height="35" rx="8" fill="#fff" stroke="#e5e7eb" stroke-width="1"/>
+
+  <line x1="50" y1="472" x2="80" y2="472" stroke="#059669" stroke-width="2"/>
+  <text x="85" y="476" font-size="9" fill="#374151">LIVE edge (exchange API)</text>
+
+  <line x1="230" y1="472" x2="260" y2="472" stroke="#d97706" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="265" y="476" font-size="9" fill="#374151">ESTIMATED edge (published fees)</text>
+
+  <line x1="460" y1="472" x2="490" y2="472" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="495" y="476" font-size="9" fill="#374151">Market rate bridge (reference FX)</text>
+
+  <circle cx="680" cy="472" r="5" fill="#fff" stroke="#0891b2" stroke-width="1.5"/>
+  <text x="690" y="476" font-size="9" fill="#374151">Origin/destination node</text>
+
+  <circle cx="800" cy="472" r="5" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="810" y="476" font-size="9" fill="#374151">Crypto bridge</text>
+
+  <!-- ═══ ANNOTATIONS ═══ -->
+  <rect x="570" y="60" width="300" height="65" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="580" y="78" font-size="9" font-weight="600" fill="#059669">Optimal path: ZAR → BTC → NGN</text>
+  <text x="580" y="92" font-size="8" fill="#374151">VALR (0.75%) + Binance (0.12%) = 0.87% total</text>
+  <text x="580" y="106" font-size="8" fill="#374151">vs. direct USD→NGN via Remitly = 3.5%</text>
+  <text x="580" y="118" font-size="8" font-weight="600" fill="#059669">Savings: 75% cheaper via crypto bridge</text>
+
+</svg>
