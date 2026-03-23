@@ -161,7 +161,12 @@ async def quote(
         get_trm_edges(), get_binance_p2p_edges(), get_calculator_edges(),
     )
     # Reference-only providers — used for bridge routing but filtered from direct results
-    REFERENCE_PROVIDERS = {"Market rate", "ECB (reference)", "FloatRates", "x-rates.com (mid-market)"}
+    REFERENCE_PROVIDERS = {
+        "Market rate", "ECB (reference)", "FloatRates", "x-rates.com (mid-market)",
+        "Yadio (P2P)", "CoinGecko (market)", "Blue market (AR)", "Official (AR)",
+        "Dolar Blue (AR)", "MEP (AR)", "CCL (AR)", "BCB PTAX (BR)", "TRM (CO)",
+        "Parallel (LB)",
+    }
 
     all_edges = [e for group in results for e in group]
 
