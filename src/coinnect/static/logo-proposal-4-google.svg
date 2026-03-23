@@ -1,0 +1,27 @@
+<svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+  <!-- Proposal 4: Google-style — Simple geometric mark, a "C" made of routing nodes -->
+  <!-- Concept: Connected dots forming a network/constellation in the shape of a coin -->
+  <!-- Friendly, recognizable, works at any size -->
+
+  <!-- Central hub node -->
+  <circle cx="22" cy="22" r="4" fill="#06b6d4"/>
+
+  <!-- Outer nodes — arranged in a circle like destinations -->
+  <circle cx="22" cy="6" r="3" fill="#06b6d4"/>
+  <circle cx="36" cy="14" r="3" fill="#06b6d4"/>
+  <circle cx="36" cy="30" r="3" fill="#06b6d4"/>
+  <circle cx="22" cy="38" r="3" fill="#06b6d4"/>
+  <circle cx="8" cy="30" r="3" fill="#06b6d4"/>
+  <circle cx="8" cy="14" r="3" fill="#06b6d4"/>
+
+  <!-- Connecting lines from center to each node -->
+  <line x1="22" y1="22" x2="22" y2="6" stroke="#06b6d4" stroke-width="1.5" opacity="0.5"/>
+  <line x1="22" y1="22" x2="36" y2="14" stroke="#06b6d4" stroke-width="1.5" opacity="0.5"/>
+  <line x1="22" y1="22" x2="36" y2="30" stroke="#06b6d4" stroke-width="1.5" opacity="0.5"/>
+  <line x1="22" y1="22" x2="22" y2="38" stroke="#06b6d4" stroke-width="1.5" opacity="0.5"/>
+  <line x1="22" y1="22" x2="8" y2="30" stroke="#06b6d4" stroke-width="1.5" opacity="0.5"/>
+  <line x1="22" y1="22" x2="8" y2="14" stroke="#06b6d4" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Outer ring connecting the nodes (subtle) -->
+  <circle cx="22" cy="22" r="16" fill="none" stroke="#06b6d4" stroke-width="1" opacity="0.25"/>
+</svg>

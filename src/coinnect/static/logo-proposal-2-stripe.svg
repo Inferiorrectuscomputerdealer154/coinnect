@@ -1,0 +1,37 @@
+<svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+  <!-- Proposal 2: Stripe-style — Abstract "C" formed by two routing paths -->
+  <!-- Concept: Two curved paths diverge and reconverge, like money finding routes -->
+  <!-- Clean, geometric, gradient accent -->
+
+  <defs>
+    <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded square container -->
+  <rect x="2" y="2" width="40" height="40" rx="10" fill="url(#sg)"/>
+
+  <!-- Upper route path -->
+  <path d="M12 16 C16 16, 18 10, 22 10 C26 10, 28 16, 32 16"
+        fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Lower route path -->
+  <path d="M12 28 C16 28, 18 34, 22 34 C26 34, 28 28, 32 28"
+        fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Center direct path -->
+  <path d="M12 22 L32 22"
+        fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Entry node -->
+  <circle cx="10" cy="22" r="3" fill="white"/>
+
+  <!-- Exit node -->
+  <circle cx="34" cy="22" r="3" fill="white"/>
+
+  <!-- Small dots at route endpoints -->
+  <circle cx="32" cy="16" r="1.5" fill="white" opacity="0.7"/>
+  <circle cx="32" cy="28" r="1.5" fill="white" opacity="0.7"/>
+</svg>
