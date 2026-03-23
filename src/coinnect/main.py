@@ -1034,11 +1034,7 @@ async def whitepaper():
 
   <nav class="topnav" role="navigation" aria-label="Site navigation">
     <a href="/" class="topnav-logo" aria-label="Coinnect home">
-      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="16" cy="16" r="14" stroke="#06b6d4" stroke-width="2"/>
-        <text x="16" y="21" font-size="13" text-anchor="middle" fill="#F7931A" font-family="monospace" font-weight="bold">₿</text>
-        <text x="16" y="13" font-size="10" text-anchor="middle" fill="#06b6d4" font-family="monospace">$</text>
-      </svg>
+      <svg width="28" height="28" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="22" r="11" fill="none" stroke="#06b6d4" stroke-width="2.5"/><circle cx="28" cy="22" r="11" fill="none" stroke="#06b6d4" stroke-width="2.5"/><path d="M8 22 L36 22" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/><path d="M32 18 L36 22 L32 26" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="22" r="2" fill="#06b6d4"/></svg>
       Coinnect
     </a>
     <a href="/" class="topnav-back" aria-label="Back to Coinnect app">← Back to app</a>

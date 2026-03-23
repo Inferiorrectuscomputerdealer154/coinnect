@@ -210,37 +210,12 @@
       <div class="flex-1 min-w-[120px] px-4 py-3">
         <label class="block text-[10px] text-gray-400 uppercase tracking-wider mb-0.5" data-i18n="label_from">From</label>
         <select id="from" class="w-full bg-transparent border-none p-0 text-sm font-medium text-gray-900 dark:text-white focus:outline-none">
-          <optgroup label="Crypto">
-            <option value="BTC">₿ BTC — Bitcoin</option>
-            <option value="ETH">Ξ ETH — Ethereum</option>
-            <option value="XRP">✕ XRP — Ripple</option>
-            <option value="SOL">◎ SOL — Solana</option>
-            <option value="USDC">◈ USDC — USD Coin</option>
-            <option value="USDT">◈ USDT — Tether</option>
-          </optgroup>
-          <optgroup label="Major Fiat">
+          <optgroup label="Popular">
             <option value="USD" selected>🇺🇸 USD — US Dollar</option>
             <option value="EUR">🇪🇺 EUR — Euro</option>
             <option value="GBP">🇬🇧 GBP — Pound</option>
             <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
             <option value="AUD">🇦🇺 AUD — Australian Dollar</option>
-            <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
-            <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
-            <option value="CHF">🇨🇭 CHF — Swiss Franc</option>
-          </optgroup>
-          <optgroup label="Middle East">
-            <option value="AED">🇦🇪 AED — UAE Dirham</option>
-            <option value="SAR">🇸🇦 SAR — Saudi Riyal</option>
-            <option value="QAR">🇶🇦 QAR — Qatari Riyal</option>
-            <option value="KWD">🇰🇼 KWD — Kuwaiti Dinar</option>
-          </optgroup>
-          <optgroup label="Europe">
-            <option value="TRY">🇹🇷 TRY — Turkish Lira</option>
-            <option value="PLN">🇵🇱 PLN — Polish Zloty</option>
-            <option value="CZK">🇨🇿 CZK — Czech Koruna</option>
-            <option value="HUF">🇭🇺 HUF — Hungarian Forint</option>
-            <option value="RON">🇷🇴 RON — Romanian Leu</option>
-            <option value="UAH">🇺🇦 UAH — Ukrainian Hryvnia</option>
           </optgroup>
           <optgroup label="Latin America">
             <option value="MXN">🇲🇽 MXN — Mexican Peso</option>
@@ -248,19 +223,57 @@
             <option value="COP">🇨🇴 COP — Colombian Peso</option>
             <option value="ARS">🇦🇷 ARS — Argentine Peso</option>
             <option value="PEN">🇵🇪 PEN — Peruvian Sol</option>
+            <option value="CLP">🇨🇱 CLP — Chilean Peso</option>
+            <option value="VES">🇻🇪 VES — Venezuelan Bolivar</option>
           </optgroup>
           <optgroup label="Asia">
             <option value="INR">🇮🇳 INR — Indian Rupee</option>
             <option value="PHP">🇵🇭 PHP — Philippine Peso</option>
-            <option value="THB">🇹🇭 THB — Thai Baht</option>
             <option value="IDR">🇮🇩 IDR — Indonesian Rupiah</option>
-            <option value="VND">🇻🇳 VND — Vietnamese Dong</option>
             <option value="PKR">🇵🇰 PKR — Pakistani Rupee</option>
+            <option value="BDT">🇧🇩 BDT — Bangladeshi Taka</option>
+            <option value="VND">🇻🇳 VND — Vietnamese Dong</option>
+            <option value="THB">🇹🇭 THB — Thai Baht</option>
+            <option value="LKR">🇱🇰 LKR — Sri Lankan Rupee</option>
+            <option value="NPR">🇳🇵 NPR — Nepalese Rupee</option>
           </optgroup>
           <optgroup label="Africa">
             <option value="NGN">🇳🇬 NGN — Nigerian Naira</option>
             <option value="KES">🇰🇪 KES — Kenyan Shilling</option>
             <option value="GHS">🇬🇭 GHS — Ghanaian Cedi</option>
+            <option value="ZAR">🇿🇦 ZAR — South African Rand</option>
+            <option value="TZS">🇹🇿 TZS — Tanzanian Shilling</option>
+            <option value="UGX">🇺🇬 UGX — Ugandan Shilling</option>
+            <option value="XOF">🇸🇳 XOF — West Africa CFA</option>
+            <option value="XAF">🇨🇲 XAF — Central Africa CFA</option>
+            <option value="ZWL">🇿🇼 ZWL — Zimbabwean Dollar</option>
+            <option value="MWK">🇲🇼 MWK — Malawian Kwacha</option>
+            <option value="ZMW">🇿🇲 ZMW — Zambian Kwacha</option>
+          </optgroup>
+          <optgroup label="Middle East & Turkey">
+            <option value="AED">🇦🇪 AED — UAE Dirham</option>
+            <option value="SAR">🇸🇦 SAR — Saudi Riyal</option>
+            <option value="QAR">🇶🇦 QAR — Qatari Riyal</option>
+            <option value="KWD">🇰🇼 KWD — Kuwaiti Dinar</option>
+            <option value="TRY">🇹🇷 TRY — Turkish Lira</option>
+          </optgroup>
+          <optgroup label="Europe">
+            <option value="CHF">🇨🇭 CHF — Swiss Franc</option>
+            <option value="PLN">🇵🇱 PLN — Polish Zloty</option>
+            <option value="CZK">🇨🇿 CZK — Czech Koruna</option>
+            <option value="HUF">🇭🇺 HUF — Hungarian Forint</option>
+            <option value="RON">🇷🇴 RON — Romanian Leu</option>
+            <option value="UAH">🇺🇦 UAH — Ukrainian Hryvnia</option>
+            <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
+            <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
+          </optgroup>
+          <optgroup label="Crypto">
+            <option value="BTC">₿ BTC — Bitcoin</option>
+            <option value="ETH">Ξ ETH — Ethereum</option>
+            <option value="USDC">◈ USDC — USD Coin</option>
+            <option value="USDT">◈ USDT — Tether</option>
+            <option value="XRP">✕ XRP — Ripple</option>
+            <option value="SOL">◎ SOL — Solana</option>
           </optgroup>
         </select>
       </div>
@@ -270,69 +283,70 @@
       <div class="flex-1 min-w-[120px] px-4 py-3">
         <label class="block text-[10px] text-gray-400 uppercase tracking-wider mb-0.5" data-i18n="label_to">To</label>
         <select id="to" class="w-full bg-transparent border-none p-0 text-sm font-medium text-gray-900 dark:text-white focus:outline-none">
+          <optgroup label="Popular">
+            <option value="USD">🇺🇸 USD — US Dollar</option>
+            <option value="EUR">🇪🇺 EUR — Euro</option>
+            <option value="GBP">🇬🇧 GBP — Pound</option>
+            <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
+            <option value="AUD">🇦🇺 AUD — Australian Dollar</option>
+          </optgroup>
           <optgroup label="Latin America">
-            <option value="MXN">🇲🇽 MXN — Mexico</option>
-            <option value="BRL">🇧🇷 BRL — Brazil</option>
-            <option value="COP">🇨🇴 COP — Colombia</option>
-            <option value="ARS">🇦🇷 ARS — Argentina</option>
-            <option value="PEN">🇵🇪 PEN — Peru</option>
+            <option value="MXN">🇲🇽 MXN — Mexican Peso</option>
+            <option value="BRL">🇧🇷 BRL — Brazilian Real</option>
+            <option value="COP">🇨🇴 COP — Colombian Peso</option>
+            <option value="ARS">🇦🇷 ARS — Argentine Peso</option>
+            <option value="PEN">🇵🇪 PEN — Peruvian Sol</option>
+            <option value="CLP">🇨🇱 CLP — Chilean Peso</option>
+            <option value="VES">🇻🇪 VES — Venezuelan Bolivar</option>
           </optgroup>
           <optgroup label="Asia">
-            <option value="PHP">🇵🇭 PHP — Philippines</option>
-            <option value="INR">🇮🇳 INR — India</option>
-            <option value="IDR">🇮🇩 IDR — Indonesia</option>
-            <option value="VND">🇻🇳 VND — Vietnam</option>
-            <option value="THB">🇹🇭 THB — Thailand</option>
-            <option value="BDT">🇧🇩 BDT — Bangladesh</option>
-            <option value="PKR">🇵🇰 PKR — Pakistan</option>
-            <option value="LKR">🇱🇰 LKR — Sri Lanka</option>
-            <option value="NPR">🇳🇵 NPR — Nepal</option>
+            <option value="INR">🇮🇳 INR — Indian Rupee</option>
+            <option value="PHP">🇵🇭 PHP — Philippine Peso</option>
+            <option value="IDR">🇮🇩 IDR — Indonesian Rupiah</option>
+            <option value="PKR">🇵🇰 PKR — Pakistani Rupee</option>
+            <option value="BDT">🇧🇩 BDT — Bangladeshi Taka</option>
+            <option value="VND">🇻🇳 VND — Vietnamese Dong</option>
+            <option value="THB">🇹🇭 THB — Thai Baht</option>
+            <option value="LKR">🇱🇰 LKR — Sri Lankan Rupee</option>
+            <option value="NPR">🇳🇵 NPR — Nepalese Rupee</option>
           </optgroup>
           <optgroup label="Africa">
-            <option value="NGN">🇳🇬 NGN — Nigeria</option>
-            <option value="KES">🇰🇪 KES — Kenya</option>
-            <option value="GHS">🇬🇭 GHS — Ghana</option>
-            <option value="TZS">🇹🇿 TZS — Tanzania</option>
-            <option value="UGX">🇺🇬 UGX — Uganda</option>
-            <option value="ZAR">🇿🇦 ZAR — South Africa</option>
-          </optgroup>
-          <optgroup label="Middle East">
-            <option value="AED">🇦🇪 AED — UAE</option>
-            <option value="SAR">🇸🇦 SAR — Saudi Arabia</option>
-            <option value="QAR">🇶🇦 QAR — Qatar</option>
-            <option value="TRY">🇹🇷 TRY — Turkey</option>
-          </optgroup>
-          <optgroup label="Europe">
-            <option value="UAH">🇺🇦 UAH — Ukraine</option>
-            <option value="PLN">🇵🇱 PLN — Poland</option>
-            <option value="RON">🇷🇴 RON — Romania</option>
-            <option value="HUF">🇭🇺 HUF — Hungary</option>
-            <option value="CZK">🇨🇿 CZK — Czech Republic</option>
-          </optgroup>
-          <optgroup label="West Africa (CFA)">
+            <option value="NGN">🇳🇬 NGN — Nigerian Naira</option>
+            <option value="KES">🇰🇪 KES — Kenyan Shilling</option>
+            <option value="GHS">🇬🇭 GHS — Ghanaian Cedi</option>
+            <option value="ZAR">🇿🇦 ZAR — South African Rand</option>
+            <option value="TZS">🇹🇿 TZS — Tanzanian Shilling</option>
+            <option value="UGX">🇺🇬 UGX — Ugandan Shilling</option>
             <option value="XOF">🇸🇳 XOF — West Africa CFA</option>
             <option value="XAF">🇨🇲 XAF — Central Africa CFA</option>
+            <option value="ZWL">🇿🇼 ZWL — Zimbabwean Dollar</option>
+            <option value="MWK">🇲🇼 MWK — Malawian Kwacha</option>
+            <option value="ZMW">🇿🇲 ZMW — Zambian Kwacha</option>
           </optgroup>
-          <optgroup label="Other">
-            <option value="VES">🇻🇪 VES — Venezuela</option>
-            <option value="CLP">🇨🇱 CLP — Chile</option>
-            <option value="ZWL">🇿🇼 ZWL — Zimbabwe</option>
-            <option value="MWK">🇲🇼 MWK — Malawi</option>
-            <option value="ZMW">🇿🇲 ZMW — Zambia</option>
+          <optgroup label="Middle East & Turkey">
+            <option value="AED">🇦🇪 AED — UAE Dirham</option>
+            <option value="SAR">🇸🇦 SAR — Saudi Riyal</option>
+            <option value="QAR">🇶🇦 QAR — Qatari Riyal</option>
+            <option value="KWD">🇰🇼 KWD — Kuwaiti Dinar</option>
+            <option value="TRY">🇹🇷 TRY — Turkish Lira</option>
           </optgroup>
-          <optgroup label="Major Fiat">
-            <option value="USD">🇺🇸 USD</option>
-            <option value="EUR">🇪🇺 EUR</option>
-            <option value="GBP">🇬🇧 GBP</option>
-            <option value="JPY">🇯🇵 JPY</option>
-            <option value="CAD">🇨🇦 CAD</option>
-            <option value="AUD">🇦🇺 AUD</option>
+          <optgroup label="Europe">
+            <option value="CHF">🇨🇭 CHF — Swiss Franc</option>
+            <option value="PLN">🇵🇱 PLN — Polish Zloty</option>
+            <option value="CZK">🇨🇿 CZK — Czech Koruna</option>
+            <option value="HUF">🇭🇺 HUF — Hungarian Forint</option>
+            <option value="RON">🇷🇴 RON — Romanian Leu</option>
+            <option value="UAH">🇺🇦 UAH — Ukrainian Hryvnia</option>
+            <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
+            <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
           </optgroup>
           <optgroup label="Crypto">
-            <option value="USDC">◈ USDC</option>
-            <option value="USDT">◈ USDT</option>
-            <option value="BTC">₿ BTC</option>
-            <option value="ETH">Ξ ETH</option>
+            <option value="BTC">₿ BTC — Bitcoin</option>
+            <option value="ETH">Ξ ETH — Ethereum</option>
+            <option value="USDC">◈ USDC — USD Coin</option>
+            <option value="USDT">◈ USDT — Tether</option>
+            <option value="XRP">✕ XRP — Ripple</option>
+            <option value="SOL">◎ SOL — Solana</option>
           </optgroup>
         </select>
       </div>
@@ -367,6 +381,24 @@
           <div class="mt-3"><span class="text-gray-500"># Tools: coinnect_quote · coinnect_corridors · coinnect_explain_route</span></div>
         </div>
       </details>
+    </div>
+  </div>
+</div>
+
+<!-- ── How it works ────────────────────────────────────────────────────────── -->
+<div class="max-w-3xl mx-auto px-5 py-6 hidden" id="howItWorks">
+  <div class="grid grid-cols-3 gap-4 text-center text-xs text-gray-500 dark:text-gray-400">
+    <div>
+      <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-2 text-sm font-bold text-gray-400">1</div>
+      <p>We check 22+ exchanges and 19 remittance providers</p>
+    </div>
+    <div>
+      <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-2 text-sm font-bold text-gray-400">2</div>
+      <p>Routes are ranked by total cost — no affiliate bias</p>
+    </div>
+    <div>
+      <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-2 text-sm font-bold text-gray-400">3</div>
+      <p>You go directly to the provider and send</p>
     </div>
   </div>
 </div>
@@ -1664,6 +1696,9 @@ function renderResults(routes,from,to){
   const filtered=applyFilter(routes);
   document.getElementById('routeCount').textContent=`${filtered.length} route${filtered.length!==1?'s':''}`;
 
+  const hiw = document.getElementById('howItWorks');
+  if(hiw) hiw.classList.remove('hidden');
+
   if(!filtered.length){
     document.getElementById('results').innerHTML=`
       <div class="text-center py-12 text-gray-400 border border-gray-200 dark:border-gray-800 rounded-xl">
@@ -1778,8 +1813,10 @@ async function getQuote(){
 
   try{
     const res=await fetch(`${API}/v1/quote?from=${from}&to=${to}&amount=${amount}`);
-    if(!res.ok){const e=await res.json();throw new Error(e.detail||'No routes found');}
-    const data=await res.json();
+    const text=await res.text();
+    let data;
+    try{data=JSON.parse(text);}catch(e){throw new Error('Server returned an invalid response. Please try again.');}
+    if(!res.ok)throw new Error(data.detail||'No routes found');
     _allRoutes=data.routes;
     _quoteTime=Date.now();
 
