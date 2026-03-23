@@ -149,7 +149,7 @@ Two-phase approach:
 
 For exotic corridors where no direct provider exists (e.g., ZAR→ETB), the engine uses **bridge edges** from reference FX sources (CurrencyAPI, Frankfurter, FloatRates). These carry a conservative 0.5% spread estimate and are labeled ESTIMATED. When a real provider is added for that corridor, it automatically wins the ranking.
 
-This means Coinnect can route virtually **any fiat-to-fiat pair** through a combination of crypto exchanges and market rate bridges. The graph currently has 3,500+ edges covering 50+ currencies.
+This means Coinnect can route virtually **any fiat-to-fiat pair** through a combination of crypto exchanges and market rate bridges. The graph currently has 29,000+ edges covering 50+ currencies.
 
 #### Constraints
 
