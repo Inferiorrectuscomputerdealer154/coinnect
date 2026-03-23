@@ -206,9 +206,13 @@ async def quote(
     # 3. At least one step uses a non-reference provider
     # Reference providers may appear as MIDDLE steps in multi-hop routes.
     if result.routes:
+        # Pure data sources that should NEVER be first or last step
+        NEVER_ENDPOINTS = {"Market rate", "x-rates.com (mid-market)", "FloatRates", "ECB (reference)"}
         result.routes = [r for r in result.routes
             if (not _is_reference_provider(r.steps[0].via)
-                and any(not _is_reference_provider(s.via) for s in r.steps))]
+                and r.steps[-1].via not in NEVER_ENDPOINTS
+                and any(not _is_reference_provider(s.via) for s in r.steps)
+                and r.they_receive > amount * 0.01)]  # sanity: receive > 1% of send
         # Re-rank and reassign labels
         if result.routes:
             result.routes[0].label = "Cheapest"
