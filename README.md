@@ -106,7 +106,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 Coinnect is built and maintained by Miguel. If it saved you money on a transfer, consider donating:
 
 - **ETH / USDC / BNB / DAI:** `0xf0813041b9b017a88f28B8600E73a695E2B02e0A`
-- **BTC:** `bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq`
+- **BTC:** `bc1q7jxdfgv6gacyx5vmmnz2nekxhptxym69ducaqz`
 
 ## License
 
