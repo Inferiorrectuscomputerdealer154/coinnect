@@ -198,6 +198,8 @@ async def quote(
         result.routes = [r for r in result.routes
             if (all(not _is_reference_provider(s.via) for s in r.steps)
                 and r.they_receive > 0)]  # sanity: must receive something
+        # Sort by total cost (cheapest first) before re-ranking
+        result.routes.sort(key=lambda r: r.total_cost_pct)
         # Re-rank and reassign labels
         if result.routes:
             result.routes[0].label = "Cheapest"
