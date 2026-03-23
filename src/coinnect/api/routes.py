@@ -217,6 +217,9 @@ async def quote(
     else:
         amount_range = None
 
+    source = "api" if x_api_key else "web"
+    asyncio.create_task(_log_search(from_, to, amount, len(result.routes), x_api_key, user_agent, source))
+
     if not result.routes:
         raise HTTPException(
             404,
@@ -224,9 +227,6 @@ async def quote(
             "This corridor may not be supported yet. "
             "Check /v1/corridors for supported pairs."
         )
-
-    source = "api" if x_api_key else "web"
-    asyncio.create_task(_log_search(from_, to, amount, len(result.routes), x_api_key, user_agent, source))
 
     return QuoteOut(
         from_currency=result.from_currency,
