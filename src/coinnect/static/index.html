@@ -126,6 +126,7 @@
     .logo-plug{animation:plug-glow 3s ease-in-out infinite;}
     /* Pill badge */
     .pill{display:inline-flex;align-items:center;gap:.3rem;font-size:.65rem;font-weight:600;letter-spacing:.05em;padding:.2rem .55rem;border-radius:9999px;border-width:1px;}
+    #heroDemo{transition:opacity 0.3s ease;}
   </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-200">
@@ -184,26 +185,43 @@
 <div class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
   <div class="max-w-5xl mx-auto px-5 pt-12 pb-8">
 
-    <!-- Headline -->
-    <div class="text-center mb-5">
-      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight mb-2" data-i18n-html="hero_h1">
-        Compare every way to send money <span class="gradient-text">anywhere</span>
+    <!-- Hero: Data as visual -->
+    <div class="text-center mb-6">
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
+        Don't trust. Compare.
       </h1>
-      <p class="text-gray-500 dark:text-gray-400 text-sm max-w-md mx-auto" data-i18n="hero_sub">
-        25+ providers. Real-time rates. No affiliate fees. Free for personal use.
-      </p>
-      <p class="mt-2 text-base text-cyan-600 dark:text-cyan-400 font-medium" id="taglineRotator"></p>
-      <!-- Compact audience hint -->
-      <div class="mt-3 flex items-center justify-center gap-4 text-[11px] text-gray-400">
-        <span>Humans: compare &amp; go</span>
-        <span class="opacity-30">|</span>
-        <button onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})" class="hover:text-cyan-500 transition-colors">API &amp; MCP for agents</button>
+
+      <!-- Animated rate comparison -->
+      <div class="max-w-md mx-auto mb-6 space-y-2" id="heroDemo">
+        <div class="flex items-center gap-3 px-4 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
+          <span class="text-sm font-medium text-emerald-700 dark:text-emerald-400 w-28 text-left">Binance</span>
+          <div class="flex-1 h-2 bg-emerald-100 dark:bg-emerald-900 rounded-full overflow-hidden">
+            <div class="h-full bg-emerald-500 rounded-full" style="width:5%"></div>
+          </div>
+          <span class="text-sm font-mono font-bold text-emerald-700 dark:text-emerald-400">0.27%</span>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-2 rounded-lg">
+          <span class="text-sm font-medium text-gray-500 w-28 text-left">Wise</span>
+          <div class="flex-1 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+            <div class="h-full bg-cyan-500 rounded-full" style="width:23%"></div>
+          </div>
+          <span class="text-sm font-mono text-gray-500">2.30%</span>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-2 rounded-lg opacity-50">
+          <span class="text-sm font-medium text-gray-400 w-28 text-left line-through">Western Union</span>
+          <div class="flex-1 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+            <div class="h-full bg-red-400 rounded-full" style="width:45%"></div>
+          </div>
+          <span class="text-sm font-mono text-gray-400 line-through">4.50%</span>
+        </div>
+        <p class="text-[10px] text-gray-400 mt-1">USD → MXN · $500 · Live rates · Updates every 3 min</p>
       </div>
-      <div class="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[11px] text-gray-400">
-        <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Live rates every 3 min</span>
+
+      <!-- Stats -->
+      <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[11px] text-gray-400 mb-2">
+        <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Live rates</span>
         <span>22+ exchanges</span>
         <span>50+ currencies</span>
-        <span>Free for personal use</span>
         <span>Open source</span>
       </div>
     </div>
@@ -2151,6 +2169,72 @@ async function getFingerprint(){
   localStorage.setItem('_fp',fp);
   return fp;
 }
+</script>
+
+<!-- Hero demo rotation -->
+<script>
+const HERO_CORRIDORS = [
+  {corridor:'USD → MXN · $500', rows:[
+    {name:'Binance',pct:0.27,color:'emerald',best:true},
+    {name:'Wise',pct:2.30,color:'cyan',best:false},
+    {name:'Western Union',pct:4.50,color:'red',best:false},
+  ]},
+  {corridor:'USD → NGN · $500', rows:[
+    {name:'Yellow Card',pct:0.90,color:'emerald',best:true},
+    {name:'Sendwave',pct:2.00,color:'cyan',best:false},
+    {name:'Western Union',pct:5.50,color:'red',best:false},
+  ]},
+  {corridor:'USD → PHP · $500', rows:[
+    {name:'Kraken + Coins.ph',pct:0.50,color:'emerald',best:true},
+    {name:'Remitly',pct:2.00,color:'cyan',best:false},
+    {name:'Western Union',pct:4.50,color:'red',best:false},
+  ]},
+  {corridor:'GBP → INR · £500', rows:[
+    {name:'CoinDCX',pct:0.40,color:'emerald',best:true},
+    {name:'Wise',pct:1.60,color:'cyan',best:false},
+    {name:'MoneyGram',pct:4.20,color:'red',best:false},
+  ]},
+];
+// Color class map (full strings so Tailwind can scan them)
+const _hColors={
+  emerald:{
+    bg:'bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800',
+    text:'text-emerald-700 dark:text-emerald-400',
+    bar:'bg-emerald-500'
+  },
+  cyan:{
+    bg:'',text:'text-gray-500',bar:'bg-cyan-500'
+  },
+  red:{
+    bg:'',text:'text-gray-400',bar:'bg-red-400'
+  }
+};
+let _heroIdx=0;
+function rotateHero(){
+  const demo=document.getElementById('heroDemo');
+  if(!demo)return;
+  _heroIdx=(_heroIdx+1)%HERO_CORRIDORS.length;
+  const c=HERO_CORRIDORS[_heroIdx];
+  demo.style.opacity='0';
+  setTimeout(()=>{
+    const rows=c.rows.map(r=>{
+      const cl=_hColors[r.color]||_hColors.cyan;
+      const struck=r.pct>4;
+      const bgClass=r.best?cl.bg:'';
+      const textClass=r.best?cl.text:(struck?'text-gray-400':'text-gray-500');
+      return`<div class="flex items-center gap-3 px-4 py-2 rounded-lg ${bgClass} ${struck?'opacity-50':''}">
+        <span class="text-sm font-medium ${textClass} w-28 text-left ${struck?'line-through':''}">${r.name}</span>
+        <div class="flex-1 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+          <div class="h-full ${cl.bar} rounded-full transition-all duration-700" style="width:${Math.min(r.pct*10,100)}%"></div>
+        </div>
+        <span class="text-sm font-mono ${r.best?'font-bold':''} ${textClass} ${struck?'line-through':''}">${r.pct.toFixed(2)}%</span>
+      </div>`;
+    }).join('');
+    demo.innerHTML=rows+`<p class="text-[10px] text-gray-400 mt-1">${c.corridor} · Live rates · Updates every 3 min</p>`;
+    demo.style.opacity='1';
+  },300);
+}
+setInterval(rotateHero,6000);
 </script>
 
 <!-- ── Cookie banner ──────────────────────────────────────────────────────── -->

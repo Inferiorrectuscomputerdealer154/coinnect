@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coinnect — Route Visualization</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f8fafc; font-family: system-ui, sans-serif; overflow: hidden; }
+    canvas { display: block; }
+    #info {
+      position: fixed; top: 20px; left: 20px; color: #374151;
+      font-size: 13px; z-index: 10;
+    }
+    #info h1 { color: #0891b2; font-size: 18px; margin-bottom: 4px; }
+    #controls {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 10;
+    }
+    #controls button {
+      background: #fff; border: 1px solid #d1d5db; color: #374151;
+      padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    #controls button:hover { border-color: #0891b2; color: #0891b2; }
+    #controls button.active { background: #0891b2; color: #fff; border-color: #0891b2; }
+  </style>
+</head>
+<body>
+<div id="info">
+  <h1>Coinnect Route Map</h1>
+  <p id="corridor">Loading...</p>
+  <p id="stats"></p>
+</div>
+<div id="controls">
+  <button class="active" onclick="setCorridor('USD','MXN',this)">USD → MXN</button>
+  <button onclick="setCorridor('USD','NGN',this)">USD → NGN</button>
+  <button onclick="setCorridor('USD','PHP',this)">USD → PHP</button>
+  <button onclick="setCorridor('USD','INR',this)">USD → INR</button>
+  <button onclick="setCorridor('EUR','TRY',this)">EUR → TRY</button>
+  <button onclick="setCorridor('GBP','NGN',this)">GBP → NGN</button>
+  <button onclick="setCorridor('AED','INR',this)">AED → INR</button>
+</div>
+
+<canvas id="globe"></canvas>
+
+<script>
+const canvas = document.getElementById('globe');
+const ctx = canvas.getContext('2d');
+
+const CITIES = {
+  USD: { name: 'New York', lat: 40.71, lon: -74.01 },
+  EUR: { name: 'Frankfurt', lat: 50.11, lon: 8.68 },
+  GBP: { name: 'London', lat: 51.51, lon: -0.13 },
+  MXN: { name: 'Mexico City', lat: 19.43, lon: -99.13 },
+  BRL: { name: 'São Paulo', lat: -23.55, lon: -46.63 },
+  ARS: { name: 'Buenos Aires', lat: -34.60, lon: -58.38 },
+  COP: { name: 'Bogotá', lat: 4.71, lon: -74.07 },
+  NGN: { name: 'Lagos', lat: 6.52, lon: 3.38 },
+  KES: { name: 'Nairobi', lat: -1.29, lon: 36.82 },
+  GHS: { name: 'Accra', lat: 5.56, lon: -0.19 },
+  ZAR: { name: 'Johannesburg', lat: -26.20, lon: 28.05 },
+  PHP: { name: 'Manila', lat: 14.60, lon: 120.98 },
+  INR: { name: 'Mumbai', lat: 19.08, lon: 72.88 },
+  PKR: { name: 'Karachi', lat: 24.86, lon: 67.01 },
+  BDT: { name: 'Dhaka', lat: 23.81, lon: 90.41 },
+  IDR: { name: 'Jakarta', lat: -6.21, lon: 106.85 },
+  TRY: { name: 'Istanbul', lat: 41.01, lon: 28.98 },
+  UAH: { name: 'Kyiv', lat: 50.45, lon: 30.52 },
+  AED: { name: 'Dubai', lat: 25.20, lon: 55.27 },
+  SAR: { name: 'Riyadh', lat: 24.69, lon: 46.72 },
+  JPY: { name: 'Tokyo', lat: 35.68, lon: 139.69 },
+  CAD: { name: 'Toronto', lat: 43.65, lon: -79.38 },
+  AUD: { name: 'Sydney', lat: -33.87, lon: 151.21 },
+};
+
+// Fallback demo data when API is unavailable
+const DEMO_ROUTES = {
+  'USD-MXN': [
+    { label:'Cheapest', cost:0.27, vias:'Binance', time:10, receive:8940 },
+    { label:'Option 2', cost:1.0, vias:'Strike', time:5, receive:8875 },
+    { label:'Option 3', cost:1.2, vias:'Global66', time:60, receive:8855 },
+    { label:'Option 4', cost:2.3, vias:'Wise', time:60, receive:8759 },
+    { label:'Option 5', cost:4.2, vias:'MoneyGram', time:30, receive:8589 },
+    { label:'Option 6', cost:4.5, vias:'Western Union', time:30, receive:8562 },
+  ],
+  'USD-NGN': [
+    { label:'Cheapest', cost:0.9, vias:'Yellow Card', time:50, receive:762000 },
+    { label:'Option 2', cost:2.0, vias:'Sendwave', time:30, receive:755000 },
+    { label:'Option 3', cost:3.5, vias:'Remitly', time:2880, receive:744000 },
+    { label:'Option 4', cost:5.5, vias:'Western Union', time:2880, receive:730000 },
+  ],
+  'USD-PHP': [
+    { label:'Cheapest', cost:0.5, vias:'Kraken → Coins.ph', time:30, receive:27850 },
+    { label:'Option 2', cost:2.0, vias:'Remitly', time:1440, receive:27400 },
+    { label:'Option 3', cost:4.5, vias:'Western Union', time:60, receive:26700 },
+  ],
+  'USD-INR': [
+    { label:'Cheapest', cost:0.4, vias:'CoinDCX', time:15, receive:41700 },
+    { label:'Option 2', cost:1.2, vias:'Wise', time:60, receive:41400 },
+    { label:'Option 3', cost:3.8, vias:'Western Union', time:1440, receive:40300 },
+  ],
+  'EUR-TRY': [
+    { label:'Cheapest', cost:0.3, vias:'BtcTurk', time:10, receive:37200 },
+    { label:'Option 2', cost:1.5, vias:'TransferGo', time:60, receive:36700 },
+    { label:'Option 3', cost:5.0, vias:'Western Union', time:30, receive:35100 },
+  ],
+  'GBP-NGN': [
+    { label:'Cheapest', cost:1.0, vias:'Yellow Card', time:50, receive:970000 },
+    { label:'Option 2', cost:3.4, vias:'WorldRemit', time:1440, receive:950000 },
+    { label:'Option 3', cost:4.0, vias:'Western Union', time:1440, receive:940000 },
+  ],
+  'AED-INR': [
+    { label:'Cheapest', cost:0.8, vias:'WazirX', time:15, receive:11300 },
+    { label:'Option 2', cost:2.0, vias:'Wise', time:60, receive:11200 },
+    { label:'Option 3', cost:4.5, vias:'Western Union', time:1440, receive:10900 },
+  ],
+};
+
+let W, H, routes = [], animPhase = 0;
+let currentFrom = 'USD', currentTo = 'MXN';
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+function project(lat, lon) {
+  const cx = W / 2, cy = H / 2;
+  const scale = Math.min(W, H) * 0.38;
+  const x = cx + (lon / 180) * scale;
+  const y = cy - (lat / 90) * scale * 0.65;
+  return [x, y];
+}
+
+function drawArc(x1, y1, x2, y2, height, color, alpha, lineWidth, progress) {
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = alpha;
+  ctx.lineWidth = lineWidth;
+
+  const steps = 80;
+  const limit = Math.floor(steps * Math.min(progress, 1));
+  for (let i = 0; i <= limit; i++) {
+    const t = i / steps;
+    const x = x1 + (x2 - x1) * t;
+    const yBase = y1 + (y2 - y1) * t;
+    const arc = -height * Math.sin(Math.PI * t);
+    if (i === 0) ctx.moveTo(x, yBase + arc);
+    else ctx.lineTo(x, yBase + arc);
+  }
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // Moving dot
+  if (progress > 0 && progress <= 1.2) {
+    const t = Math.min(progress, 1);
+    const x = x1 + (x2 - x1) * t;
+    const yBase = y1 + (y2 - y1) * t;
+    const arc = -height * Math.sin(Math.PI * t);
+
+    // Glow
+    ctx.beginPath();
+    ctx.arc(x, yBase + arc, 6, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.2;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Dot
+    ctx.beginPath();
+    ctx.arc(x, yBase + arc, 3, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+}
+
+function drawCity(lat, lon, name, currency, isEndpoint) {
+  const [x, y] = project(lat, lon);
+
+  if (isEndpoint) {
+    // Pulse ring
+    ctx.beginPath();
+    ctx.arc(x, y, 14 + Math.sin(animPhase * 3) * 2, 0, Math.PI * 2);
+    ctx.strokeStyle = '#0891b2';
+    ctx.globalAlpha = 0.15;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    ctx.beginPath();
+    ctx.arc(x, y, 8, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(8, 145, 178, 0.12)';
+    ctx.fill();
+  }
+
+  ctx.beginPath();
+  ctx.arc(x, y, isEndpoint ? 5 : 2.5, 0, Math.PI * 2);
+  ctx.fillStyle = isEndpoint ? '#0891b2' : '#cbd5e1';
+  ctx.fill();
+
+  if (isEndpoint) {
+    ctx.font = 'bold 12px system-ui';
+    ctx.fillStyle = '#111827';
+    ctx.fillText(`${currency}`, x + 10, y - 6);
+    ctx.font = '10px system-ui';
+    ctx.fillStyle = '#6b7280';
+    ctx.fillText(name, x + 10, y + 8);
+  }
+}
+
+function drawWorld() {
+  // Subtle grid
+  ctx.strokeStyle = '#e5e7eb';
+  ctx.lineWidth = 0.5;
+  for (let lat = -60; lat <= 60; lat += 30) {
+    ctx.beginPath();
+    for (let lon = -180; lon <= 180; lon += 5) {
+      const [x, y] = project(lat, lon);
+      if (lon === -180) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+  for (let lon = -180; lon <= 180; lon += 30) {
+    ctx.beginPath();
+    for (let lat = -60; lat <= 60; lat += 5) {
+      const [x, y] = project(lat, lon);
+      if (lat === -60) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  for (const [cur, city] of Object.entries(CITIES)) {
+    const isEndpoint = cur === currentFrom || cur === currentTo;
+    drawCity(city.lat, city.lon, city.name, cur, isEndpoint);
+  }
+}
+
+function costColor(pct) {
+  if (pct < 1) return '#059669';
+  if (pct < 2) return '#0891b2';
+  if (pct < 4) return '#d97706';
+  return '#dc2626';
+}
+
+async function setCorridor(from, to, btn) {
+  currentFrom = from;
+  currentTo = to;
+  animPhase = 0;
+
+  document.querySelectorAll('#controls button').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  document.getElementById('corridor').textContent = `${from} → ${to} · Loading...`;
+
+  // Try live API first, fallback to demo
+  let apiRoutes = [];
+  try {
+    const r = await fetch(`https://coinnect.bot/v1/quote?from=${from}&to=${to}&amount=500`);
+    const d = await r.json();
+    apiRoutes = (d.routes || []).slice(0, 8).map((r, i) => ({
+      label: r.label,
+      cost: r.total_cost_pct,
+      receive: r.they_receive,
+      time: r.total_time_minutes,
+      vias: r.steps.map(s => s.via).join(' → '),
+      delay: i * 0.18,
+    }));
+  } catch(e) {
+    console.log('API unavailable, using demo data');
+  }
+
+  if (!apiRoutes.length) {
+    const demo = DEMO_ROUTES[`${from}-${to}`] || DEMO_ROUTES['USD-MXN'];
+    apiRoutes = demo.map((r, i) => ({ ...r, delay: i * 0.18 }));
+  }
+
+  routes = apiRoutes;
+
+  document.getElementById('corridor').textContent = `${from} → ${to} · ${routes.length} routes`;
+  document.getElementById('stats').textContent = routes.length
+    ? `Best: ${routes[0].cost.toFixed(2)}% via ${routes[0].vias}`
+    : '';
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  drawWorld();
+
+  const fromCity = CITIES[currentFrom];
+  const toCity = CITIES[currentTo];
+  if (!fromCity || !toCity) { requestAnimationFrame(draw); return; }
+
+  const [x1, y1] = project(fromCity.lat, fromCity.lon);
+  const [x2, y2] = project(toCity.lat, toCity.lon);
+
+  animPhase += 0.008;
+
+  for (const route of routes) {
+    const progress = Math.max(0, (animPhase - route.delay) * 1.2);
+    if (progress <= 0) continue;
+
+    const baseHeight = 40;
+    const costHeight = route.cost * 20;
+    const height = baseHeight + costHeight;
+
+    const color = costColor(route.cost);
+    const alpha = progress > 1 ? 0.5 : 0.85;
+    const lw = progress > 1 ? 1.5 : 2.5;
+
+    drawArc(x1, y1, x2, y2, height, color, alpha, lw, progress);
+
+    // Label at peak
+    if (progress > 1) {
+      const peakX = (x1 + x2) / 2;
+      const peakY = ((y1 + y2) / 2) - height;
+
+      // Background pill
+      const text = `${route.vias} · ${route.cost.toFixed(2)}%`;
+      ctx.font = '10px system-ui';
+      const tw = ctx.measureText(text).width;
+      ctx.fillStyle = '#ffffff';
+      ctx.globalAlpha = 0.85;
+      ctx.beginPath();
+      ctx.roundRect(peakX - 4, peakY - 10, tw + 12, 16, 4);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = color;
+      ctx.fillText(text, peakX + 2, peakY + 2);
+    }
+  }
+
+  if (animPhase > 3.5) animPhase = 0;
+  requestAnimationFrame(draw);
+}
+
+setCorridor('USD', 'MXN', document.querySelector('#controls button.active'));
+draw();
+</script>
+</body>
+</html>
