@@ -370,11 +370,7 @@
     </div>
   </div>
 
-  <!-- Two-column layout: results left, charts right (Expedia-style) -->
-  <div class="flex flex-col lg:flex-row gap-5">
-
-  <!-- LEFT: Results (wider) -->
-  <div class="flex-1 min-w-0">
+  <!-- Results -->
 
   <!-- Table view container -->
   <div id="resultsTableWrap" class="hidden mb-5 overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
@@ -405,12 +401,7 @@
   </div>
   <div id="results"></div>
 
-  </div><!-- end LEFT results column -->
-
-  <!-- RIGHT: Charts sidebar (stacked) -->
-  <div class="lg:w-80 lg:shrink-0">
-
-  <!-- History charts panel -->
+  <!-- History charts (collapsible) -->
   <div id="historyBar" class="hidden mb-5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
     <!-- Header row: title + period buttons -->
     <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
@@ -424,8 +415,8 @@
         <button class="hist-period text-xs border border-gray-300 dark:border-gray-700 rounded-full px-2.5 py-1 transition-all text-gray-500 dark:text-gray-400" data-min="525600">1y</button>
       </div>
     </div>
-    <!-- Charts stacked vertically in sidebar -->
-    <div class="grid grid-cols-1 gap-4">
+    <!-- Charts side by side -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div>
         <div class="flex items-center justify-between mb-1">
           <span id="chartALabel" class="text-xs text-gray-400 font-mono"></span>
@@ -455,8 +446,6 @@
     </div>
   </div>
 
-  </div><!-- end RIGHT charts column -->
-  </div><!-- end two-column layout -->
 
 </div>
 
