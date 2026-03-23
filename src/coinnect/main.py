@@ -360,6 +360,72 @@ ul{{columns:2;column-gap:2rem;list-style:none;padding:0}} li{{padding:.25rem 0;f
 </body></html>""")
 
 
+@app.get("/get-listed", include_in_schema=False)
+async def get_listed_page():
+    """Page for providers who want to be listed on Coinnect."""
+    return HTMLResponse("""<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get Listed on Coinnect</title>
+<link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+<style>
+body{font-family:system-ui,sans-serif;max-width:700px;margin:2rem auto;padding:0 1rem;color:#111827;background:#f9fafb;line-height:1.7}
+a{color:#0891b2;text-decoration:none} a:hover{text-decoration:underline}
+h1{font-size:1.5rem;margin-bottom:.25rem} h2{font-size:1.1rem;margin-top:2rem;color:#374151}
+.back{display:inline-block;margin-bottom:1rem;font-size:.85rem;color:#6b7280}
+.req{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1.25rem;margin:.75rem 0}
+.req h3{font-size:.95rem;margin:0 0 .5rem;color:#111827}
+.req p{font-size:.85rem;color:#6b7280;margin:0}
+.cta{display:inline-block;margin-top:1.5rem;background:#0891b2;color:#fff;padding:.75rem 1.5rem;border-radius:10px;font-weight:600;font-size:.9rem}
+.cta:hover{background:#0e7490;text-decoration:none}
+code{background:#f1f5f9;padding:.15rem .4rem;border-radius:4px;font-size:.85rem}
+</style></head><body>
+<a href="/" class="back">← Back to Coinnect</a>
+<h1>Get Listed on Coinnect</h1>
+<p style="color:#6b7280;font-size:.9rem">Coinnect compares 30+ providers to find the cheapest money transfer routes. Listing is free, neutral, and based on data — not partnerships.</p>
+
+<h2>Requirements</h2>
+
+<div class="req">
+  <h3>1. Public pricing</h3>
+  <p>Your fees and exchange rates must be publicly accessible without login. A pricing page URL or published API is required.</p>
+</div>
+
+<div class="req">
+  <h3>2. Corridor data</h3>
+  <p>Provide your supported currency pairs with: <code>from</code>, <code>to</code>, <code>min/max amount</code>, <code>payment methods</code>, and <code>estimated time</code>.</p>
+</div>
+
+<div class="req">
+  <h3>3. Rate source (one of)</h3>
+  <p><strong>Best:</strong> A public REST API returning live quotes (you get a "LIVE" badge).<br>
+  <strong>Good:</strong> A public calculator page we can reference.<br>
+  <strong>Minimum:</strong> Published fee tables (listed as "ESTIMATED").</p>
+</div>
+
+<div class="req">
+  <h3>4. Regulated in at least one jurisdiction</h3>
+  <p>No credible fraud or insolvency history. Providers must comply with applicable regulations in their operating jurisdictions.</p>
+</div>
+
+<h2>What you get</h2>
+<ul style="font-size:.9rem;color:#374151">
+  <li>Neutral ranking by cost — we never favor paying partners</li>
+  <li>Visibility across 50+ SEO-optimized corridor pages</li>
+  <li>Listed in our open dataset on <a href="https://huggingface.co/datasets/coinnect-dev/coinnect-rates">Hugging Face</a></li>
+  <li>Discoverable by AI agents via MCP server and REST API</li>
+  <li>Badge: LIVE (with API) or ESTIMATED (fee tables)</li>
+</ul>
+
+<h2>How rankings work</h2>
+<p style="font-size:.9rem;color:#6b7280">Routes are ranked by total cost to the recipient (fees + exchange rate spread). We do not accept affiliate commissions, paid placements, or sponsored rankings. Ever. <a href="https://github.com/coinnect-dev/coinnect/blob/main/docs/LISTING_STANDARD.md">Full listing standard →</a></p>
+
+<a href="mailto:miguel@coinnect.bot?subject=Get%20listed%20on%20Coinnect&body=Provider%20name:%0ACorridor(s):%0APricing%20page%20URL:%0AAPI%20docs%20(if%20available):" class="cta">Apply to get listed</a>
+<p style="font-size:.8rem;color:#9ca3af;margin-top:.5rem">Or email miguel@coinnect.bot with your provider name, corridors, and pricing page URL.</p>
+
+</body></html>""")
+
+
 @app.get("/suggest", include_in_schema=False)
 async def suggest_page():
     """Standalone page for suggesting and voting on corridors/providers."""
