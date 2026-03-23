@@ -724,8 +724,8 @@
 document.addEventListener('DOMContentLoaded',function(){
   // Wait for exchangeLogo and esc to be defined
   setTimeout(function(){
-    const live=['Binance','Kraken','Coinbase','Bitso','Luno','Bitstamp','Gemini','Wise','Buda'];
-    const reference=['CoinGecko','Frankfurter (ECB)','Bluelytics (AR)','CriptoYa (AR)','BCB PTAX (BR)','TRM (CO)','LiraRate (LB)'];
+    const live=['Binance','Kraken','Coinbase','OKX','Bybit','KuCoin','Bitso','Luno','Bitstamp','Gemini','Bithumb','Bitflyer','BtcTurk','Wise','Buda','VALR','CoinDCX','WazirX','SatoshiTango'];
+    const reference=['CoinGecko','Yadio (P2P)','Frankfurter (ECB)','FloatRates','Bluelytics (AR)','CriptoYa (AR)','BCB PTAX (BR)','TRM (CO)'];
     const estimated=['Remitly','WorldRemit','Ria','Sendwave','Xoom','Paysend','OFX','TransferGo','Skrill','Revolut','Strike','XE','Global66','Atlantic Money','Intermex','CurrencyFair','Binance P2P','Western Union','MoneyGram'];
     function renderProviders(names,containerId){
       const el=document.getElementById(containerId);
@@ -819,8 +819,8 @@ const API='';
 function esc(s){if(s==null)return'';const d=document.createElement('div');d.textContent=String(s);return d.innerHTML;}
 
 // ── Live vs estimated provider badges ─────────────────────────────────────
-const LIVE_PROVIDERS=new Set(['Binance','Kraken','Coinbase','Bitso','Luno','Bitstamp','Gemini','Wise','Yellow Card','Buda','Flutterwave','Strike']);
-const REF_PROVIDERS=new Set(['CoinGecko (market)','ECB (reference)','Market rate','Blue market (AR)','Official (AR)','Dolar Blue (AR)','MEP (AR)','CCL (AR)','BCB PTAX (BR)','TRM (CO)','Parallel (LB)']);
+const LIVE_PROVIDERS=new Set(['Binance','Kraken','Coinbase','Bitso','Luno','Bitstamp','Gemini','Wise','Yellow Card','Buda','Flutterwave','Strike','OKX','Bybit','KuCoin','Gate.io','Bitget','MEXC','HTX','Crypto.com','Bithumb','Bitflyer','BtcTurk','IndependentReserve','WhiteBIT','Exmo','VALR','CoinDCX','WazirX','SatoshiTango']);
+const REF_PROVIDERS=new Set(['CoinGecko (market)','ECB (reference)','Market rate','Blue market (AR)','Official (AR)','Dolar Blue (AR)','MEP (AR)','CCL (AR)','BCB PTAX (BR)','TRM (CO)','Parallel (LB)','Yadio (P2P)','FloatRates']);
 function rateBadge(via){
   if(LIVE_PROVIDERS.has(via))return'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">LIVE</span>';
   if(REF_PROVIDERS.has(via)||via.endsWith('(AR)'))return'<span class="inline-block ml-1 px-1 py-0.5 rounded text-[9px] font-bold leading-none bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400">OFFICIAL</span>';
