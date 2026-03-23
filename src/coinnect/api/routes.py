@@ -138,16 +138,29 @@ async def quote(
 
     # ── Fetch edges & build quote ────────────────────────────────────────────
     from coinnect.exchanges.remittance_adapter import get_remittance_edges
-    from coinnect.exchanges.direct_api_adapter import get_binance_p2p_edges
-    crypto_edges, wise_edges, trad_edges, yc_edges, remit_edges, bp2p_edges = await asyncio.gather(
+    from coinnect.exchanges.direct_api_adapter import (
+        get_bitso_edges, get_buda_edges, get_coingecko_edges,
+        get_strike_edges, get_frankfurter_edges, get_currencyapi_edges,
+        get_yadio_edges, get_valr_edges, get_coindcx_edges,
+        get_wazirx_edges, get_satoshitango_edges, get_floatrates_edges,
+        get_bluelytics_edges, get_criptoya_edges, get_bcb_edges,
+        get_trm_edges, get_binance_p2p_edges,
+    )
+    from coinnect.exchanges.calculator_adapter import get_calculator_edges
+    results = await asyncio.gather(
         get_all_edges(),
         get_wise_edges(),
         get_traditional_edges(),
         get_yellowcard_edges(),
         get_remittance_edges(),
-        get_binance_p2p_edges(),
+        get_bitso_edges(), get_buda_edges(), get_coingecko_edges(),
+        get_strike_edges(), get_frankfurter_edges(), get_currencyapi_edges(),
+        get_yadio_edges(), get_valr_edges(), get_coindcx_edges(),
+        get_wazirx_edges(), get_satoshitango_edges(), get_floatrates_edges(),
+        get_bluelytics_edges(), get_criptoya_edges(), get_bcb_edges(),
+        get_trm_edges(), get_binance_p2p_edges(), get_calculator_edges(),
     )
-    all_edges = crypto_edges + wise_edges + trad_edges + yc_edges + remit_edges + bp2p_edges
+    all_edges = [e for group in results for e in group]
 
     if not all_edges:
         raise HTTPException(503, "Exchange data temporarily unavailable")
