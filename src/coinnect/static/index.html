@@ -691,21 +691,21 @@
 <!-- ── Supported Providers ──────────────────────────────────────────────── -->
 <section class="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-5 py-10">
   <div class="max-w-2xl mx-auto">
-    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-1">30+ data sources</h2>
-    <p class="text-xs text-gray-400 mb-4">Every search checks all sources. No affiliate fees, no hidden markup.</p>
+    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-1" data-i18n="ds_title">30+ data sources</h2>
+    <p class="text-xs text-gray-400 mb-4" data-i18n="ds_sub">Every search checks all sources. No affiliate fees, no hidden markup.</p>
     <!-- Legend -->
     <div class="flex flex-wrap gap-3 mb-5 text-[10px] text-gray-500 dark:text-gray-400">
-      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> <strong>LIVE RATE</strong> — Exchange API, refreshed ~3 min</span>
-      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> <strong>OFFICIAL</strong> — Central bank / country rate</span>
-      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-500"></span> <strong>REFERENCE</strong> — Market data aggregator</span>
-      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span> <strong>ESTIMATED</strong> — Published fee tables</span>
+      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> <strong data-i18n="badge_live">LIVE RATE</strong> — <span data-i18n="badge_live_desc">Exchange API, refreshed ~3 min</span></span>
+      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> <strong data-i18n="badge_official">OFFICIAL</strong> — <span data-i18n="badge_official_desc">Central bank / country rate</span></span>
+      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-500"></span> <strong data-i18n="badge_reference">REFERENCE</strong> — <span data-i18n="badge_reference_desc">Market data aggregator</span></span>
+      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span> <strong data-i18n="badge_estimated">ESTIMATED</strong> — <span data-i18n="badge_estimated_desc">Published fee tables</span></span>
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
       <!-- Live -->
       <div>
         <div class="flex items-center gap-2 mb-3">
           <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Live</span>
+          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="cat_live">Live</span>
         </div>
         <div id="providersLive" class="flex flex-wrap gap-2"></div>
       </div>
@@ -713,7 +713,7 @@
       <div>
         <div class="flex items-center gap-2 mb-3">
           <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
-          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Official</span>
+          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="cat_official">Official</span>
         </div>
         <div id="providersOfficial" class="flex flex-wrap gap-2"></div>
       </div>
@@ -721,15 +721,15 @@
       <div>
         <div class="flex items-center gap-2 mb-3">
           <span class="w-2 h-2 rounded-full bg-cyan-500 inline-block"></span>
-          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Reference</span>
+          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="cat_reference">Reference</span>
         </div>
         <div id="providersReference" class="flex flex-wrap gap-2"></div>
       </div>
       <!-- Estimated -->
       <div>
         <div class="flex items-center gap-2 mb-3">
-          <span class="w-2 h-2 rounded-full bg-gray-300 inline-block"></span>
-          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Estimated</span>
+          <span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span>
+          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider" data-i18n="cat_estimated">Estimated</span>
         </div>
         <div id="providersEstimated" class="flex flex-wrap gap-2"></div>
       </div>
@@ -907,44 +907,44 @@ const REQS={
 
 const FEATURED={'Cheapest':'','Fastest':''};
 const PROVIDER_INFO = {
-  'Binance': {url:'https://binance.com',refresh:'~3 min (live order book)',contact:'https://www.binance.com/en/support'},
-  'Kraken': {url:'https://kraken.com',refresh:'~3 min (live order book)',contact:'https://support.kraken.com'},
-  'Coinbase': {url:'https://coinbase.com',refresh:'~3 min (live order book)',contact:'https://help.coinbase.com'},
-  'OKX': {url:'https://okx.com',refresh:'~3 min (live order book)',contact:'https://www.okx.com/support'},
-  'Bybit': {url:'https://bybit.com',refresh:'~3 min (live order book)',contact:'https://www.bybit.com/en/help-center'},
-  'KuCoin': {url:'https://kucoin.com',refresh:'~3 min (live order book)',contact:'https://www.kucoin.com/support'},
-  'Bitso': {url:'https://bitso.com',refresh:'~3 min (live REST API)',contact:'https://help.bitso.com'},
-  'Wise': {url:'https://wise.com',refresh:'~30 min (live FX rate)',contact:'https://wise.com/help'},
-  'Buda': {url:'https://buda.com',refresh:'~3 min (live REST API)',contact:'https://help.buda.com'},
-  'VALR': {url:'https://valr.com',refresh:'~3 min (live REST API)',contact:'https://support.valr.com'},
-  'CoinDCX': {url:'https://coindcx.com',refresh:'~3 min (live REST API)',contact:'https://support.coindcx.com'},
-  'WazirX': {url:'https://wazirx.com',refresh:'~3 min (live REST API)',contact:'https://support.wazirx.com'},
+  'Binance': {url:'https://binance.com',refresh:'~3 min (live order book)',contact:'https://www.binance.com/en/support',fees:'https://www.binance.com/en/fee/schedule'},
+  'Kraken': {url:'https://kraken.com',refresh:'~3 min (live order book)',contact:'https://support.kraken.com',fees:'https://www.kraken.com/features/fee-schedule'},
+  'Coinbase': {url:'https://coinbase.com',refresh:'~3 min (live order book)',contact:'https://help.coinbase.com',fees:'https://help.coinbase.com/en/coinbase/trading-and-funding/pricing-and-fees/fees'},
+  'OKX': {url:'https://okx.com',refresh:'~3 min (live order book)',contact:'https://www.okx.com/support',fees:'https://www.okx.com/fees'},
+  'Bybit': {url:'https://bybit.com',refresh:'~3 min (live order book)',contact:'https://www.bybit.com/en/help-center',fees:'https://www.bybit.com/en/help-center/article/Fee-Structure'},
+  'KuCoin': {url:'https://kucoin.com',refresh:'~3 min (live order book)',contact:'https://www.kucoin.com/support',fees:'https://www.kucoin.com/vip/level'},
+  'Bitso': {url:'https://bitso.com',refresh:'~3 min (live REST API)',contact:'https://help.bitso.com',fees:'https://bitso.com/fees'},
+  'Wise': {url:'https://wise.com',refresh:'~30 min (live FX rate)',contact:'https://wise.com/help',fees:'https://wise.com/pricing'},
+  'Buda': {url:'https://buda.com',refresh:'~3 min (live REST API)',contact:'https://help.buda.com',fees:'https://www.buda.com/comisiones'},
+  'VALR': {url:'https://valr.com',refresh:'~3 min (live REST API)',contact:'https://support.valr.com',fees:'https://www.valr.com/fees'},
+  'CoinDCX': {url:'https://coindcx.com',refresh:'~3 min (live REST API)',contact:'https://support.coindcx.com',fees:'https://coindcx.com/fees'},
+  'WazirX': {url:'https://wazirx.com',refresh:'~3 min (live REST API)',contact:'https://support.wazirx.com',fees:'https://wazirx.com/fees'},
   'SatoshiTango': {url:'https://satoshitango.com',refresh:'~5 min (live REST API)',contact:'https://satoshitango.com/contacto'},
-  'Uphold': {url:'https://uphold.com',refresh:'~5 min (live public ticker)',contact:'https://support.uphold.com'},
+  'Uphold': {url:'https://uphold.com',refresh:'~5 min (live public ticker)',contact:'https://support.uphold.com',fees:'https://uphold.com/en/pricing'},
   'Binance P2P': {url:'https://p2p.binance.com',refresh:'~5 min (live P2P offers)',contact:'https://www.binance.com/en/support'},
   'Binance P2P (live)': {url:'https://p2p.binance.com',refresh:'~5 min (live P2P median)',contact:'https://www.binance.com/en/support'},
-  'Remitly': {url:'https://remitly.com',refresh:'Estimated (published fees, verified quarterly)',contact:'https://help.remitly.com'},
-  'WorldRemit': {url:'https://worldremit.com',refresh:'Estimated (published fees)',contact:'https://www.worldremit.com/en/faq'},
-  'Western Union': {url:'https://westernunion.com',refresh:'Estimated (published fees)',contact:'https://www.westernunion.com/blog/en/contact-us'},
-  'MoneyGram': {url:'https://moneygram.com',refresh:'Estimated (published fees)',contact:'https://www.moneygram.com/mgo/us/en/help'},
-  'Ria': {url:'https://riamoneytransfer.com',refresh:'Estimated (published fees)',contact:'https://www.riamoneytransfer.com/en-us/contact-us'},
-  'Sendwave': {url:'https://sendwave.com',refresh:'Estimated (published fees)',contact:'https://www.sendwave.com/faq'},
-  'Xoom': {url:'https://xoom.com',refresh:'Estimated (published fees)',contact:'https://help.xoom.com'},
-  'Paysend': {url:'https://paysend.com',refresh:'Estimated (published fees)',contact:'https://paysend.com/en/support'},
-  'OFX': {url:'https://ofx.com',refresh:'Estimated (published fees)',contact:'https://www.ofx.com/en-us/contact-us'},
-  'TransferGo': {url:'https://transfergo.com',refresh:'Estimated (published fees)',contact:'https://www.transfergo.com/en/contact'},
-  'Skrill': {url:'https://skrill.com',refresh:'Estimated (published fees)',contact:'https://help.skrill.com'},
-  'Revolut': {url:'https://revolut.com',refresh:'Estimated (published fees)',contact:'https://help.revolut.com'},
-  'Strike': {url:'https://strike.me',refresh:'Estimated (published fees)',contact:'https://strike.me/support'},
-  'XE': {url:'https://xe.com',refresh:'Estimated (published fees)',contact:'https://www.xe.com/support'},
-  'Global66': {url:'https://global66.com',refresh:'Estimated (published fees)',contact:'https://global66.com/contacto'},
-  'Atlantic Money': {url:'https://atlantic.money',refresh:'Estimated (flat fee model)',contact:'https://atlantic.money/faq'},
+  'Remitly': {url:'https://remitly.com',refresh:'Estimated (published fees, verified quarterly)',contact:'https://help.remitly.com',fees:'https://www.remitly.com/us/en/pricing'},
+  'WorldRemit': {url:'https://worldremit.com',refresh:'Estimated (published fees)',contact:'https://www.worldremit.com/en/faq',fees:'https://www.worldremit.com/en/fee-and-pricing'},
+  'Western Union': {url:'https://westernunion.com',refresh:'Estimated (published fees)',contact:'https://www.westernunion.com/blog/en/contact-us',fees:'https://www.westernunion.com/us/en/send-money/app.html'},
+  'MoneyGram': {url:'https://moneygram.com',refresh:'Estimated (published fees)',contact:'https://www.moneygram.com/mgo/us/en/help',fees:'https://www.moneygram.com/mgo/us/en/pricing'},
+  'Ria': {url:'https://riamoneytransfer.com',refresh:'Estimated (published fees)',contact:'https://www.riamoneytransfer.com/en-us/contact-us',fees:'https://www.riamoneytransfer.com/en-us/pricing'},
+  'Sendwave': {url:'https://sendwave.com',refresh:'Estimated (published fees)',contact:'https://www.sendwave.com/faq',fees:'https://www.sendwave.com/faq'},
+  'Xoom': {url:'https://xoom.com',refresh:'Estimated (published fees)',contact:'https://help.xoom.com',fees:'https://www.xoom.com/pricing'},
+  'Paysend': {url:'https://paysend.com',refresh:'Estimated (published fees)',contact:'https://paysend.com/en/support',fees:'https://paysend.com/en/fees'},
+  'OFX': {url:'https://ofx.com',refresh:'Estimated (published fees)',contact:'https://www.ofx.com/en-us/contact-us',fees:'https://www.ofx.com/en-us/pricing/'},
+  'TransferGo': {url:'https://transfergo.com',refresh:'Estimated (published fees)',contact:'https://www.transfergo.com/en/contact',fees:'https://www.transfergo.com/en/pricing'},
+  'Skrill': {url:'https://skrill.com',refresh:'Estimated (published fees)',contact:'https://help.skrill.com',fees:'https://www.skrill.com/en/footer/fee-information/'},
+  'Revolut': {url:'https://revolut.com',refresh:'Estimated (published fees)',contact:'https://help.revolut.com',fees:'https://www.revolut.com/en-US/legal/fees/'},
+  'Strike': {url:'https://strike.me',refresh:'Estimated (published fees)',contact:'https://strike.me/support',fees:'https://strike.me/en/faq/fees/'},
+  'XE': {url:'https://xe.com',refresh:'Estimated (published fees)',contact:'https://www.xe.com/support',fees:'https://www.xe.com/mt/fees/'},
+  'Global66': {url:'https://global66.com',refresh:'Estimated (published fees)',contact:'https://global66.com/contacto',fees:'https://global66.com/comisiones'},
+  'Atlantic Money': {url:'https://atlantic.money',refresh:'Estimated (flat fee model)',contact:'https://atlantic.money/faq',fees:'https://atlantic.money/pricing'},
   'Intermex': {url:'https://intermexonline.com',refresh:'Estimated (published fees)',contact:'https://www.intermexonline.com/contact'},
-  'CurrencyFair': {url:'https://currencyfair.com',refresh:'Estimated (published fees)',contact:'https://www.currencyfair.com/support'},
-  'PayPal': {url:'https://paypal.com',refresh:'Estimated (published fees)',contact:'https://www.paypal.com/us/cshelp/contact-us'},
-  'Payoneer': {url:'https://payoneer.com',refresh:'Estimated (published fees)',contact:'https://payoneer.custhelp.com'},
-  'Nala': {url:'https://nala.money',refresh:'Estimated (published fees)',contact:'https://www.nala.money/faq'},
-  'Taptap Send': {url:'https://taptapsend.com',refresh:'Estimated (published fees)',contact:'https://www.taptapsend.com/faq'},
+  'CurrencyFair': {url:'https://currencyfair.com',refresh:'Estimated (published fees)',contact:'https://www.currencyfair.com/support',fees:'https://www.currencyfair.com/support/pricing-and-fees/'},
+  'PayPal': {url:'https://paypal.com',refresh:'Estimated (published fees)',contact:'https://www.paypal.com/us/cshelp/contact-us',fees:'https://www.paypal.com/us/webapps/mpp/paypal-fees'},
+  'Payoneer': {url:'https://payoneer.com',refresh:'Estimated (published fees)',contact:'https://payoneer.custhelp.com',fees:'https://www.payoneer.com/about/fees/'},
+  'Nala': {url:'https://nala.money',refresh:'Estimated (published fees)',contact:'https://www.nala.money/faq',fees:'https://www.nala.money/pricing'},
+  'Taptap Send': {url:'https://taptapsend.com',refresh:'Estimated (published fees)',contact:'https://www.taptapsend.com/faq',fees:'https://www.taptapsend.com/pricing'},
 };
 function translateLabel(label){
   if(label==='Cheapest')return t('tag_cheapest')||'Cheapest';
@@ -957,6 +957,11 @@ const GITHUB_REPO='https://github.com/coinnect-dev/coinnect';
 
 const EXCHANGE_DOMAIN={
   'Binance':'binance.com','Kraken':'kraken.com','Coinbase':'coinbase.com',
+  'OKX':'okx.com','Bybit':'bybit.com','KuCoin':'kucoin.com',
+  'Gate':'gate.io','Bitget':'bitget.com','MEXC':'mexc.com','HTX':'htx.com',
+  'Crypto.com':'crypto.com','Luno':'luno.com','Bitstamp':'bitstamp.net',
+  'Gemini':'gemini.com','Bithumb':'bithumb.com','Bitflyer':'bitflyer.com',
+  'BtcTurk':'btcturk.com','WhiteBIT':'whitebit.com',
   'Bitso':'bitso.com','Yellow Card':'yellowcard.io','Wise':'wise.com',
   'Western Union':'westernunion.com','MoneyGram':'moneygram.com',
   'Kucoin':'kucoin.com','Huobi':'huobi.com',
@@ -965,8 +970,14 @@ const EXCHANGE_DOMAIN={
   'OFX':'ofx.com','TransferGo':'transfergo.com','Skrill':'skrill.com',
   'Revolut':'revolut.com','Zinli':'zinli.com','Lemon Cash':'lemon.me',
   'Mukuru':'mukuru.com','Mama Money':'mamamoney.co.za','Binance P2P':'binance.com',
+  'Binance P2P (live)':'binance.com',
   'Global66':'global66.com','Strike':'strike.me','XE':'xe.com',
   'Atlantic Money':'atlantic.money','Intermex':'intermexonline.com','CurrencyFair':'currencyfair.com',
+  'Buda':'buda.com','VALR':'valr.com','CoinDCX':'coindcx.com',
+  'WazirX':'wazirx.com','SatoshiTango':'satoshitango.com','Uphold':'uphold.com',
+  'PayPal':'paypal.com','Payoneer':'payoneer.com',
+  'Nala':'nala.money','Taptap Send':'taptapsend.com',
+  'IndependentReserve':'independentreserve.com',
 };
 const PROVIDER_URL={
   'Binance':'https://binance.com','Kraken':'https://kraken.com','Coinbase':'https://coinbase.com',
@@ -1635,11 +1646,13 @@ function providerDetails(steps) {
     const info = PROVIDER_INFO[via];
     if (!info) return '';
     const isLive = LIVE_PROVIDERS.has(via);
+    const feeLink = info.fees ? `· <a href="${info.fees}" target="_blank" rel="noopener" class="hover:text-cyan-500">${t('fee_source')}</a>` : '';
     return `<div class="flex items-start gap-2 text-[10px] text-gray-400 mt-1">
       <span class="shrink-0">${isLive ? '●' : '○'}</span>
       <div>
         <a href="${info.url}" target="_blank" rel="noopener" class="text-gray-500 hover:text-cyan-500">${esc(via)}</a>
         — ${info.refresh}
+        ${feeLink}
         · <a href="${info.contact}" target="_blank" rel="noopener" class="hover:text-cyan-500">Contact provider</a>
       </div>
     </div>`;
@@ -1710,12 +1723,15 @@ function renderFeaturedCard(r,from,to,insideTied=false){
           <div class="pt-3 border-t border-gray-100 dark:border-gray-800">${renderSteps(r.steps,to)}</div>
           ${renderReqs(r.steps,to)}
           <details class="mt-2">
-            <summary class="text-[10px] text-gray-400 cursor-pointer hover:text-cyan-500">Read more — data sources & refresh rates</summary>
+            <summary class="text-[10px] text-gray-400 cursor-pointer hover:text-cyan-500">${t('read_more')}</summary>
             <div class="mt-1 pl-2 border-l border-gray-200 dark:border-gray-700">
               ${providerDetails(r.steps)}
             </div>
           </details>
-          <div class="pt-2 text-right"><a href="#" onclick="reportRate('${from}','${to}','${viaList[0]}',${r.they_receive/r.you_send});return false;" class="text-[10px] text-gray-400 hover:text-cyan-500 transition-colors">Report real rate</a></div>
+          <div class="pt-2 flex items-center justify-between">
+            <span class="rate-vote flex items-center gap-1 text-[10px] text-gray-300 dark:text-gray-600"><span>${t('rate_correct')}</span><button onclick="quickVote('${from}','${to}','${viaList[0]}',${r.they_receive/r.you_send},true,this)" class="hover:text-emerald-500 transition-colors px-0.5" title="Correct">&#10003;</button><button onclick="quickVote('${from}','${to}','${viaList[0]}',${r.they_receive/r.you_send},false,this)" class="hover:text-red-400 transition-colors px-0.5" title="Incorrect">&#10007;</button></span>
+            <a href="#" onclick="showFeedbackPanel('${from}','${to}','${viaList[0]}',${r.they_receive/r.you_send},this);return false;" class="text-[10px] text-gray-400 hover:text-cyan-500 transition-colors font-medium">${t('rate_feedback')}</a>
+          </div>
         </div>
       </details>
     </div>`;
@@ -1755,12 +1771,15 @@ function renderCompactRow(r,from,to){
         <div class="px-5 py-4">${renderSteps(r.steps,to)}</div>
         <div class="px-5 pb-5">${renderReqs(r.steps,to)}
           <details class="mt-2">
-            <summary class="text-[10px] text-gray-400 cursor-pointer hover:text-cyan-500">Read more — data sources & refresh rates</summary>
+            <summary class="text-[10px] text-gray-400 cursor-pointer hover:text-cyan-500">${t('read_more')}</summary>
             <div class="mt-1 pl-2 border-l border-gray-200 dark:border-gray-700">
               ${providerDetails(r.steps)}
             </div>
           </details>
-          <div class="pt-2 text-right"><a href="#" onclick="reportRate('${from}','${to}','${viaList[0]}',${r.they_receive/r.you_send});return false;" class="text-[10px] text-gray-400 hover:text-cyan-500 transition-colors">Report real rate</a></div>
+          <div class="pt-2 flex items-center justify-between">
+            <span class="rate-vote flex items-center gap-1 text-[10px] text-gray-300 dark:text-gray-600"><span>${t('rate_correct')}</span><button onclick="quickVote('${from}','${to}','${viaList[0]}',${r.they_receive/r.you_send},true,this)" class="hover:text-emerald-500 transition-colors px-0.5" title="Correct">&#10003;</button><button onclick="quickVote('${from}','${to}','${viaList[0]}',${r.they_receive/r.you_send},false,this)" class="hover:text-red-400 transition-colors px-0.5" title="Incorrect">&#10007;</button></span>
+            <a href="#" onclick="showFeedbackPanel('${from}','${to}','${viaList[0]}',${r.they_receive/r.you_send},this);return false;" class="text-[10px] text-gray-400 hover:text-cyan-500 transition-colors font-medium">${t('rate_feedback')}</a>
+          </div>
         </div>
       </div>
     </details>`;
@@ -2008,33 +2027,73 @@ function trackOutbound(url, label){
 }
 
 // ── Rate report ─────────────────────────────────────────────────────────────
-async function reportRate(fromC,toC,provider,rate){
+// Rate feedback tags
+const FB_TAGS=[
+  {id:'correct',label:()=>t('fb_correct')},
+  {id:'too_high',label:()=>t('fb_too_high')},
+  {id:'too_low',label:()=>t('fb_too_low')},
+  {id:'provider_down',label:()=>t('fb_provider_down')},
+  {id:'fee_wrong',label:()=>t('fb_fee_wrong')},
+  {id:'other',label:()=>t('fb_other')},
+];
+
+function showFeedbackPanel(fromC,toC,provider,rate,btnEl){
+  // Remove any existing panel
+  document.querySelectorAll('.fb-panel').forEach(p=>p.remove());
+  const panel=document.createElement('div');
+  panel.className='fb-panel mt-2 p-3 bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-xl text-xs';
+  panel.innerHTML=`
+    <div class="text-gray-500 dark:text-gray-400 mb-2 font-medium">${t('rate_feedback')}</div>
+    <div class="flex flex-wrap gap-1.5 mb-2">
+      ${FB_TAGS.map(tag=>`<button type="button" data-tag="${tag.id}" class="fb-tag px-2 py-1 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-cyan-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">${tag.label()}</button>`).join('')}
+    </div>
+    <input type="text" maxlength="200" placeholder="${t('fb_note')}" class="fb-note w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 placeholder-gray-400 mb-2 hidden">
+    <div class="flex justify-end gap-2">
+      <button type="button" class="fb-cancel text-gray-400 hover:text-gray-600 px-2 py-1">${t('cancel')}</button>
+      <button type="button" class="fb-submit px-3 py-1 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors disabled:opacity-40" disabled>${t('submit')}</button>
+    </div>`;
+  btnEl.closest('.pt-2,.px-5')?.appendChild(panel);
+  let selectedTags=new Set();
+  panel.querySelectorAll('.fb-tag').forEach(btn=>{
+    btn.onclick=()=>{
+      const tag=btn.dataset.tag;
+      if(selectedTags.has(tag)){selectedTags.delete(tag);btn.classList.remove('border-cyan-500','text-cyan-600','dark:text-cyan-400','bg-cyan-50','dark:bg-cyan-950/30');btn.classList.add('border-gray-200','dark:border-gray-600');}
+      else{selectedTags.add(tag);btn.classList.add('border-cyan-500','text-cyan-600','dark:text-cyan-400','bg-cyan-50','dark:bg-cyan-950/30');btn.classList.remove('border-gray-200','dark:border-gray-600');}
+      panel.querySelector('.fb-submit').disabled=selectedTags.size===0;
+      // Show note input if "other" selected
+      const noteEl=panel.querySelector('.fb-note');
+      if(selectedTags.has('other'))noteEl.classList.remove('hidden');else noteEl.classList.add('hidden');
+    };
+  });
+  panel.querySelector('.fb-cancel').onclick=()=>panel.remove();
+  panel.querySelector('.fb-submit').onclick=async()=>{
+    const note=panel.querySelector('.fb-note').value||'';
+    await submitFeedback(fromC,toC,provider,rate,[...selectedTags],note);
+    panel.innerHTML=`<div class="text-emerald-600 dark:text-emerald-400 py-1">${t('fb_thanks')}</div>`;
+    setTimeout(()=>panel.remove(),2000);
+  };
+}
+
+async function submitFeedback(fromC,toC,provider,rate,tags,note){
   const amount=parseFloat(document.getElementById('amount')?.value)||null;
   try{
-    const res=await fetch('/v1/verify',{
+    await fetch('/v1/verify',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         from_currency:fromC,to_currency:toC,provider:provider,
-        rate:rate,amount:amount
+        rate:rate,amount:amount,tags:tags,note:note
       })
     });
-    if(res.ok){
-      const d=await res.json();
-      // Brief thank-you toast
-      const toast=document.createElement('div');
-      toast.className='fixed bottom-6 right-6 bg-emerald-600 text-white text-sm px-4 py-2 rounded-xl shadow-lg z-50 animate-pulse';
-      toast.textContent='Thanks! Rate reported.';
-      document.body.appendChild(toast);
-      setTimeout(()=>toast.remove(),3000);
-      trackEvent('rate_reported',{from:fromC,to:toC,provider:provider});
-    }else{
-      const err=await res.json().catch(()=>({}));
-      alert(err.detail||'Could not submit report. Try again later.');
-    }
-  }catch(e){
-    alert('Network error — could not submit report.');
-  }
+    trackEvent('rate_feedback',{from:fromC,to:toC,provider:provider,tags:tags.join(',')});
+  }catch(e){/* silent */}
+}
+
+// Quick inline rate accuracy vote (check/cross)
+async function quickVote(fromC,toC,provider,rate,correct,el){
+  el.closest('.rate-vote')?.querySelectorAll('button').forEach(b=>{b.disabled=true;b.style.opacity='0.3';});
+  el.style.opacity='1';
+  await submitFeedback(fromC,toC,provider,rate,[correct?'correct':'incorrect'],'');
 }
 
 // Debounce helper for amount_changed
