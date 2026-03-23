@@ -177,7 +177,7 @@ app = FastAPI(
         "The open map for global money.\n\n"
         "Finds the cheapest path between any two currencies — "
         "across traditional remittance, crypto exchanges, and P2P platforms.\n\n"
-        "**Non-profit. No affiliate fees. No custody. Free forever.**\n\n"
+        "**Non-profit. No affiliate fees. No custody. Free for personal use.**\n\n"
         "**For AI agents:** call `/v1/quote` as a tool with `from`, `to`, and `amount` parameters. "
         "Or use the MCP server (`python -m coinnect.mcp_server`) for Claude/MCP-compatible agents.\n\n"
         "Rate limits: 20 req/day / 50/hr anonymous (beta) · 1,000/day free key · "

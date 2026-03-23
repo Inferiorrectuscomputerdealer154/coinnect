@@ -129,18 +129,23 @@ The engine runs a shortest-path algorithm across a live graph:
 
 Two-phase approach:
 1. **Direct routes** — all single-step provider edges for the corridor, ranked by cost.
-2. **Multi-hop routes** — two Dijkstra passes (cost-optimized, time-optimized) find paths like USD → USDC via Coinbase → NGN via Yellow Card.
+2. **Multi-hop routes** — two Dijkstra passes (cost-optimized, time-optimized) find paths up to **4 hops** (max_steps=4), like USD → USDC via Coinbase → NGN via Yellow Card.
+
+**Circular route prevention:** the engine skips any exchange already used in the current path, ensuring no provider appears twice in a single route.
 
 Results are merged, deduplicated by path signature, and returned as up to 30 ranked routes. Routes within 0.1% of each other are shown as tied.
 
 ### 3.2 Rate refresh
 
-Exchange rates refresh every 3 minutes via a background asyncio task:
+Exchange rates refresh every 3 minutes via a background asyncio task, pulling from 22+ live data sources:
 
-- **CCXT** — live order book data from Binance, Kraken, Coinbase, Bitso, Luno, Bitstamp, Gemini
+- **CCXT** — live order book data from Binance, Kraken, Coinbase, Bitso, Luno, Bitstamp, Gemini, OKX, Bybit, KuCoin
+- **Binance P2P (live)** — real-time P2P USDT rates for 12 emerging market currencies (MXN, ARS, NGN, COP, VES, BRL, KES, GHS, PKR, BDT, TRY, UAH)
 - **Wise API** — live fiat rates for 80+ currencies
 - **Yellow Card API** — live Africa crypto→fiat rates
-- **open.er-api.com** — FX cross-rates for fiat pairs
+- **Direct exchange APIs** — Bitso, Buda, Strike, VALR, CoinDCX, WazirX, SatoshiTango, Flutterwave
+- **Regional rate sources** — Bluelytics, DolarSi, CriptoYa (Argentina), BCB (Brazil), TRM (Colombia), LiraRate (Turkey), Yadio (LatAm P2P)
+- **FX reference** — Frankfurter (ECB), CoinGecko, FloatRates, fawazahmed0 CDN
 - **Published fee tables** — 15+ remittance providers (labeled `~est.`)
 
 ### 3.3 Rate history & open data
@@ -165,6 +170,9 @@ GET  /v1/corridors             Most active currency pairs
 GET  /v1/health                API status
 POST /v1/keys                  Generate a self-serve API key (no signup)
 GET  /v1/keys/usage            Today's usage for a key
+POST /v1/verify                Report a real rate you observed (community calibration)
+GET  /v1/quests                Open rate verification bounties
+POST /v1/quests/{id}/claim     Claim a quest with your rate report
 GET  /v1/suggestions           Community provider suggestions
 POST /v1/suggestions           Submit a new suggestion
 ```
@@ -308,9 +316,19 @@ Providers without a live public API are included with fees from published pricin
 
 ### 6.1 Integrated providers (March 2026)
 
-**Crypto exchanges (live rates via CCXT):** Binance, Kraken, Coinbase, Bitso, Luno (Africa), Bitstamp (EU), Gemini (US)
+**Crypto exchanges (live rates via CCXT):** Binance, Kraken, Coinbase, Bitso, Luno (Africa), Bitstamp (EU), Gemini (US), OKX, Bybit, KuCoin
 
-**Fiat/crypto bridges (live APIs):** Wise (80+ currencies), Yellow Card (Africa, 8 countries)
+**Crypto exchanges (live rates via direct API):** Bitso (LatAm), Buda (Chile/Colombia/Peru), VALR (South Africa), CoinDCX (India), WazirX (India), SatoshiTango (Argentina), Strike (Lightning Network)
+
+**P2P live rates:** Binance P2P (12 emerging market currencies: MXN, ARS, NGN, COP, VES, BRL, KES, GHS, PKR, BDT, TRY, UAH), Yadio (LatAm P2P)
+
+**Fiat/crypto bridges (live APIs):** Wise (80+ currencies), Yellow Card (Africa, 8 countries), Flutterwave (African corridors)
+
+**Regional rate sources:** Bluelytics & DolarSi (Argentina parallel rates), CriptoYa (Argentine crypto exchanges), BCB (Brazil central bank), TRM (Colombia), LiraRate (Turkey)
+
+**FX reference rates:** Frankfurter (ECB), CoinGecko, FloatRates, fawazahmed0 CDN
+
+**Community verification:** Users and bots can report real rates via `POST /v1/verify`. Open quests at `GET /v1/quests` incentivize coverage of under-observed corridors. Reports feed the adaptive fee calibration system (Section 11).
 
 **Remittance (published fee estimates):**
 
@@ -370,8 +388,8 @@ Coinnect does not collect personal information. Quote requests include only curr
 
 | Phase | Focus |
 |-------|-------|
-| Now ✅ | Live beta — 8 exchanges, 19 remittance providers, API, MCP, open data |
-| Next | More live-rate providers, community rate verification, delivery filters |
+| Now ✅ | Live beta — 22+ live data sources, 15 remittance providers, Binance P2P, API, MCP, open data, community rate verification & quests |
+| Next | More live-rate providers, delivery filters, accuracy scoring |
 | Later | x402 micropayments, Machine Tipping Protocol, Stellar anchors, SDKs |
 
 This is a beta. Priorities shift based on user feedback. See [`ROADMAP.md`](./ROADMAP.md) for details.
