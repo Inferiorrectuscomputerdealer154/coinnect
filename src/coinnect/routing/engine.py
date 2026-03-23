@@ -74,20 +74,22 @@ def _dijkstra(
     max_steps: int = 4,
 ) -> list[tuple[float, float, list[Edge]]]:
     """Single Dijkstra run optimizing by cost or time."""
-    counter = 0
-    heap = [(0.0, counter, 0, start, amount, [])]
+    tie_breaker = 0
+    heap = [(0.0, tie_breaker, 0, start, amount, [])]
     results = []
     visited_states: dict[tuple, float] = {}
-    max_iterations = 50_000  # safety cap to prevent runaway search
+    iterations = 0
+    max_iterations = 200_000  # safety cap: heap pops, not pushes
 
-    while heap and len(results) < max_routes and counter < max_iterations:
+    while heap and len(results) < max_routes and iterations < max_iterations:
         priority, _, steps, curr, curr_amount, path = heapq.heappop(heap)
+        iterations += 1
 
-        # State includes which providers were used — allows different exchange
-        # combinations to reach the same currency at the same step count
-        providers_key = frozenset(e.via for e in path)
-        state = (curr, steps, providers_key)
-        if state in visited_states and visited_states[state] <= priority:
+        # State: (currency, step_count) — simple and fast.
+        # We allow the same currency at the same step to be revisited only
+        # if reached with a meaningfully better cost (> 0.01% improvement).
+        state = (curr, steps)
+        if state in visited_states and visited_states[state] <= priority + 0.01:
             continue
         visited_states[state] = priority
 
@@ -109,10 +111,10 @@ def _dijkstra(
                 continue
             new_amount = curr_amount * edge.exchange_rate * (1 - edge.fee_pct / 100)
             new_priority = priority + (edge.fee_pct if optimize == "cost" else edge.estimated_minutes)
-            counter += 1
+            tie_breaker += 1
             heapq.heappush(heap, (
                 new_priority,
-                counter,
+                tie_breaker,
                 steps + 1,
                 edge.to_currency,
                 new_amount,
