@@ -47,7 +47,7 @@ async def _refresh_once(force: bool = False) -> int:
         get_binance_p2p_edges,
         get_tcmb_edges, get_nrb_edges, get_nbp_edges, get_cnb_edges,
         get_nbu_edges, get_nbg_edges, get_boi_edges, get_bnr_edges,
-        get_cbr_edges,
+        # get_cbr_edges removed — sanctioned country
     )
     from coinnect.exchanges.calculator_adapter import get_calculator_edges
     from coinnect.routing.engine import build_quote
@@ -99,7 +99,7 @@ async def _refresh_once(force: bool = False) -> int:
         get_nbg_edges(),
         get_boi_edges(),
         get_bnr_edges(),
-        get_cbr_edges(),
+        # get_cbr_edges() removed — sanctioned country
         get_calculator_edges(),
     )
     all_edges = (
@@ -313,7 +313,7 @@ async def _get_all_edges_cached() -> list:
         get_binance_p2p_edges,
         get_tcmb_edges, get_nrb_edges, get_nbp_edges, get_cnb_edges,
         get_nbu_edges, get_nbg_edges, get_boi_edges, get_bnr_edges,
-        get_cbr_edges,
+        # get_cbr_edges removed — sanctioned country
     )
     from coinnect.exchanges.calculator_adapter import get_calculator_edges
     results = await asyncio.gather(
@@ -350,7 +350,7 @@ async def _get_all_edges_cached() -> list:
         get_nbg_edges(),
         get_boi_edges(),
         get_bnr_edges(),
-        get_cbr_edges(),
+        # get_cbr_edges() removed — sanctioned country
         get_calculator_edges(),
     )
     all_edges = []

@@ -37,7 +37,7 @@ SUPPORTED_EXCHANGES = {
     "btcturk":        {"class": ccxt.btcturk,        "fee_pct": 0.25},  # TRY (Turkey)
     "independentreserve": {"class": ccxt.independentreserve, "fee_pct": 0.50},  # AUD
     "whitebit":       {"class": ccxt.whitebit,       "fee_pct": 0.10},  # EUR
-    "exmo":           {"class": ccxt.exmo,           "fee_pct": 0.30},  # RUB, UAH
+    # exmo removed — primarily serves sanctioned RUB market
     # bitso, mercado: fetchTickers() not supported by CCXT — handled in direct_api_adapter
 }
 
