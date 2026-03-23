@@ -11,9 +11,7 @@ from datetime import datetime, UTC
 from fastapi import APIRouter, Query, HTTPException, Header, Request
 from pydantic import BaseModel
 
-from coinnect.exchanges.ccxt_adapter import get_all_edges, SUPPORTED_EXCHANGES
-from coinnect.exchanges.wise_adapter import get_wise_edges, get_traditional_edges
-from coinnect.exchanges.yellowcard_adapter import get_yellowcard_edges
+from coinnect.exchanges.ccxt_adapter import SUPPORTED_EXCHANGES
 from coinnect.routing.engine import build_quote
 
 router = APIRouter(prefix="/v1")
@@ -137,29 +135,8 @@ async def quote(
             raise _rate_limit_error(info)
 
     # ── Fetch edges & build quote ────────────────────────────────────────────
-    from coinnect.exchanges.remittance_adapter import get_remittance_edges
-    from coinnect.exchanges.direct_api_adapter import (
-        get_bitso_edges, get_buda_edges, get_coingecko_edges,
-        get_strike_edges, get_frankfurter_edges, get_currencyapi_edges,
-        get_yadio_edges, get_valr_edges, get_coindcx_edges,
-        get_wazirx_edges, get_satoshitango_edges, get_floatrates_edges,
-        get_bluelytics_edges, get_criptoya_edges, get_bcb_edges,
-        get_trm_edges, get_binance_p2p_edges,
-    )
-    from coinnect.exchanges.calculator_adapter import get_calculator_edges
-    results = await asyncio.gather(
-        get_all_edges(),
-        get_wise_edges(),
-        get_traditional_edges(),
-        get_yellowcard_edges(),
-        get_remittance_edges(),
-        get_bitso_edges(), get_buda_edges(), get_coingecko_edges(),
-        get_strike_edges(), get_frankfurter_edges(), get_currencyapi_edges(),
-        get_yadio_edges(), get_valr_edges(), get_coindcx_edges(),
-        get_wazirx_edges(), get_satoshitango_edges(), get_floatrates_edges(),
-        get_bluelytics_edges(), get_criptoya_edges(), get_bcb_edges(),
-        get_trm_edges(), get_binance_p2p_edges(), get_calculator_edges(),
-    )
+    from coinnect.main import _get_all_edges_cached
+    all_edges = await _get_all_edges_cached()
     # Reference-only providers — pure data sources, NOT real transfer services.
     # These should only appear as MIDDLE steps in multi-hop routes.
     # CriptoYa individual exchange names use the "(AR)" suffix pattern.
@@ -191,8 +168,6 @@ async def quote(
         if via.endswith(" (AR)") and via not in REFERENCE_PROVIDERS:
             return True
         return False
-
-    all_edges = [e for group in results for e in group]
 
     # Split: reference edges only used as intermediate hops, not as direct single-step routes
     real_edges = [e for e in all_edges if not _is_reference_provider(e.via)]
