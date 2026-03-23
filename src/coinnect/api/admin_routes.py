@@ -54,6 +54,72 @@ async def admin_searches(
     return {"searches": get_recent_searches(limit)}
 
 
+# ── Admin: integration health ────────────────────────────────────────────────
+
+@admin_router.get("/integrations")
+async def admin_integrations(x_admin_key: str | None = Header(None)):
+    """Show health status of all data source integrations."""
+    _require_admin(x_admin_key)
+    import time
+    from coinnect.exchanges.direct_api_adapter import (
+        _bitso_cache, _buda_cache, _coingecko_cache, _valr_cache,
+        _coindcx_cache, _wazirx_cache, _satoshitango_cache,
+        _floatrates_cache, _yadio_cache, _bluelytics_cache,
+        _criptoya_cache, _bcb_cache, _trm_cache,
+        _frankfurter_cache, _currencyapi_cache, _binance_p2p_cache,
+        _uphold_cache,
+    )
+    from coinnect.exchanges.wise_adapter import _wise_rate_cache, _rate_cache as _wise_fx_cache
+
+    now = time.monotonic()
+
+    def cache_status(cache, ttl=300):
+        if not cache:
+            return {"status": "empty", "edges": 0, "age_seconds": None}
+        if isinstance(cache, dict) and "edges" in cache and "ts" in cache:
+            edges = cache.get("edges", [])
+            ts = cache.get("ts", 0)
+            age = round(now - ts) if ts else None
+            return {"status": "ok" if age and age < ttl * 2 else "stale", "edges": len(edges), "age_seconds": age}
+        if isinstance(cache, dict):
+            count = len(cache)
+            return {"status": "ok" if count > 0 else "empty", "entries": count}
+        return {"status": "unknown"}
+
+    wise_cached = len(_wise_rate_cache)
+    wise_ages = [round(now - ts) for ts, _ in _wise_rate_cache.values()] if _wise_rate_cache else []
+    wise_oldest = max(wise_ages) if wise_ages else None
+    wise_blocked = all(v is None for _, v in _wise_rate_cache.values()) if _wise_rate_cache else None
+
+    integrations = {
+        "ccxt": {"status": "live", "note": "21 exchanges via CCXT, refreshed every 3 min"},
+        "wise": {
+            "status": "blocked" if wise_blocked else ("ok" if wise_cached > 0 else "empty"),
+            "cached_corridors": wise_cached,
+            "oldest_cache_seconds": wise_oldest,
+            "note": "30 min TTL, batched 5 req + 0.5s delay",
+        },
+        "bitso": cache_status(_bitso_cache),
+        "buda": cache_status(_buda_cache),
+        "coingecko": cache_status(_coingecko_cache),
+        "valr": cache_status(_valr_cache),
+        "coindcx": cache_status(_coindcx_cache),
+        "wazirx": cache_status(_wazirx_cache),
+        "satoshitango": cache_status(_satoshitango_cache),
+        "uphold": cache_status(_uphold_cache),
+        "binance_p2p": cache_status(_binance_p2p_cache),
+        "frankfurter": cache_status(_frankfurter_cache),
+        "currencyapi": cache_status(_currencyapi_cache),
+        "floatrates": cache_status(_floatrates_cache),
+        "yadio": cache_status(_yadio_cache),
+        "bluelytics": cache_status(_bluelytics_cache),
+        "criptoya": cache_status(_criptoya_cache),
+        "bcb_ptax": cache_status(_bcb_cache),
+        "trm_colombia": cache_status(_trm_cache),
+    }
+    return {"integrations": integrations}
+
+
 # ── Admin: rate reports ──────────────────────────────────────────────────────
 
 @admin_router.get("/reports")

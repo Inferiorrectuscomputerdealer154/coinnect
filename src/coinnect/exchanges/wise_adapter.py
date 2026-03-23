@@ -87,7 +87,7 @@ _RATE_CACHE_TTL = 300  # 5 minutes
 
 # Wise-specific rate cache keyed by "FROM-TO" pair
 _wise_rate_cache: dict[str, tuple[float, float]] = {}  # "USD-MXN" -> (timestamp, rate)
-_WISE_RATE_CACHE_TTL = 129600  # 36 hours — long cache to avoid rate limiting from Wise
+_WISE_RATE_CACHE_TTL = 1800  # 30 minutes — safe interval to avoid Wise rate limiting
 
 # Track whether we've already logged a Wise block warning this cycle
 _wise_block_warned: bool = False
