@@ -1,39 +1,18 @@
 <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="btcg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#F7931A"/>
-      <stop offset="100%" stop-color="#f59e0b"/>
-    </linearGradient>
-    <linearGradient id="usdg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#06b6d4"/>
-      <stop offset="100%" stop-color="#3b82f6"/>
-    </linearGradient>
-    <clipPath id="lhalf"><rect x="0" y="0" width="22" height="44"/></clipPath>
-    <clipPath id="rhalf"><rect x="22" y="0" width="22" height="44"/></clipPath>
-    <filter id="glow" x="-15%" y="-15%" width="130%" height="130%">
-      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#00000040"/>
-    </filter>
-  </defs>
+  <!-- Proposal 1: Wise-style — Two overlapping circles forming a routing node -->
+  <!-- Concept: Two open circles overlap in the center, connected by a clean path -->
+  <!-- The overlap creates a natural "link" or "handshake" shape -->
 
-  <!-- Coin: left half BTC orange -->
-  <circle cx="22" cy="22" r="21" fill="url(#btcg)" clip-path="url(#lhalf)" filter="url(#glow)"/>
-  <!-- Coin: right half cyan/blue -->
-  <circle cx="22" cy="22" r="21" fill="url(#usdg)" clip-path="url(#rhalf)" filter="url(#glow)"/>
+  <!-- Left circle (source) -->
+  <circle cx="16" cy="22" r="11" fill="none" stroke="#06b6d4" stroke-width="2.5"/>
 
-  <!-- Outer rim -->
-  <circle cx="22" cy="22" r="21" fill="none" stroke="white" stroke-width="1" stroke-opacity="0.2"/>
+  <!-- Right circle (destination) -->
+  <circle cx="28" cy="22" r="11" fill="none" stroke="#06b6d4" stroke-width="2.5"/>
 
-  <!-- Inner ring (coin depth) -->
-  <circle cx="22" cy="22" r="17.5" fill="none" stroke="white" stroke-width="0.7" stroke-opacity="0.12"/>
+  <!-- Routing arrow through center — a forward path -->
+  <path d="M8 22 L36 22" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/>
+  <path d="M32 18 L36 22 L32 26" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 
-  <!-- Center dashed seam ("connect") -->
-  <line x1="22" y1="3" x2="22" y2="41" stroke="white" stroke-width="1.8" stroke-dasharray="3,2.2" stroke-opacity="0.85"/>
-
-  <!-- ₿ symbol (left) -->
-  <text x="11" y="28" text-anchor="middle" fill="white" font-size="17" font-weight="900"
-        font-family="'Arial Black','Helvetica Neue',system-ui,sans-serif" opacity="0.97">₿</text>
-
-  <!-- $ symbol (right) -->
-  <text x="33" y="28" text-anchor="middle" fill="white" font-size="17" font-weight="900"
-        font-family="'Arial Black','Helvetica Neue',system-ui,sans-serif" opacity="0.97">$</text>
+  <!-- Small dot at origin -->
+  <circle cx="8" cy="22" r="2" fill="#06b6d4"/>
 </svg>
