@@ -237,7 +237,7 @@
           </optgroup>
         </select>
       </div>
-      <button onclick="swapCurrencies()" title="Swap currencies" class="pb-2.5 text-gray-400 hover:text-cyan-500 transition-colors text-xl leading-none" aria-label="Swap from/to">⇄</button>
+      <button onclick="swapCurrencies()" title="Swap currencies" class="pb-2.5 text-gray-400 hover:text-cyan-500 transition-colors text-xl leading-none" aria-label="Swap from/to">↔</button>
       <div class="flex-1 min-w-[140px] max-w-[200px]">
         <label class="block text-xs text-gray-400 mb-1 uppercase tracking-wide" data-i18n="label_to">To</label>
         <select id="to" class="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:border-cyan-500">
@@ -345,13 +345,13 @@
     <div class="flex flex-wrap items-center gap-2">
       <span class="text-xs text-gray-400 mr-1" data-i18n="filter_label">Filter:</span>
       <button class="filter-btn active text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all" data-filter="all" onclick="setFilter('all')" data-i18n="filter_all">All</button>
-      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="cheap" onclick="setFilter('cheap')" data-i18n="filter_cheap">💰 Cheapest first</button>
-      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="fast" onclick="setFilter('fast')" data-i18n="filter_fast">⚡ Fastest first</button>
-      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="nocrypto" onclick="setFilter('nocrypto')" data-i18n="filter_nocrypto">🏦 Fiat only</button>
-      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="crypto" onclick="setFilter('crypto')" data-i18n="filter_crypto">🔗 Crypto routes</button>
+      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="cheap" onclick="setFilter('cheap')" data-i18n="filter_cheap">Cheapest</button>
+      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="fast" onclick="setFilter('fast')" data-i18n="filter_fast">Fastest</button>
+      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="nocrypto" onclick="setFilter('nocrypto')" data-i18n="filter_nocrypto">Bank only</button>
+      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="crypto" onclick="setFilter('crypto')" data-i18n="filter_crypto">Crypto</button>
       <div class="ml-auto flex items-center gap-2">
         <button onclick="openFeedback('corridor')" class="text-xs px-2.5 py-1.5 rounded-full border border-cyan-300 dark:border-cyan-700 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 transition-all font-medium" data-i18n="suggest_corridor">+ Suggest corridor</button>
-        <button onclick="openFeedback('bug')" class="text-xs px-2.5 py-1.5 rounded-full border border-amber-300 dark:border-amber-700 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all font-medium" data-i18n="report_bug">🐛 Report bug</button>
+        <button onclick="openFeedback('bug')" class="text-xs px-2.5 py-1.5 rounded-full border border-amber-300 dark:border-amber-700 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all font-medium" data-i18n="report_bug">Report bug</button>
         <div id="routeCount" class="text-xs text-gray-400"></div>
         <div id="rateAge" class="text-xs text-gray-400 hidden">🟢 <span id="rateAgeText"></span></div>
         <!-- View toggle -->
@@ -877,7 +877,7 @@ const REQS={
   'Binance P2P':{sender:['Binance account','KYC (government ID + selfie)','Crypto or fiat in Binance wallet'],recipient:['Binance account or bank account (per trader terms)'],kyc:'Required on Binance'},
 };
 
-const FEATURED={'Cheapest':'💰','Fastest':'⚡'};
+const FEATURED={'Cheapest':'','Fastest':''};
 const CRYPTO_EXCHANGES=new Set(['Binance','Kraken','Coinbase','Bitso','Kucoin','Huobi']);
 
 const GITHUB_REPO='https://github.com/coinnect-dev/coinnect';
@@ -954,6 +954,12 @@ function flag(c){return FLAGS[c]||''}
 function isCryptoExchange(via){return CRYPTO_EXCHANGES.has(via)}
 function routeUsesCrypto(r){return r.steps.some(s=>isCryptoExchange(s.via)||CRYPTO_SET.has(s.from_currency)||CRYPTO_SET.has(s.to_currency))}
 
+function fmtFee(route, amount, from){
+  const cost = amount * route.total_cost_pct / 100;
+  if(cost < 0.01) return 'No fee';
+  return fmtNum(cost, from) + ' ' + from;
+}
+
 function fmtNum(n,currency){
   if(!n&&n!==0)return'—';
   // Crypto: always show full precision
@@ -1004,7 +1010,7 @@ function toggleTheme(){
   localStorage.theme=dark?'light':'dark';
   updateThemeIcon();
 }
-function updateThemeIcon(){document.getElementById('themeIcon').textContent=isDark()?'☀️':'🌙'}
+function updateThemeIcon(){document.getElementById('themeIcon').textContent=isDark()?'☀':'☽'}
 
 // ── Locale default ─────────────────────────────────────────────────────────
 function getLocalCurrency(){
@@ -1513,7 +1519,7 @@ function renderFeaturedCard(r,from,to,insideTied=false){
         </div>
         <div class="flex items-center gap-3 text-xs text-gray-400">
           <span>🕐 ${fmtTime(r.total_time_minutes)}</span>
-          <span>${r.total_cost_pct.toFixed(2)}${t('fees_pct')}</span>
+          <span>${fmtFee(r, parseFloat(document.getElementById('amount').value), from)} (${r.total_cost_pct.toFixed(2)}${t('fees_pct')})</span>
         </div>
       </div>`;
   return`
@@ -1522,7 +1528,7 @@ function renderFeaturedCard(r,from,to,insideTied=false){
       ${transferBox(r,from,to)}
       <div class="px-5 py-2 bg-gray-50 dark:bg-gray-800/40 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between text-xs text-gray-400">
         <div class="flex items-center gap-1.5"><span>via</span>${viaWithLogos(viaList,14)}${viaBadges(r.steps)}</div>
-        ${insideTied?`<div class="flex items-center gap-2"><span>🕐 ${fmtTime(r.total_time_minutes)}</span><span>${r.total_cost_pct.toFixed(2)}${t('fees_pct')}</span></div>`:''}
+        ${insideTied?`<div class="flex items-center gap-2"><span>🕐 ${fmtTime(r.total_time_minutes)}</span><span>${fmtFee(r, parseFloat(document.getElementById('amount').value), from)} (${r.total_cost_pct.toFixed(2)}${t('fees_pct')})</span></div>`:''}
       </div>
       <details class="group">
         <summary class="flex items-center justify-between px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors select-none">
@@ -1550,7 +1556,7 @@ function renderCompactRow(r,from,to){
           </div>
           <div class="text-right min-w-[120px]">
             <div class="font-mono font-semibold text-cyan-700 dark:text-cyan-300">${fmtNum(r.they_receive,to)} <span class="text-gray-400 font-normal text-xs">${to}</span></div>
-            <div class="text-xs text-gray-400">${r.total_cost_pct.toFixed(2)}% · ${fmtTime(r.total_time_minutes)}</div>
+            <div class="text-xs text-gray-400">${fmtFee(r, parseFloat(document.getElementById('amount').value), from)} (${r.total_cost_pct.toFixed(2)}%) · ${fmtTime(r.total_time_minutes)}</div>
           </div>
         </div>
         <span class="text-gray-400 text-xs ml-2 transition-transform group-open:rotate-180">▼</span>
@@ -1682,11 +1688,24 @@ function renderResults(routes,from,to){
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5 pt-2">
       ${featuredHtml}
     </div>
-    ${extras.length?`
+    ${(()=>{
+      if(!extras.length) return '';
+      const SHOW_LIMIT = 5;
+      const visibleExtras = extras.slice(0, SHOW_LIMIT);
+      const hiddenExtras = extras.slice(SHOW_LIMIT);
+      return `
       <div>
         <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">${t('more_options')}</div>
-        <div class="flex flex-col gap-2">${renderExtrasWithTies(extras,from,to)}</div>
-      </div>`:''}
+        <div class="flex flex-col gap-2">${renderExtrasWithTies(visibleExtras,from,to)}</div>
+        ${hiddenExtras.length?`
+          <button onclick="this.nextElementSibling.classList.remove('hidden');this.classList.add('hidden');"
+            class="w-full mt-3 py-2.5 text-sm text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+            Show ${hiddenExtras.length} more routes
+          </button>
+          <div class="hidden flex flex-col gap-2 mt-2">${renderExtrasWithTies(hiddenExtras,from,to)}</div>
+        `:''}
+      </div>`;
+    })()}
     <div class="mt-5 flex justify-center gap-3">
       <button onclick="shareResults()" class="inline-flex items-center gap-1.5 text-xs border border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-cyan-400 hover:text-cyan-500 px-3 py-1.5 rounded-lg transition-colors">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
