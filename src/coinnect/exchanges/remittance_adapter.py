@@ -445,6 +445,9 @@ PROVIDER_LIMITS: dict[str, tuple[float, float]] = {
     "MoneyGram":      (1.0,  10_000.0),
     "Nala":           (1.0,   5_000.0),
     "Taptap Send":    (1.0,  10_000.0),
+    "PayPal":         (1.0,  60_000.0),
+    "Payoneer":       (1.0, 100_000.0),
+    "Uphold":         (1.0,  50_000.0),
 }
 
 NALA_CORRIDORS: list[tuple] = [
@@ -482,6 +485,46 @@ TAPTAP_SEND_CORRIDORS: list[tuple] = [
     ("EUR", "NGN",  1.80, 60,   "Taptap Send — bank deposit, Nigeria"),
 ]
 
+PAYPAL_CORRIDORS: list[tuple] = [
+    # PayPal — 200+ countries, fees vary by corridor. Typically 3-5% all-in.
+    # No public rate API. Fees from paypal.com/webapps/mpp/paypal-fees
+    ("USD", "EUR",  3.50, 1440, "PayPal — bank deposit or PayPal balance"),
+    ("USD", "GBP",  3.50, 1440, "PayPal — bank deposit or PayPal balance"),
+    ("USD", "MXN",  5.00, 1440, "PayPal — bank deposit, Mexico"),
+    ("USD", "BRL",  5.50, 1440, "PayPal — bank deposit, Brazil"),
+    ("USD", "PHP",  4.50, 1440, "PayPal — bank deposit, Philippines"),
+    ("USD", "INR",  4.00, 1440, "PayPal — bank deposit, India"),
+    ("EUR", "USD",  3.50, 1440, "PayPal — bank deposit or PayPal balance"),
+    ("GBP", "EUR",  3.00, 1440, "PayPal — bank deposit or PayPal balance"),
+    ("GBP", "USD",  3.50, 1440, "PayPal — bank deposit or PayPal balance"),
+]
+
+PAYONEER_CORRIDORS: list[tuple] = [
+    # Payoneer — freelancer/business payments. Fees ~2% FX + $1.50-3.00 withdrawal.
+    # Modeled at 3% total for typical $500 transfer.
+    ("USD", "EUR",  2.00, 1440, "Payoneer — bank withdrawal"),
+    ("USD", "GBP",  2.00, 1440, "Payoneer — bank withdrawal"),
+    ("USD", "MXN",  3.00, 1440, "Payoneer — bank withdrawal, Mexico"),
+    ("USD", "INR",  2.50, 1440, "Payoneer — bank withdrawal, India"),
+    ("USD", "PHP",  3.00, 1440, "Payoneer — bank withdrawal, Philippines"),
+    ("USD", "BRL",  3.00, 1440, "Payoneer — bank withdrawal, Brazil"),
+    ("USD", "PKR",  3.00, 1440, "Payoneer — bank withdrawal, Pakistan"),
+    ("USD", "BDT",  3.00, 1440, "Payoneer — bank withdrawal, Bangladesh"),
+    ("EUR", "USD",  2.00, 1440, "Payoneer — bank withdrawal"),
+    ("GBP", "USD",  2.00, 1440, "Payoneer — bank withdrawal"),
+]
+
+UPHOLD_CORRIDORS: list[tuple] = [
+    # Uphold — multi-asset platform. FX spread ~0.8-1.2% for major pairs.
+    # Crypto fees vary. Modeled conservatively.
+    ("USD", "EUR",  1.20, 30,   "Uphold — instant conversion + withdrawal"),
+    ("USD", "GBP",  1.20, 30,   "Uphold — instant conversion + withdrawal"),
+    ("USD", "MXN",  1.50, 60,   "Uphold — conversion + bank withdrawal"),
+    ("EUR", "USD",  1.20, 30,   "Uphold — instant conversion + withdrawal"),
+    ("EUR", "GBP",  1.10, 30,   "Uphold — instant conversion + withdrawal"),
+    ("GBP", "EUR",  1.10, 30,   "Uphold — instant conversion + withdrawal"),
+]
+
 # ── All corridors grouped by provider ──────────────────────────────────────
 ALL_STATIC_PROVIDERS = [
     ("Remitly",      REMITLY_CORRIDORS),
@@ -509,6 +552,9 @@ ALL_STATIC_PROVIDERS = [
     ("MoneyGram",       MONEYGRAM_CORRIDORS),
     ("Nala",            NALA_CORRIDORS),
     ("Taptap Send",     TAPTAP_SEND_CORRIDORS),
+    ("PayPal",          PAYPAL_CORRIDORS),
+    ("Payoneer",        PAYONEER_CORRIDORS),
+    ("Uphold",          UPHOLD_CORRIDORS),
 ]
 
 
