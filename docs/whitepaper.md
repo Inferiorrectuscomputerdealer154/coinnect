@@ -1,7 +1,7 @@
 # Coinnect: The Open Route Guide for Global Money
 
 **Version:** 0.5 (March 2026)
-**Author:** [Miguel V.](https://www.linkedin.com/in/miguelvalenciav/)
+**Author:** Miguel
 **Domain:** coinnect.bot · **Status:** Live — public beta
 **Code:** [github.com/coinnect-dev/coinnect](https://github.com/coinnect-dev/coinnect) · MIT License
 
@@ -378,15 +378,7 @@ This is a beta. Priorities shift based on user feedback. See [`ROADMAP.md`](./RO
 
 ---
 
-## 10. The Founder
-
-[Miguel V.](https://www.linkedin.com/in/miguelvalenciav/) built Coinnect because the problem is real, the solution is simple, and nobody was building it without a business model attached.
-
-His compensation is capped by the founding statutes and published quarterly. He has no equity to sell, no investors to answer to, and no exit to plan.
-
----
-
-## 11. Vision
+## 10. Vision
 
 Before GPS, every driver carried a road atlas. It didn't drive. It didn't own the roads. It had no preference for which highway you took. You trusted it precisely because it had no stake in your route — it just knew every path and showed you all of them.
 
