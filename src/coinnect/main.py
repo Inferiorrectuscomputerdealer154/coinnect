@@ -183,7 +183,7 @@ app = FastAPI(
         "Rate limits: 20 req/day / 50/hr anonymous (beta) · 1,000/day free key · "
         "5,000/day agent key · see coinnect.bot/#pricing"
     ),
-    version="2026.03.22.1",
+    version="2026.03.23",
     contact={"name": "Coinnect", "url": "https://coinnect.bot"},
     license_info={"name": "MIT"},
     lifespan=lifespan,
@@ -358,6 +358,456 @@ ul{{columns:2;column-gap:2rem;list-style:none;padding:0}} li{{padding:.25rem 0;f
 <ul>{countries_html}</ul>
 <p style="margin-top:2rem;font-size:.75rem;color:#9ca3af">Data updates every 3 minutes · <a href="/v1/snapshot/meta">Open data API</a> · <a href="https://huggingface.co/datasets/coinnect-dev/coinnect-rates">Hugging Face</a></p>
 </body></html>""")
+
+
+@app.get("/suggest", include_in_schema=False)
+async def suggest_page():
+    """Standalone page for suggesting and voting on corridors/providers."""
+    return HTMLResponse("""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suggest a Corridor or Provider | Coinnect</title>
+  <meta name="description" content="Help Coinnect add the money routes you need. Suggest corridors and providers, vote on community requests.">
+  <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:system-ui,-apple-system,sans-serif;background:#f8fafc;color:#1a1a1a;line-height:1.6}
+    @media(prefers-color-scheme:dark){
+      body{background:#0f172a;color:#e2e8f0}
+      .card{background:#1e293b;border-color:#334155}
+      .topnav{background:rgba(15,23,42,.95);border-color:#334155}
+      select,input{background:#0f172a;color:#e2e8f0;border-color:#475569}
+      .sg-item{background:#1e293b;border-color:#334155}
+      .vote-btn{border-color:#475569}
+      .vote-btn:hover{border-color:#06b6d4;background:rgba(6,182,212,.1)}
+      .submit-btn{background:#0891b2}
+      .submit-btn:hover{background:#0e7490}
+      .note-text{color:#94a3b8}
+      .admin-note{background:rgba(245,158,11,.08);border-color:#92400e;color:#fbbf24}
+      .api-note{background:#1e293b;border-color:#334155;color:#94a3b8}
+      .status-msg{color:#67e8f9}
+      h1,h2,.sg-name{color:#f1f5f9}
+      .subtitle,.meta-text{color:#94a3b8}
+    }
+
+    .topnav{position:sticky;top:0;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);
+             border-bottom:1px solid #e2e8f0;display:flex;align-items:center;
+             justify-content:space-between;padding:.75rem 1.5rem;z-index:100}
+    .logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;color:#1a1a1a;font-weight:700}
+    @media(prefers-color-scheme:dark){.logo{color:#f1f5f9}}
+    .back{text-decoration:none;color:#6b7280;font-size:.85rem;padding:.35rem .8rem;
+           border:1px solid #e2e8f0;border-radius:8px;background:#fff}
+    @media(prefers-color-scheme:dark){.back{background:#1e293b;border-color:#475569;color:#94a3b8}}
+    .back:hover{color:#06b6d4;border-color:#06b6d4}
+
+    .container{max-width:640px;margin:0 auto;padding:2rem 1rem 4rem}
+
+    h1{font-size:1.5rem;font-weight:700;margin-bottom:.25rem}
+    .subtitle{color:#6b7280;font-size:.9rem;margin-bottom:2rem}
+
+    /* Form card */
+    .card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:1.5rem;margin-bottom:2rem;
+          box-shadow:0 1px 3px rgba(0,0,0,.04)}
+    .form-row{display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:1rem}
+    .form-group{flex:1;min-width:120px}
+    .form-group label{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;margin-bottom:.3rem;font-weight:600}
+    select,input[type="text"]{width:100%;padding:.55rem .75rem;border:1px solid #d1d5db;border-radius:10px;
+           font-size:.88rem;background:#fff;color:#1a1a1a;transition:border-color .15s}
+    select:focus,input:focus{outline:none;border-color:#06b6d4;box-shadow:0 0 0 2px rgba(6,182,212,.15)}
+    .arrow{color:#9ca3af;font-size:1.1rem;padding-bottom:.35rem;flex-shrink:0}
+    .submit-btn{padding:.55rem 1.25rem;background:#06b6d4;color:#fff;border:none;border-radius:10px;
+                font-size:.88rem;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
+    .submit-btn:hover{background:#0891b2}
+    .submit-btn:disabled{opacity:.5;cursor:not-allowed}
+
+    .match-hint{font-size:.8rem;color:#f59e0b;padding:.5rem .75rem;background:#fefce8;border:1px solid #fde68a;
+                border-radius:8px;margin-bottom:1rem;display:none}
+    @media(prefers-color-scheme:dark){.match-hint{background:rgba(245,158,11,.08);border-color:#92400e;color:#fbbf24}}
+    .status-msg{font-size:.85rem;color:#06b6d4;margin-top:.5rem;min-height:1.3rem}
+
+    /* Suggestions list */
+    h2{font-size:1.1rem;font-weight:700;margin-bottom:.75rem;color:#374151}
+    .sg-item{display:flex;gap:.75rem;align-items:flex-start;background:#fff;border:1px solid #e2e8f0;
+             border-radius:12px;padding:.85rem 1rem;margin-bottom:.5rem;transition:border-color .15s}
+    .sg-item:hover{border-color:#cbd5e1}
+    .vote-btn{display:flex;flex-direction:column;align-items:center;gap:.15rem;flex-shrink:0;width:2.5rem;
+              padding:.4rem 0;border-radius:8px;border:1px solid #e2e8f0;background:none;cursor:pointer;
+              transition:all .15s}
+    .vote-btn:hover{border-color:#06b6d4;background:rgba(6,182,212,.05)}
+    .vote-btn .arrow-up{color:#9ca3af;font-size:.7rem;line-height:1;transition:color .15s}
+    .vote-btn:hover .arrow-up{color:#06b6d4}
+    .vote-btn .count{font-size:.9rem;font-weight:700;color:#374151;line-height:1}
+    @media(prefers-color-scheme:dark){.vote-btn .count{color:#e2e8f0}}
+    .vote-btn.voted{border-color:#06b6d4;background:rgba(6,182,212,.08)}
+    .vote-btn.voted .arrow-up{color:#06b6d4}
+    .sg-name{font-weight:600;font-size:.9rem;color:#1a1a1a}
+    .note-text{font-size:.78rem;color:#6b7280;margin-top:.15rem}
+    .admin-note{margin-top:.4rem;font-size:.78rem;color:#b45309;background:#fffbeb;border:1px solid #fde68a;
+                border-radius:6px;padding:.3rem .6rem;display:flex;align-items:flex-start;gap:.4rem}
+
+    /* Status badges */
+    .badge{display:inline-block;font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:999px;
+           text-transform:uppercase;letter-spacing:.03em;margin-left:.4rem;vertical-align:middle}
+    .badge-open{background:#f3f4f6;color:#6b7280}
+    .badge-considering{background:#dbeafe;color:#1d4ed8}
+    .badge-integrated{background:#d1fae5;color:#059669}
+    .badge-needs-api{background:#fef3c7;color:#b45309}
+    .badge-accepted{background:#d1fae5;color:#059669}
+    .badge-rejected{background:#fee2e2;color:#dc2626}
+    @media(prefers-color-scheme:dark){
+      .badge-open{background:#374151;color:#9ca3af}
+      .badge-considering{background:rgba(59,130,246,.15);color:#60a5fa}
+      .badge-integrated{background:rgba(16,185,129,.15);color:#34d399}
+      .badge-needs-api{background:rgba(245,158,11,.15);color:#fbbf24}
+      .badge-accepted{background:rgba(16,185,129,.15);color:#34d399}
+      .badge-rejected{background:rgba(239,68,68,.15);color:#f87171}
+    }
+
+    .api-note{margin-top:2rem;font-size:.78rem;color:#9ca3af;background:#f8fafc;border:1px solid #e2e8f0;
+              border-radius:10px;padding:.85rem 1rem}
+    .api-note code{background:#e2e8f0;padding:.15rem .4rem;border-radius:4px;font-size:.8rem}
+    @media(prefers-color-scheme:dark){.api-note code{background:#334155}}
+    .meta-text{font-size:.75rem;color:#9ca3af;margin-top:1.5rem;text-align:center}
+    .meta-text a{color:#06b6d4;text-decoration:none}
+
+    .empty-state{text-align:center;padding:2rem;color:#9ca3af;font-size:.85rem}
+
+    @media(max-width:480px){
+      .form-row{flex-direction:column;align-items:stretch}
+      .arrow{text-align:center;padding:0;margin:-.25rem 0}
+      .submit-btn{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a href="/" class="logo">
+      <svg width="24" height="24" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="22" r="11" fill="none" stroke="#06b6d4" stroke-width="2.5"/><circle cx="28" cy="22" r="11" fill="none" stroke="#06b6d4" stroke-width="2.5"/><path d="M8 22 L36 22" stroke="#06b6d4" stroke-width="2" stroke-linecap="round"/><path d="M32 18 L36 22 L32 26" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="22" r="2" fill="#06b6d4"/></svg>
+      Coinnect
+    </a>
+    <a href="/" class="back">&larr; Back to Coinnect</a>
+  </nav>
+
+  <div class="container">
+    <h1>Suggest a Corridor or Provider</h1>
+    <p class="subtitle">Help us add the routes you need.</p>
+
+    <!-- Submit form -->
+    <div class="card">
+      <div class="form-row">
+        <div class="form-group">
+          <label>From</label>
+          <select id="sgFrom">
+            <option value="">(any)</option>
+            <optgroup label="Crypto">
+              <option value="BTC">BTC &mdash; Bitcoin</option>
+              <option value="ETH">ETH &mdash; Ethereum</option>
+              <option value="USDC">USDC &mdash; USD Coin</option>
+              <option value="USDT">USDT &mdash; Tether</option>
+            </optgroup>
+            <optgroup label="Major Fiat">
+              <option value="USD">USD &mdash; US Dollar</option>
+              <option value="EUR">EUR &mdash; Euro</option>
+              <option value="GBP">GBP &mdash; Pound</option>
+              <option value="CAD">CAD &mdash; Canadian Dollar</option>
+              <option value="AUD">AUD &mdash; Australian Dollar</option>
+              <option value="JPY">JPY &mdash; Japanese Yen</option>
+              <option value="CHF">CHF &mdash; Swiss Franc</option>
+            </optgroup>
+            <optgroup label="Latin America">
+              <option value="MXN">MXN &mdash; Mexican Peso</option>
+              <option value="BRL">BRL &mdash; Brazilian Real</option>
+              <option value="COP">COP &mdash; Colombian Peso</option>
+              <option value="ARS">ARS &mdash; Argentine Peso</option>
+              <option value="PEN">PEN &mdash; Peruvian Sol</option>
+              <option value="CLP">CLP &mdash; Chilean Peso</option>
+              <option value="VES">VES &mdash; Venezuelan Bolivar</option>
+            </optgroup>
+            <optgroup label="Asia">
+              <option value="INR">INR &mdash; Indian Rupee</option>
+              <option value="PHP">PHP &mdash; Philippine Peso</option>
+              <option value="THB">THB &mdash; Thai Baht</option>
+              <option value="IDR">IDR &mdash; Indonesian Rupiah</option>
+              <option value="VND">VND &mdash; Vietnamese Dong</option>
+              <option value="PKR">PKR &mdash; Pakistani Rupee</option>
+              <option value="BDT">BDT &mdash; Bangladeshi Taka</option>
+            </optgroup>
+            <optgroup label="Africa">
+              <option value="NGN">NGN &mdash; Nigerian Naira</option>
+              <option value="KES">KES &mdash; Kenyan Shilling</option>
+              <option value="GHS">GHS &mdash; Ghanaian Cedi</option>
+              <option value="ZAR">ZAR &mdash; South African Rand</option>
+            </optgroup>
+            <optgroup label="Middle East">
+              <option value="AED">AED &mdash; UAE Dirham</option>
+              <option value="SAR">SAR &mdash; Saudi Riyal</option>
+              <option value="TRY">TRY &mdash; Turkish Lira</option>
+            </optgroup>
+            <optgroup label="Europe">
+              <option value="UAH">UAH &mdash; Ukrainian Hryvnia</option>
+              <option value="PLN">PLN &mdash; Polish Zloty</option>
+              <option value="RON">RON &mdash; Romanian Leu</option>
+              <option value="CZK">CZK &mdash; Czech Koruna</option>
+              <option value="HUF">HUF &mdash; Hungarian Forint</option>
+            </optgroup>
+          </select>
+        </div>
+        <span class="arrow">&rarr;</span>
+        <div class="form-group">
+          <label>To</label>
+          <select id="sgTo">
+            <option value="">(any)</option>
+            <optgroup label="Latin America">
+              <option value="MXN">MXN &mdash; Mexico</option>
+              <option value="BRL">BRL &mdash; Brazil</option>
+              <option value="COP">COP &mdash; Colombia</option>
+              <option value="ARS">ARS &mdash; Argentina</option>
+              <option value="PEN">PEN &mdash; Peru</option>
+              <option value="CLP">CLP &mdash; Chile</option>
+              <option value="VES">VES &mdash; Venezuela</option>
+            </optgroup>
+            <optgroup label="Asia">
+              <option value="PHP">PHP &mdash; Philippines</option>
+              <option value="INR">INR &mdash; India</option>
+              <option value="IDR">IDR &mdash; Indonesia</option>
+              <option value="VND">VND &mdash; Vietnam</option>
+              <option value="THB">THB &mdash; Thailand</option>
+              <option value="BDT">BDT &mdash; Bangladesh</option>
+              <option value="PKR">PKR &mdash; Pakistan</option>
+            </optgroup>
+            <optgroup label="Africa">
+              <option value="NGN">NGN &mdash; Nigeria</option>
+              <option value="KES">KES &mdash; Kenya</option>
+              <option value="GHS">GHS &mdash; Ghana</option>
+              <option value="ZAR">ZAR &mdash; South Africa</option>
+              <option value="TZS">TZS &mdash; Tanzania</option>
+              <option value="UGX">UGX &mdash; Uganda</option>
+            </optgroup>
+            <optgroup label="Middle East">
+              <option value="AED">AED &mdash; UAE</option>
+              <option value="SAR">SAR &mdash; Saudi Arabia</option>
+              <option value="TRY">TRY &mdash; Turkey</option>
+            </optgroup>
+            <optgroup label="Europe">
+              <option value="UAH">UAH &mdash; Ukraine</option>
+              <option value="PLN">PLN &mdash; Poland</option>
+              <option value="RON">RON &mdash; Romania</option>
+              <option value="CZK">CZK &mdash; Czech Republic</option>
+              <option value="HUF">HUF &mdash; Hungary</option>
+            </optgroup>
+            <optgroup label="Major Fiat">
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="CAD">CAD</option>
+              <option value="AUD">AUD</option>
+              <option value="JPY">JPY</option>
+            </optgroup>
+            <optgroup label="Crypto">
+              <option value="USDC">USDC</option>
+              <option value="USDT">USDT</option>
+              <option value="BTC">BTC</option>
+              <option value="ETH">ETH</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="form-group" style="min-width:160px">
+          <label>Provider name (optional)</label>
+          <input type="text" id="sgProvider" maxlength="100" placeholder="e.g. M-Pesa, GCash, Nequi...">
+        </div>
+        <button class="submit-btn" id="sgSubmitBtn" onclick="submitSuggestion()">Submit</button>
+      </div>
+      <div id="matchHint" class="match-hint"></div>
+      <div id="sgMsg" class="status-msg"></div>
+    </div>
+
+    <!-- Existing suggestions -->
+    <h2>Existing suggestions</h2>
+    <div id="suggestionsList">
+      <div class="empty-state">Loading suggestions...</div>
+    </div>
+
+    <!-- API note for bots -->
+    <div class="api-note">
+      <strong>Bots:</strong> use <code>POST /v1/suggestions</code> with <code>{"name": "...", "fingerprint": "..."}</code>.
+      Upvote with <code>POST /v1/suggestions/{id}/upvote</code> with <code>{"fingerprint": "..."}</code>.
+    </div>
+
+    <p class="meta-text">
+      Coinnect is non-profit and open source &middot; <a href="/">Live rates</a> &middot; <a href="/whitepaper">Whitepaper</a>
+    </p>
+  </div>
+
+  <script>
+    // ---- Fingerprint ----
+    function getFingerprint(){
+      let fp=localStorage.getItem('_fp');
+      if(fp)return fp;
+      const arr=new Uint8Array(16);
+      crypto.getRandomValues(arr);
+      fp=Array.from(arr).map(b=>b.toString(16).padStart(2,'0')).join('');
+      localStorage.setItem('_fp',fp);
+      return fp;
+    }
+
+    // ---- Escape HTML ----
+    function esc(s){if(s==null)return'';const d=document.createElement('div');d.textContent=String(s);return d.innerHTML;}
+
+    // ---- Status badges ----
+    const BADGE_MAP={
+      'open':['Open','badge-open'],
+      'considering':['Considering','badge-considering'],
+      'integrated':['Integrated','badge-integrated'],
+      'needs-api':['Needs API','badge-needs-api'],
+      'accepted':['Accepted','badge-accepted'],
+      'rejected':['Rejected','badge-rejected'],
+    };
+    function badge(status){
+      const [label,cls]=BADGE_MAP[status]||BADGE_MAP['open'];
+      return `<span class="badge ${cls}">${label}</span>`;
+    }
+
+    // ---- State ----
+    let allSuggestions=[];
+
+    // ---- Load suggestions ----
+    async function loadSuggestions(){
+      try{
+        const r=await fetch('/v1/suggestions?status=all');
+        const d=await r.json();
+        allSuggestions=d.suggestions||[];
+        renderSuggestions(allSuggestions);
+      }catch(e){
+        document.getElementById('suggestionsList').innerHTML='<div class="empty-state">Could not load suggestions.</div>';
+      }
+    }
+
+    function renderSuggestions(list){
+      const el=document.getElementById('suggestionsList');
+      if(!list.length){el.innerHTML='<div class="empty-state">No suggestions yet &mdash; be the first!</div>';return;}
+      el.innerHTML=list.map(s=>`
+        <div class="sg-item">
+          <button onclick="voteSuggestion(${s.id},this)" class="vote-btn" title="Upvote this suggestion">
+            <span class="arrow-up">&#9650;</span>
+            <span class="count">${s.votes}</span>
+          </button>
+          <div style="flex:1;min-width:0">
+            <div>
+              <span class="sg-name">${esc(s.name)}</span>
+              ${badge(s.status)}
+            </div>
+            ${s.note?`<div class="note-text">${esc(s.note)}</div>`:''}
+            ${s.admin_note?`<div class="admin-note"><span style="flex-shrink:0">&#8505;&#65039;</span><span>${esc(s.admin_note)}</span></div>`:''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ---- Auto-check for duplicates ----
+    function buildName(){
+      const from=document.getElementById('sgFrom').value;
+      const to=document.getElementById('sgTo').value;
+      const prov=document.getElementById('sgProvider').value.trim();
+      let parts=[];
+      if(from&&to) parts.push(from+' to '+to);
+      else if(from) parts.push(from);
+      else if(to) parts.push(to);
+      if(prov) parts.push(prov);
+      return parts.join(' — ');
+    }
+
+    function checkDuplicates(){
+      const hint=document.getElementById('matchHint');
+      const from=document.getElementById('sgFrom').value.toUpperCase();
+      const to=document.getElementById('sgTo').value.toUpperCase();
+      const prov=document.getElementById('sgProvider').value.trim().toLowerCase();
+
+      if(!from&&!to&&!prov){hint.style.display='none';return;}
+
+      const matches=allSuggestions.filter(s=>{
+        const n=s.name.toLowerCase();
+        if(prov&&n.includes(prov))return true;
+        if(from&&to&&n.includes(from.toLowerCase())&&n.includes(to.toLowerCase()))return true;
+        return false;
+      });
+
+      if(matches.length){
+        hint.style.display='block';
+        hint.innerHTML='Already suggested: '+matches.map(m=>
+          `<strong>${esc(m.name)}</strong> (${m.votes} vote${m.votes!==1?'s':''}) &mdash; vote instead?`
+        ).join(', ');
+      }else{
+        hint.style.display='none';
+      }
+    }
+
+    document.getElementById('sgFrom').addEventListener('change',checkDuplicates);
+    document.getElementById('sgTo').addEventListener('change',checkDuplicates);
+    document.getElementById('sgProvider').addEventListener('input',checkDuplicates);
+
+    // ---- Submit ----
+    async function submitSuggestion(){
+      const name=buildName();
+      const msg=document.getElementById('sgMsg');
+      if(!name){msg.textContent='Please select currencies or enter a provider name.';return;}
+
+      const btn=document.getElementById('sgSubmitBtn');
+      btn.disabled=true;
+      btn.textContent='Submitting...';
+      const fp=getFingerprint();
+      try{
+        const r=await fetch('/v1/suggestions',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({name:name,fingerprint:fp})
+        });
+        if(r.ok){
+          document.getElementById('sgFrom').value='';
+          document.getElementById('sgTo').value='';
+          document.getElementById('sgProvider').value='';
+          document.getElementById('matchHint').style.display='none';
+          msg.textContent='Submitted! Thanks for the suggestion.';
+          setTimeout(()=>{msg.textContent='';},4000);
+          loadSuggestions();
+        }else{
+          const d=await r.json();
+          msg.textContent=d.detail||'Error submitting.';
+        }
+      }catch(e){
+        msg.textContent='Network error. Try again.';
+      }
+      btn.disabled=false;
+      btn.textContent='Submit';
+    }
+
+    // ---- Vote ----
+    async function voteSuggestion(id,btn){
+      const fp=getFingerprint();
+      try{
+        const r=await fetch('/v1/suggestions/'+id+'/upvote',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({fingerprint:fp})
+        });
+        const d=await r.json();
+        if(d.votes!==undefined){
+          btn.querySelector('.count').textContent=d.votes;
+          btn.classList.add('voted');
+          btn.disabled=true;
+        }else if(d.detail){
+          btn.classList.add('voted');
+          btn.disabled=true;
+        }
+      }catch(e){}
+    }
+
+    // ---- Init ----
+    loadSuggestions();
+  </script>
+</body>
+</html>""")
 
 
 @app.get("/send/{corridor}", include_in_schema=False)

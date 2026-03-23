@@ -384,7 +384,7 @@
       <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="nocrypto" onclick="setFilter('nocrypto')" data-i18n="filter_nocrypto">Bank only</button>
       <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="crypto" onclick="setFilter('crypto')" data-i18n="filter_crypto">Crypto</button>
       <div class="ml-auto flex items-center gap-2">
-        <button onclick="openFeedback('corridor')" class="text-xs px-2.5 py-1.5 rounded-full border border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium" data-i18n="suggest_corridor">+ Suggest corridor</button>
+        <a href="/suggest" class="text-xs px-2.5 py-1.5 rounded-full border border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium no-underline" data-i18n="suggest_corridor">+ Suggest corridor</a>
         <button onclick="openFeedback('bug')" class="text-xs px-2.5 py-1.5 rounded-full border border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium" data-i18n="report_bug">Report bug</button>
         <div id="routeCount" class="text-xs text-gray-400"></div>
         <div id="rateAge" class="text-xs text-gray-400 hidden">🟢 <span id="rateAgeText"></span></div>
@@ -794,7 +794,7 @@ document.addEventListener('DOMContentLoaded',function(){
     <div class="flex items-center gap-2">
       <span>MIT License</span>
       <span>·</span>
-      <span class="opacity-50">v2026.03.22</span>
+      <span class="opacity-50">v2026.03.23</span>
     </div>
   </div>
 </footer>

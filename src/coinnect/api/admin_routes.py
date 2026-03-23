@@ -169,9 +169,16 @@ class UpvoteBody(BaseModel):
 
 
 @suggest_router.get("")
-async def list_suggestions():
+async def list_suggestions(status: str = Query("open", pattern="^(open|considering|integrated|needs-api|accepted|all)$")):
     from coinnect.db.analytics import get_suggestions
-    return {"suggestions": get_suggestions("open")}
+    if status == "all":
+        # Return all non-rejected suggestions for the public page
+        results = []
+        for s in ("open", "considering", "integrated", "needs-api", "accepted"):
+            results.extend(get_suggestions(s))
+        results.sort(key=lambda x: (-x.get("votes", 0), x.get("created_at", "")))
+        return {"suggestions": results}
+    return {"suggestions": get_suggestions(status)}
 
 
 @suggest_router.post("")
