@@ -62,12 +62,31 @@ def export_day_csv(date_str: str) -> str | None:
     detail_buf = io.StringIO()
     dw = csv.writer(detail_buf)
     dw.writerow(["captured_at_utc", "from_currency", "to_currency", "amount",
-                 "rank", "provider", "cost_pct", "they_receive", "has_public_api"])
+                 "rank", "provider", "cost_pct", "they_receive", "has_public_api",
+                 "accuracy_score"])
 
-    LIVE_PROVIDERS = {'Binance','Kraken','Coinbase','OKX','Bybit','KuCoin','Gate','Bitget',
+    LIVE_EXCHANGES = {'Binance','Kraken','Coinbase','OKX','Bybit','KuCoin','Gate','Bitget',
         'MEXC','HTX','Crypto.com','Luno','Bitstamp','Gemini','Bithumb','Bitflyer',
-        'BtcTurk','IndependentReserve','WhiteBIT','Exmo','Wise','Bitso','Buda',
-        'VALR','CoinDCX','WazirX','SatoshiTango','Binance P2P (live)'}
+        'BtcTurk','IndependentReserve','WhiteBIT','Bitso','Buda',
+        'VALR','CoinDCX','WazirX','SatoshiTango','Binance P2P (live)','Uphold'}
+    LIVE_FX = {'Wise'}
+    CENTRAL_BANKS = {'BCB PTAX (BR)','TRM (CO)','Bluelytics (AR)','TCMB (TR)',
+        'NBP (PL)','CNB (CZ)','NBU (UA)','NBG (GE)','BOI (IL)','BNR (RO)','NRB (NP)'}
+    P2P_MONITORS = {'Binance P2P','Yadio (P2P)'}
+
+    def accuracy_score(via: str) -> float:
+        """Rate accuracy score per whitepaper Section 10."""
+        if any(p in via for p in LIVE_EXCHANGES):
+            return 1.0
+        if any(p in via for p in LIVE_FX):
+            return 0.95
+        if any(p in via for p in CENTRAL_BANKS):
+            return 0.90
+        if any(p in via for p in P2P_MONITORS):
+            return 0.80
+        if "~est." in via or "est." in via.lower():
+            return 0.40
+        return 0.60  # published fee + live FX fallback
 
     detail_count = 0
     for r in rows:
@@ -77,12 +96,13 @@ def export_day_csv(date_str: str) -> str | None:
             continue
         for route in routes:
             via = route.get("via", "")
-            has_api = any(p in via for p in LIVE_PROVIDERS)
+            has_api = any(p in via for p in LIVE_EXCHANGES | LIVE_FX)
+            score = accuracy_score(via)
             dw.writerow([
                 r["captured_at"], r["from_currency"], r["to_currency"], r["amount"],
                 route.get("rank", 0), via,
                 route.get("total_cost_pct", 0), route.get("they_receive", 0),
-                has_api
+                has_api, score
             ])
             detail_count += 1
 
