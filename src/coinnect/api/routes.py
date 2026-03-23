@@ -208,7 +208,6 @@ async def quote(
     if result.routes:
         result.routes = [r for r in result.routes
             if (not _is_reference_provider(r.steps[0].via)
-                and not _is_reference_provider(r.steps[-1].via)
                 and any(not _is_reference_provider(s.via) for s in r.steps))]
         # Re-rank and reassign labels
         if result.routes:
