@@ -1233,11 +1233,12 @@ function applyFilter(routes){
 // ── History charts ──────────────────────────────────────────────────────────
 let _histFrom='',_histTo='',_histMinutes=15;
 
-function chartHover(e,container,rates,W,H,minR,range,label){
+function chartHover(e,container,rates,W,H,minR,range,label,timestamps){
   const rect=container.getBoundingClientRect();
   const x=e.clientX-rect.left;
   const idx=Math.round((x/rect.width)*(rates.length-1));
-  const val=rates[Math.max(0,Math.min(idx,rates.length-1))];
+  const clamped=Math.max(0,Math.min(idx,rates.length-1));
+  const val=rates[clamped];
   const tooltip=container.querySelector('.chart-tip');
   const line=container.querySelector('.chart-line');
   if(!tooltip||!line)return;
@@ -1246,7 +1247,8 @@ function chartHover(e,container,rates,W,H,minR,range,label){
   tooltip.style.left=x+'px';
   line.style.left=x+'px';
   const fmt=v=>v>=1000?Math.round(v).toLocaleString('en'):v>=1?v.toFixed(4):v.toFixed(6);
-  tooltip.textContent=fmt(val)+' '+label;
+  const ts=timestamps&&timestamps[clamped]?new Date(timestamps[clamped]).toLocaleString():'';
+  tooltip.textContent=fmt(val)+' '+label+(ts?' · '+ts:'');
 }
 function chartLeave(container){
   const t=container.querySelector('.chart-tip');
@@ -1266,6 +1268,7 @@ function renderChart(wrapId,labelId,statsId,points,amount,fromC,toC,gradId){
   }
   // Rate = they_receive / amount (how much toC per 1 fromC)
   const rates=points.map(p=>p.they_receive/(amount||1));
+  const timestamps=points.map(p=>p.captured_at);
   const minR=Math.min(...rates),maxR=Math.max(...rates);
   const rawRange=maxR-minR;
   const minVisualRange=maxR*0.02;
@@ -1294,7 +1297,7 @@ function renderChart(wrapId,labelId,statsId,points,amount,fromC,toC,gradId){
         <polyline points="0,${H} ${pts} ${W},${H}" fill="url(#${gradId})" stroke="none"/>
         <circle cx="${px(rates.length-1)}" cy="${py(latest)}" r="3" fill="${col}"/>
       </svg>
-      <div class="chart-overlay" onmousemove="chartHover(event,this.parentElement,${JSON.stringify(rates)},${W},${H},${minR},${range},'${toC}')" onmouseleave="chartLeave(this.parentElement)"></div>
+      <div class="chart-overlay" onmousemove="chartHover(event,this.parentElement,${JSON.stringify(rates)},${W},${H},${minR},${range},'${toC}',${JSON.stringify(timestamps)})" onmouseleave="chartLeave(this.parentElement)"></div>
       <div class="chart-tip hidden"></div>
       <div class="chart-line hidden"></div>
     </div>`;

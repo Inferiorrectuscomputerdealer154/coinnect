@@ -260,17 +260,7 @@ Our receiving address (`0xf0813041b9b017a88f28B8600E73a695E2B02e0A`) is an EVM a
 
 x402 is designed for fully autonomous AI agents that operate without human oversight. They pay as they go, wallets permitting, with no account management required.
 
-### 4.5 Mexico-specific note
-
-If you are operating from Mexico and want to top up a Base L2 wallet:
-
-1. **Coinbase (recommended):** Available in Mexico since 2023. Buy USDC directly with MXN via SPEI or bank transfer. No MSB license required on your end — you're a retail buyer. Withdraw USDC to Base L2 within the same app.
-2. **Bitso → Coinbase:** Convert MXN → USDC on Bitso (native Mexican exchange), then send to a Coinbase-linked Base address or any Base-compatible wallet.
-3. **Wallet:** MetaMask supports Base natively. Switch network to "Base" and your existing address (`0xf0813…`) receives and sends USDC on Base.
-
-Since Coinnect is purely an informational service (no money transmission), operating from Mexico requires no special financial licensing. x402 income would be classified as digital services revenue — taxable as RESICO or general regime depending on your setup.
-
-### 4.6 Current status
+### 4.5 Current status
 
 x402 is in the Coinnect roadmap for Q3 2026. The receiving address is already configured. Implementation requires integrating the [x402-python](https://github.com/coinbase/x402) middleware (FastAPI-compatible) into the `/v1/quote` route and deploying with a Base RPC endpoint.
 
