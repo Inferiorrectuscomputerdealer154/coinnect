@@ -35,7 +35,7 @@ This is the core problem Coinnect solves: **not the cost of moving money, but th
 | Yadio.io | LatAm P2P crypto rates | For-profit, price tracker | Partial — single-step only |
 | Wise | Direct fiat transfer | For-profit, also a provider | Partial — also a listed route |
 | Google "send money" | Surface-level | Commercial agreements | No |
-| Coinnect | Global, fiat + crypto + P2P | Non-profit, donation-funded | **Yes** |
+| Coinnect | Global, fiat + crypto + P2P | Open source, API-funded | **Yes** |
 
 The difference is structural, not ethical. Affiliate platforms may have good intentions — but if Exchange A pays them and Exchange B doesn't, the incentive exists to favor A. Coinnect removes that incentive entirely by accepting no commission from any exchange, ever.
 
@@ -292,31 +292,35 @@ The [Coinbase x402 SDK](https://github.com/coinbase/x402) is MIT-licensed and ma
 
 ---
 
-## 5. Why Non-Profit
+## 5. Governance & Sustainability
 
 ### 5.1 The alignment problem
 
 Every for-profit comparison platform faces the same structural problem: the business model eventually compromises the product. Affiliate commissions, promoted listings, premium placements — these aren't malicious choices, they're business necessities. But they introduce bias into what should be a purely informational service.
 
-A non-profit doesn't have this problem. The only metric that matters is accuracy.
+Coinnect solves this structurally. The routing engine has no preference for any provider because it has no commercial relationship with any of them. Revenue comes from the information layer itself — not from the providers being ranked.
 
-### 5.2 Sustainability
+### 5.2 Revenue model
 
-Coinnect is **free for personal use**. If usage patterns change or costs require it, paid tiers may be introduced for high-volume commercial use — with a minimum 90-day notice before any change takes effect.
+Coinnect is **free for personal use**. Revenue comes from three sources, in order of priority:
 
-The project is funded by voluntary donations from users who save money using the platform, and by x402 micropayments from autonomous agents. If we save you $20 on a transfer, a $1 donation is a 2000% return for you and keeps the service running for everyone.
+1. **x402 micropayments** — autonomous AI agents pay $0.002 USDC per query. As agent-to-agent commerce grows, this becomes the primary revenue stream. No accounts, no billing — just HTTP payments.
+2. **Commercial API tiers** — high-volume integrations (fintech apps, comparison platforms) pay for dedicated throughput and SLA guarantees.
+3. **Voluntary donations** — users who save money on transfers can support the project. Not the primary model, but a signal of value.
 
-No advertising. No affiliate fees. No investor expectations. No exit.
+No advertising. No affiliate fees. No investor expectations. The incentive is accuracy — better routes attract more queries, which generates more revenue.
 
-Open Collective (fiscal host: Open Source Collective) accepts donations in fiat and crypto. The project treasury uses a Gnosis Safe multisig on Polygon.
+If usage patterns change or costs require it, paid tiers may be adjusted with a minimum 90-day notice before any change takes effect.
 
-### 5.3 Transparent compensation
+### 5.3 Open-source social enterprise
 
-The founder's compensation and all operational expenses are published publicly in [SUSTAINABILITY.md](https://github.com/coinnect-dev/coinnect/blob/main/docs/SUSTAINABILITY.md). The founding statutes cap founder compensation at 10% of total annual budget, starting at $2,500/month and scaling only with organizational revenue. Financial reports are published quarterly.
+Coinnect is open source (MIT license) and mission-driven, but not structurally locked into a non-profit model. The project operates as an **open-source social enterprise**: transparent governance, public code, no affiliate bias — with the flexibility to sustain itself commercially through the API layer.
 
-### 5.4 Infrastructure cost
+Founder compensation and operational expenses are published in [SUSTAINABILITY.md](https://github.com/coinnect-dev/coinnect/blob/main/docs/SUSTAINABILITY.md). Compensation is determined quarterly, benchmarked to market rates, and adjusted to project revenue. Financial reports are published quarterly.
 
-The current deployment runs on a single Linux server: FastAPI, three SQLite databases, and a static frontend. No serverless, no CDN required at current scale. As traffic grows, the architecture is designed for straightforward horizontal scaling: the quote engine is stateless, SQLite history can migrate to libSQL/Turso for edge distribution, and the frontend can move to any CDN.
+### 5.4 Infrastructure
+
+The architecture is designed for horizontal scaling from day one. The quote engine is stateless — any number of instances can serve queries from a shared edge cache. Rate data is refreshed centrally and distributed to all instances. The frontend is static and can be served from any CDN. Storage can migrate to distributed databases as traffic requires.
 
 ---
 
