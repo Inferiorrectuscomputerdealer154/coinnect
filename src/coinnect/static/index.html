@@ -61,7 +61,7 @@
     if(localStorage.getItem('ga_consent')==='1'&&localStorage.getItem('ga_optout')!=='1'){loadGA4();}
   </script>
 
-  <script src="/static/i18n.js?v=2026.03.23.2"></script>
+  <script src="/static/i18n.js?v=2026.03.23.3"></script>
   <script>initLang();</script>
   <link rel="stylesheet" href="/static/tailwind.css">
 
@@ -1645,6 +1645,24 @@ function renderSteps(steps,to){
   }).join('');
 }
 
+function renderNarrative(steps,from,to){
+  if(steps.length<=1)return'';
+  let amt=parseFloat(document.getElementById('amount').value)||500;
+  const lines=steps.map((s,i)=>{
+    const give=fmtNum(amt,s.from_currency);
+    const hasRate=s.exchange_rate&&s.exchange_rate!==1.0;
+    const received=hasRate?amt*s.exchange_rate*(1-s.fee_pct/100):amt*(1-s.fee_pct/100);
+    const get=fmtNum(received,s.to_currency);
+    if(hasRate)amt=received;
+    const verb=i===0?'Send':i===steps.length-1?'Finally, send':'Then give';
+    return`<div class="flex gap-2 mb-1.5">
+      <span class="text-cyan-500 dark:text-cyan-600 font-bold text-[10px] mt-px shrink-0">${i+1}.</span>
+      <span>${verb} <strong>${give} ${s.from_currency}</strong> → receive <strong>${get} ${s.to_currency}</strong> in ${esc(s.via)}</span>
+    </div>`;
+  });
+  return`<div class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">${lines.join('')}</div>`;
+}
+
 function providerDetails(steps) {
   const providers = [...new Set(steps.map(s => s.via))];
   return providers.map(via => {
@@ -1725,7 +1743,13 @@ function renderFeaturedCard(r,from,to,insideTied=false){
             </div>
           </div>
           <div class="text-xs text-gray-400 mb-1">Time: ${fmtTime(r.total_time_minutes)}</div>
-          <div class="pt-3 border-t border-gray-100 dark:border-gray-800">${renderSteps(r.steps,to)}</div>
+          <div class="pt-3 border-t border-gray-100 dark:border-gray-800 grid grid-cols-1 ${r.steps.length>1?'sm:grid-cols-2':''} gap-4">
+            <div>${renderSteps(r.steps,to)}</div>
+            ${r.steps.length>1?`<div class="bg-gray-50 dark:bg-gray-800/40 rounded-xl p-3 self-start">
+              <div class="text-[10px] text-gray-400 uppercase tracking-wide font-medium mb-2">Step by step</div>
+              ${renderNarrative(r.steps,from,to)}
+            </div>`:''}
+          </div>
           ${renderReqs(r.steps,to)}
           <details class="mt-2">
             <summary class="text-[10px] text-gray-400 cursor-pointer hover:text-cyan-500">${t('read_more')}</summary>
@@ -1774,7 +1798,13 @@ function renderCompactRow(r,from,to){
         </div>
         <div class="px-5 py-2 bg-gray-50 dark:bg-gray-800/40 text-xs font-mono text-gray-500">${t('rate')} ${rate}</div>
         <div class="px-5 pt-3 mb-2">${routeDataType(r.steps)}</div>
-        <div class="px-5 py-4">${renderSteps(r.steps,to)}</div>
+        <div class="px-5 py-4 grid grid-cols-1 ${r.steps.length>1?'sm:grid-cols-2':''} gap-4">
+          <div>${renderSteps(r.steps,to)}</div>
+          ${r.steps.length>1?`<div class="bg-gray-50 dark:bg-gray-800/40 rounded-xl p-3 self-start">
+            <div class="text-[10px] text-gray-400 uppercase tracking-wide font-medium mb-2">Step by step</div>
+            ${renderNarrative(r.steps,from,to)}
+          </div>`:''}
+        </div>
         <div class="px-5 pb-5">${renderReqs(r.steps,to)}
           <details class="mt-2">
             <summary class="text-[10px] text-gray-400 cursor-pointer hover:text-cyan-500">${t('read_more')}</summary>
