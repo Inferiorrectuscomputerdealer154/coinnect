@@ -17,6 +17,7 @@ class Step:
     fee_pct: float
     estimated_minutes: int
     instructions: str
+    exchange_rate: float = 1.0
     min_amount: float = 0.01
     max_amount: float = 1_000_000.0
 
@@ -223,6 +224,7 @@ def build_quote(
                 fee_pct=e.fee_pct,
                 estimated_minutes=e.estimated_minutes,
                 instructions=e.instructions or f"Convert {e.from_currency} to {e.to_currency} via {e.via}",
+                exchange_rate=e.exchange_rate,
                 min_amount=e.min_amount,
                 max_amount=e.max_amount,
             )
