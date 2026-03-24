@@ -6,7 +6,7 @@
 set -euo pipefail
 
 BACKUP_DIR="/home/inge/coinnect/backups"
-ASH="inge@100.64.0.1"
+ASH="ash"  # uses ~/.ssh/config host alias
 DATE=$(date +%Y-%m-%d)
 KEEP_DAYS=7
 
@@ -15,7 +15,7 @@ echo "=== Coinnect backup — $DATE $(date +%H:%M:%S) ==="
 # 1. SQLite databases from ash
 echo "[1/4] Copying databases from ash..."
 mkdir -p "$BACKUP_DIR/$DATE"
-for db in history.db analytics.db keys.db; do
+for db in history.db; do
     scp -q "$ASH:/home/inge/coinnect/data/$db" "$BACKUP_DIR/$DATE/$db" 2>/dev/null && \
         echo "  ✓ $db" || echo "  ✗ $db (not found or failed)"
 done
