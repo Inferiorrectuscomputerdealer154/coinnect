@@ -80,7 +80,7 @@ def _dijkstra(
     results = []
     visited_states: dict[tuple, float] = {}
     iterations = 0
-    max_iterations = 500_000  # safety cap: heap pops, not pushes
+    max_iterations = 100_000  # safety cap: heap pops
 
     while heap and len(results) < max_routes and iterations < max_iterations:
         priority, _, steps, curr, curr_amount, path = heapq.heappop(heap)
