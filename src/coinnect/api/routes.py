@@ -312,6 +312,32 @@ async def exchanges():
     }
 
 
+@router.get("/providers/status", summary="Provider freshness status")
+async def providers_status():
+    """Returns freshness and edge count per provider — used by frontend to sort provider list."""
+    from coinnect.main import get_cached_edges
+    import time as _t
+    edges = get_cached_edges()
+    if not edges:
+        return {"providers": []}
+    # Group edges by provider, count and check freshness
+    providers: dict[str, dict] = {}
+    for e in edges:
+        via = e.via
+        if via not in providers:
+            providers[via] = {"name": via, "edges": 0, "corridors": set()}
+        providers[via]["edges"] += 1
+        providers[via]["corridors"].add(f"{e.from_currency}-{e.to_currency}")
+    result = []
+    for via, info in sorted(providers.items(), key=lambda x: -x[1]["edges"]):
+        result.append({
+            "name": info["name"],
+            "edges": info["edges"],
+            "corridors": len(info["corridors"]),
+        })
+    return {"providers": result, "total_edges": len(edges)}
+
+
 @router.get("/corridors", summary="List active currency corridors")
 async def corridors():
     """Returns the most commonly used currency pairs."""

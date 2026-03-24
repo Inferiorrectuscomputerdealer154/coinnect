@@ -751,19 +751,46 @@
 document.addEventListener('DOMContentLoaded',function(){
   // Wait for exchangeLogo and esc to be defined
   setTimeout(function(){
-    const live=['Binance','Kraken','Coinbase','OKX','Bybit','KuCoin','Bitso','Luno','Bitstamp','Gemini','Bithumb','Bitflyer','BtcTurk','Wise','Buda','VALR','CoinDCX','WazirX','SatoshiTango','Binance P2P'];
+    const live=['Binance','Kraken','Coinbase','OKX','Bybit','KuCoin','Bitso','Luno','Bitstamp','Gemini','Bithumb','Bitflyer','BtcTurk','Wise','Buda','VALR','CoinDCX','WazirX','SatoshiTango','Binance P2P','Uphold'];
     const official=['BCB PTAX (BR)','Banxico (MX)','TRM (CO)','Bluelytics (AR)','TCMB (TR)','NBP (PL)','CNB (CZ)','NBU (UA)','NBG (GE)','BOI (IL)','BNR (RO)'];
     const reference=['CoinGecko','Yadio','Frankfurter (ECB)','FloatRates','CriptoYa (AR)'];
     const estimated=['Remitly','WorldRemit','Ria','Sendwave','Xoom','Paysend','OFX','TransferGo','Skrill','Revolut','Strike','XE','Global66','Atlantic Money','Intermex','CurrencyFair','Western Union','MoneyGram','Nala','Taptap Send'];
-    function renderProviders(names,containerId){
-      const el=document.getElementById(containerId);
-      if(!el)return;
-      el.innerHTML=names.map(n=>`<span class="inline-flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-1.5">${typeof exchangeLogo==='function'?exchangeLogo(n,14):''}<span>${typeof esc==='function'?esc(n):n}</span></span>`).join('');
-    }
-    renderProviders(live,'providersLive');
-    renderProviders(official,'providersOfficial');
-    renderProviders(reference,'providersReference');
-    renderProviders(estimated,'providersEstimated');
+    // Fetch live status to sort by edge count and gray out inactive
+    fetch('/v1/providers/status').then(r=>r.json()).then(d=>{
+      const status={};
+      (d.providers||[]).forEach(p=>{status[p.name]=p.edges;});
+      function sortByEdges(names){
+        return [...names].sort((a,b)=>(status[b]||0)-(status[a]||0));
+      }
+      function renderProviders(names,containerId){
+        const el=document.getElementById(containerId);
+        if(!el)return;
+        el.innerHTML=sortByEdges(names).map(n=>{
+          const edges=status[n]||0;
+          const active=edges>0;
+          const cls=active
+            ?'text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+            :'text-gray-400 dark:text-gray-600 bg-gray-50/50 dark:bg-gray-800/30 border-gray-100 dark:border-gray-800 opacity-50';
+          const badge=active?`<span class="text-[8px] text-gray-400 ml-0.5">${edges}</span>`:'';
+          return`<span class="inline-flex items-center gap-1.5 text-xs ${cls} border rounded-lg px-2.5 py-1.5" title="${edges} edges">${typeof exchangeLogo==='function'?exchangeLogo(n,14):''}<span>${typeof esc==='function'?esc(n):n}</span>${badge}</span>`;
+        }).join('');
+      }
+      renderProviders(live,'providersLive');
+      renderProviders(official,'providersOfficial');
+      renderProviders(reference,'providersReference');
+      renderProviders(estimated,'providersEstimated');
+    }).catch(()=>{
+      // Fallback: render without status
+      function renderProviders(names,containerId){
+        const el=document.getElementById(containerId);
+        if(!el)return;
+        el.innerHTML=names.map(n=>`<span class="inline-flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-1.5">${typeof exchangeLogo==='function'?exchangeLogo(n,14):''}<span>${typeof esc==='function'?esc(n):n}</span></span>`).join('');
+      }
+      renderProviders(live,'providersLive');
+      renderProviders(official,'providersOfficial');
+      renderProviders(reference,'providersReference');
+      renderProviders(estimated,'providersEstimated');
+    });
   },100);
 });
 </script>
