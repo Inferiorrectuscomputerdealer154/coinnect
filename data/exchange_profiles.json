@@ -167,7 +167,19 @@
         "Holds 65 regulatory licenses worldwide, operating in over 80 countries."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "Public rates page (scraping) + open FX API fallback. No official partnership."
+      "coinnect_data_source": "Public rates page (scraping) + open FX API fallback. No official partnership.",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "proof_address"
+        ],
+        "kyc_level": "full",
+        "ssn_us": true,
+        "bank_required": true,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "SSN/ITIN for US. ID + address proof. Bank/card required (no cash)."
+      }
     },
     {
       "slug": "binance",
@@ -212,7 +224,19 @@
         "Operates Binance Academy, one of the largest free crypto education platforms."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.binance)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.binance)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Full KYC mandatory since 2023. ID + selfie verification."
+      }
     },
     {
       "slug": "western-union",
@@ -256,7 +280,19 @@
         "Publicly traded on the NYSE under ticker symbol WU."
       ],
       "integration_status": "estimated",
-      "coinnect_data_source": "Published fees and exchange rate estimates (no public rate API for consumer transfers)"
+      "coinnect_data_source": "Published fees and exchange rate estimates (no public rate API for consumer transfers)",
+      "requirements": {
+        "requires": [
+          "gov_id"
+        ],
+        "kyc_level": "basic",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": true,
+        "no_kyc_tier": false,
+        "alt_id": true,
+        "notes": "Cash-to-cash with photo ID. No SSN. No bank account. Accepts wide range of IDs including some non-standard."
+      }
     },
     {
       "slug": "remitly",
@@ -299,7 +335,19 @@
         "Acquired Rewire (now Remitly for Immigrants) to serve long-term migrant financial needs."
       ],
       "integration_status": "estimated",
-      "coinnect_data_source": "Published fees with open exchange rate API fallback (corridor-specific static estimates)"
+      "coinnect_data_source": "Published fees with open exchange rate API fallback (corridor-specific static estimates)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "ID verification required. Debit/credit card or bank. No SSN but needs valid ID."
+      }
     },
     {
       "slug": "okx",
@@ -344,7 +392,18 @@
         "Official sponsor of Manchester City F.C. and the McLaren Formula 1 team."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.okx)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.okx)",
+      "requirements": {
+        "requires": [
+          "phone"
+        ],
+        "kyc_level": "tiered",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": true,
+        "notes": "Level 1: basic info only, 5,000 USDT/day. Level 2+: full KYC."
+      }
     },
     {
       "slug": "kraken",
@@ -391,7 +450,18 @@
         "Licensed as a CASP under MiCA in Ireland, enabling passporting across the EU/EEA."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.kraken)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.kraken)",
+      "requirements": {
+        "requires": [
+          "phone"
+        ],
+        "kyc_level": "tiered",
+        "ssn_us": true,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": true,
+        "notes": "Starter: name + DOB + phone (limited crypto). Pro: full KYC. US users need SSN."
+      }
     },
     {
       "slug": "moneygram",
@@ -436,7 +506,19 @@
         "Offers a public developer API for partners to integrate money transfer and crypto on/off-ramp services."
       ],
       "integration_status": "estimated",
-      "coinnect_data_source": "Published fees (MoneyGram developer API available for partner integration)"
+      "coinnect_data_source": "Published fees (MoneyGram developer API available for partner integration)",
+      "requirements": {
+        "requires": [
+          "gov_id"
+        ],
+        "kyc_level": "basic",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": true,
+        "no_kyc_tier": false,
+        "alt_id": true,
+        "notes": "Most inclusive major provider. Accepts matricula consular, welfare ID, Border Crossing Card, inmate exit ID. Cash available. No SSN needed."
+      }
     },
     {
       "slug": "payoneer",
@@ -481,7 +563,19 @@
         "Filed application for a US national trust bank charter (PAYO Digital Bank, N.A.) in February 2026."
       ],
       "integration_status": "planned",
-      "coinnect_data_source": "Published fees (Payoneer API available for partner payout integration)"
+      "coinnect_data_source": "Published fees (Payoneer API available for partner payout integration)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "proof_address"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": true,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Full KYC. ID + address proof. Primarily for freelancers/businesses."
+      }
     },
     {
       "slug": "global66",
@@ -523,7 +617,19 @@
         "One of the fastest-growing fintechs in the Latin American cross-border payments space."
       ],
       "integration_status": "planned",
-      "coinnect_data_source": "Published fees (no public API available; exchange rate markup estimated from pricing page)"
+      "coinnect_data_source": "Published fees (no public API available; exchange rate markup estimated from pricing page)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": true,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "LatAm. National ID required. Bank transfer only."
+      }
     },
     {
       "slug": "bitso",
@@ -566,7 +672,18 @@
         "Offers Bitso Business with APIs for developers to access crypto liquidity and LatAm local payment rails."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "Direct API (live order book via Bitso REST API — not in CCXT, custom adapter)"
+      "coinnect_data_source": "Direct API (live order book via Bitso REST API — not in CCXT, custom adapter)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "tiered",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": true,
+        "notes": "Mexico. Level 1: INE/CURP (limited). Level 2: INE + address proof. Cash deposit via OXXO/SPEI."
+      }
     },
     {
       "slug": "coinbase",
@@ -613,7 +730,19 @@
         "Offers crypto futures trading across 26 European countries through its MiFID-regulated entity."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.coinbase)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.coinbase)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": true,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "US users must provide last 4 of SSN. Full ID verification required."
+      }
     },
     {
       "slug": "gemini",
@@ -658,7 +787,19 @@
         "Issued the Gemini Dollar (GUSD), one of the first regulated stablecoins backed 1:1 by USD."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.gemini)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.gemini)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": true,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "US only (mostly). Full KYC + SSN."
+      }
     },
     {
       "slug": "bybit",
@@ -701,7 +842,19 @@
         "Available in over 160 countries, serving a global user base focused on derivatives and spot trading."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bybit)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bybit)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Mandatory KYC (Level 1) since 2023."
+      }
     },
     {
       "slug": "kucoin",
@@ -743,7 +896,19 @@
         "Offers KuCoin Earn, lending, and bot trading alongside standard spot and futures markets."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.kucoin)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.kucoin)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Mandatory KYC since 2023. ID + selfie."
+      }
     },
     {
       "slug": "gate-io",
@@ -834,7 +999,19 @@
         "Available in over 150 countries with a focus on derivatives and social trading features."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bitget)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bitget)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Full KYC required."
+      }
     },
     {
       "slug": "mexc",
@@ -874,7 +1051,18 @@
         "Offers zero maker fees on spot trading as a competitive differentiator."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.mexc)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.mexc)",
+      "requirements": {
+        "requires": [
+          "email"
+        ],
+        "kyc_level": "tiered",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": true,
+        "notes": "Email-only registration still possible. Limited withdrawals without KYC (varies by region). Last major exchange with lighter requirements."
+      }
     },
     {
       "slug": "htx",
@@ -914,7 +1102,19 @@
         "One of the earliest cryptocurrency exchanges founded in China, later relocating internationally."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.htx)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.htx)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Full KYC required."
+      }
     },
     {
       "slug": "crypto-com",
@@ -1004,7 +1204,19 @@
         "Focused on emerging markets, particularly South Africa, Nigeria, Malaysia, and Indonesia."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.luno)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.luno)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Full KYC. Accepts national ID for supported countries (ZA, NG, ID, MY)."
+      }
     },
     {
       "slug": "bitstamp",
@@ -1050,7 +1262,19 @@
         "Offices in Luxembourg, Ljubljana, Singapore, London, and the USA."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bitstamp)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bitstamp)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": true,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Full KYC. US users need SSN/ITIN."
+      }
     },
     {
       "slug": "btcturk",
@@ -1089,7 +1313,19 @@
         "Deeply integrated with Turkish banking infrastructure, offering localized services for the Turkish market."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.btcturk)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.btcturk)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Turkey. TC Kimlik (national ID) required."
+      }
     },
     {
       "slug": "bithumb",
@@ -1127,7 +1363,19 @@
         "Registered as a Virtual Asset Service Provider (VASP) with South Korea's Financial Intelligence Unit."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bithumb)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bithumb)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": true,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Korea-only. Korean bank account + phone required."
+      }
     },
     {
       "slug": "bitflyer",
@@ -1166,7 +1414,19 @@
         "Operates bitFlyer Lightning, a professional trading platform for spot and derivatives."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bitflyer)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bitflyer)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": true,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Japan-only. Japanese bank account required."
+      }
     },
     {
       "slug": "independent-reserve",
@@ -1246,7 +1506,19 @@
         "Backed by investors including Pantera Capital, Coinbase Ventures, and Distributed Global."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.valr)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.valr)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "South Africa. SA ID or passport."
+      }
     },
     {
       "slug": "coindcx",
@@ -1285,7 +1557,19 @@
         "Backed by investors including Pantera Capital, Steadview Capital, and Coinbase Ventures."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.coindcx)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.coindcx)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "India. PAN + Aadhaar required."
+      }
     },
     {
       "slug": "wazirx",
@@ -1325,7 +1609,19 @@
         "Supports 200+ cryptocurrencies with INR and USDT trading pairs."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.wazirx)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.wazirx)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "India. PAN + Aadhaar."
+      }
     },
     {
       "slug": "satoshitango",
@@ -1364,7 +1660,19 @@
         "Known for supporting various local payment methods across Latin America."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.satoshitango)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.satoshitango)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Argentina. DNI required."
+      }
     },
     {
       "slug": "buda",
@@ -1403,7 +1711,20 @@
         "Focuses on compliance with local regulatory requirements across each Latin American market it serves."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.buda)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.buda)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone",
+          "proof_address"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": true,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Chile/Colombia/Peru. National ID + address proof + bank account."
+      }
     },
     {
       "slug": "ria-money-transfer",
@@ -1491,7 +1812,19 @@
         "Regional offices in the US, Poland, Canada, Australia, and multiple African and Asian countries."
       ],
       "integration_status": "estimated",
-      "coinnect_data_source": "Published fee estimates with open FX rate fallback (corridor-specific static estimates)"
+      "coinnect_data_source": "Published fee estimates with open FX rate fallback (corridor-specific static estimates)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "proof_address"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": true,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "ID + address proof. Bank/card required. App-based."
+      }
     },
     {
       "slug": "sendwave",
@@ -1530,7 +1863,19 @@
         "Focused on serving the diaspora community with fast, affordable mobile-first transfers."
       ],
       "integration_status": "estimated",
-      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)"
+      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "US/UK to Africa. ID + debit card."
+      }
     },
     {
       "slug": "xoom",
@@ -1574,7 +1919,19 @@
         "Strong presence in Mexico, India, the Philippines, China, and Brazil."
       ],
       "integration_status": "estimated",
-      "coinnect_data_source": "Published fee estimates and exchange rate data (no public consumer rate API)"
+      "coinnect_data_source": "Published fee estimates and exchange rate data (no public consumer rate API)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "PayPal subsidiary. ID required. Bank/card."
+      }
     },
     {
       "slug": "paysend",
@@ -1615,7 +1972,19 @@
         "Offers card-to-card transfers as a distinctive feature alongside bank and mobile wallet delivery."
       ],
       "integration_status": "estimated",
-      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)"
+      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Card-to-card. ID verification."
+      }
     },
     {
       "slug": "transfergo",
@@ -1654,7 +2023,18 @@
         "Authorized as a payment institution by the FCA and the Bank of Lithuania."
       ],
       "integration_status": "estimated",
-      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)"
+      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)",
+      "requirements": {
+        "requires": [
+          "gov_id"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": true,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "Europe focus. ID + bank."
+      }
     },
     {
       "slug": "xe",
@@ -1696,7 +2076,18 @@
         "Regulated across 6+ jurisdictions including the UK, EU, US, Canada, Australia, and New Zealand."
       ],
       "integration_status": "estimated",
-      "coinnect_data_source": "XE Currency Data API (XECDAPI) for live rates + published fee estimates"
+      "coinnect_data_source": "XE Currency Data API (XECDAPI) for live rates + published fee estimates",
+      "requirements": {
+        "requires": [
+          "gov_id"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": true,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "ID verification. Bank transfer only."
+      }
     },
     {
       "slug": "atlantic-money",
@@ -1735,7 +2126,18 @@
         "Positions itself as one of the most cost-effective options for large international transfers."
       ],
       "integration_status": "estimated",
-      "coinnect_data_source": "Published fee structure (flat fee + mid-market rate) with open FX rate data"
+      "coinnect_data_source": "Published fee structure (flat fee + mid-market rate) with open FX rate data",
+      "requirements": {
+        "requires": [
+          "gov_id"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": true,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "EU focus. ID + bank account."
+      }
     },
     {
       "slug": "nala",
@@ -1774,7 +2176,19 @@
         "Team spans 18 countries, with hubs in London, Nairobi, and Dakar."
       ],
       "integration_status": "estimated",
-      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)"
+      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "UK/EU to East Africa. ID + debit card."
+      }
     },
     {
       "slug": "taptap-send",
@@ -1818,7 +2232,19 @@
         "Particularly strong in West African corridors including Senegal, Mali, Guinea, Ghana, and Cameroon."
       ],
       "integration_status": "estimated",
-      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)"
+      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "UK/EU/US to Africa. ID + debit card."
+      }
     },
     {
       "slug": "yellow-card",
@@ -1859,7 +2285,19 @@
         "Backed by investors including Blockchain Capital, Polychain Capital, and Block (formerly Square)."
       ],
       "integration_status": "estimated",
-      "coinnect_data_source": "Yellow Card API for stablecoin rates + published fee estimates"
+      "coinnect_data_source": "Yellow Card API for stablecoin rates + published fee estimates",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "tiered",
+        "ssn_us": false,
+        "bank_required": false,
+        "cash_option": false,
+        "no_kyc_tier": true,
+        "notes": "Africa. Tier 1 with phone only (limited). Full KYC for higher limits."
+      }
     },
     {
       "slug": "strike",
@@ -1901,7 +2339,19 @@
         "One of the first companies licensed under El Salvador's digital assets regulatory framework."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.strike)"
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.strike)",
+      "requirements": {
+        "requires": [
+          "gov_id",
+          "phone"
+        ],
+        "kyc_level": "full",
+        "ssn_us": true,
+        "bank_required": true,
+        "cash_option": false,
+        "no_kyc_tier": false,
+        "notes": "US + select countries. SSN + bank account required."
+      }
     }
   ]
 }

@@ -470,6 +470,8 @@
       <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="fast" onclick="setFilter('fast')" data-i18n="filter_fast">Fastest</button>
       <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="nocrypto" onclick="setFilter('nocrypto')" data-i18n="filter_nocrypto">Bank only</button>
       <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="crypto" onclick="setFilter('crypto')" data-i18n="filter_crypto">Crypto</button>
+      <!-- Access filter toggle -->
+      <button onclick="document.getElementById('accessFilters').classList.toggle('hidden')" class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" title="Filter by what documents/accounts you have">🔑 Access</button>
       <div class="ml-auto flex items-center gap-2">
         <a href="/suggest" class="text-xs px-2.5 py-1.5 rounded-full border border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium no-underline" data-i18n="suggest_corridor">+ Suggest corridor</a>
         <div id="routeCount" class="text-xs text-gray-400"></div>
@@ -481,6 +483,30 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Access filters panel -->
+  <div id="accessFilters" class="hidden mb-4 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
+    <p class="text-[10px] text-gray-400 uppercase tracking-wide font-medium mb-2">I have access to:</p>
+    <div class="flex flex-wrap gap-3">
+      <label class="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-300 cursor-pointer">
+        <input type="checkbox" id="filterGovId" checked onchange="applyAccessFilters()" class="rounded border-gray-300">
+        <span>Government ID</span>
+      </label>
+      <label class="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-300 cursor-pointer">
+        <input type="checkbox" id="filterBank" checked onchange="applyAccessFilters()" class="rounded border-gray-300">
+        <span>Bank account</span>
+      </label>
+      <label class="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-300 cursor-pointer">
+        <input type="checkbox" id="filterSSN" onchange="applyAccessFilters()" class="rounded border-gray-300">
+        <span>SSN / ITIN (US)</span>
+      </label>
+      <label class="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-300 cursor-pointer">
+        <input type="checkbox" id="filterAddress" onchange="applyAccessFilters()" class="rounded border-gray-300">
+        <span>Proof of address</span>
+      </label>
+    </div>
+    <p class="text-[10px] text-gray-400 mt-2">Uncheck items you don't have — routes requiring them will be hidden. <span class="text-emerald-500">Cash pickup & no-KYC options shown when available.</span></p>
   </div>
 
   <!-- Results -->
@@ -1433,12 +1459,58 @@ function setFilter(f){
   renderResults(_allRoutes,_fromCur,_toCur);
 }
 
+// Provider access requirements (loaded from exchange profiles)
+const PROVIDER_REQS={
+  // SSN required (US)
+  'Wise':1,'Kraken':1,'Coinbase':1,'Gemini':1,'Bitstamp':1,'Cryptocom':1,'Strike':1,
+  // Bank account required
+  'Bithumb':2,'bitFlyer':2,'Buda':2,'Strike':2,'Wise':1,'Global66':2,'Atlantic Money':2,'XE':2,'TransferGo':2,'WorldRemit':2,
+  // Proof of address required
+  // 'Wise':3,'Buda':3,'WorldRemit':3,'Payoneer':3,
+  // No special requirements (cash OK, minimal ID)
+  'MoneyGram':0,'Western Union':0,'Ria':0,
+  // Email-only tier available
+  'MEXC':0,
+};
+const SSN_PROVIDERS=new Set(['Wise','Kraken','Coinbase','Gemini','Bitstamp','Cryptocom','Strike']);
+const BANK_PROVIDERS=new Set(['Wise','Bithumb','bitFlyer','Buda','Strike','Global66','Atlantic Money','XE','TransferGo','WorldRemit','Payoneer']);
+const ADDRESS_PROVIDERS=new Set(['Wise','Buda','WorldRemit','Payoneer']);
+
+function getAccessState(){
+  return {
+    govId: document.getElementById('filterGovId')?.checked??true,
+    bank: document.getElementById('filterBank')?.checked??true,
+    ssn: document.getElementById('filterSSN')?.checked??false,
+    address: document.getElementById('filterAddress')?.checked??false,
+  };
+}
+
+function routePassesAccess(route, access){
+  if(!route.steps)return true;
+  for(const step of route.steps){
+    const via=step.via||'';
+    if(!access.ssn && SSN_PROVIDERS.has(via))return false;
+    if(!access.bank && BANK_PROVIDERS.has(via))return false;
+    if(!access.address && ADDRESS_PROVIDERS.has(via))return false;
+  }
+  return true;
+}
+
+function applyAccessFilters(){
+  renderResults(_allRoutes,_fromCur,_toCur);
+}
+
 function applyFilter(routes){
   let r=[...routes];
   if(_activeFilter==='cheap')r.sort((a,b)=>a.total_cost_pct-b.total_cost_pct);
   else if(_activeFilter==='fast')r.sort((a,b)=>a.total_time_minutes-b.total_time_minutes);
   else if(_activeFilter==='nocrypto')r=r.filter(x=>!routeUsesCrypto(x));
   else if(_activeFilter==='crypto')r=r.filter(x=>routeUsesCrypto(x));
+  // Apply access filters
+  const access=getAccessState();
+  if(!access.ssn||!access.bank||!access.address){
+    r=r.filter(x=>routePassesAccess(x,access));
+  }
   return r;
 }
 
