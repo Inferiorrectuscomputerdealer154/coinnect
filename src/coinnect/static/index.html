@@ -760,10 +760,10 @@
 document.addEventListener('DOMContentLoaded',function(){
   // Wait for exchangeLogo and esc to be defined
   setTimeout(function(){
-    const live=['Binance','Kraken','Coinbase','OKX','Bybit','KuCoin','Bitso','Luno','Bitstamp','Gemini','Bithumb','Bitflyer','BtcTurk','Wise','Buda','VALR','CoinDCX','WazirX','SatoshiTango','Binance P2P','Uphold'];
-    const official=['BCB PTAX (BR)','Banxico (MX)','TRM (CO)','Bluelytics (AR)','TCMB (TR)','NBP (PL)','CNB (CZ)','NBU (UA)','NBG (GE)','BOI (IL)','BNR (RO)'];
-    const reference=['CoinGecko','Yadio','Frankfurter (ECB)','FloatRates','CriptoYa (AR)'];
-    const estimated=['Remitly','WorldRemit','Ria','Sendwave','Xoom','Paysend','OFX','TransferGo','Skrill','Revolut','Strike','XE','Global66','Atlantic Money','Intermex','CurrencyFair','Western Union','MoneyGram','Nala','Taptap Send'];
+    const live=['Binance','Kraken','Okx','Bybit','Kucoin','Gate','Bitget','Mexc','Htx','Cryptocom','Bitso','Luno','Bitstamp','Btcturk','Wise','Buda','VALR','CoinDCX','WazirX','SatoshiTango','Binance P2P','Binance P2P (live)','Uphold'];
+    const official=['Banxico (MX)','TRM (CO)','Blue market (AR)','Official (AR)','TCMB (TR)','NBP (PL)','CNB (CZ)','NBU (UA)','NBG (GE)','BOI (IL)','BNR (RO)'];
+    const reference=['CoinGecko (market)','Yadio (P2P)','Market rate','x-rates.com (mid-market)'];
+    const estimated=['Remitly','WorldRemit','Ria','Sendwave','Xoom','Paysend','OFX','TransferGo','Skrill','Revolut','Strike','XE','Global66','Atlantic Money','Intermex','CurrencyFair','Western Union','MoneyGram','Nala','Taptap Send','PayPal','Payoneer','Yellow Card','Zinli','Mama Money','Mukuru'];
     // Fetch live status to sort by freshness and gray out inactive
     fetch('/v1/providers/status').then(r=>r.json()).then(d=>{
       const status={};
@@ -2461,7 +2461,8 @@ async function loadSuggestions(){
     const d=await r.json();
     renderSuggestions(d.suggestions||[]);
   }catch(e){
-    document.getElementById('suggestionsList').innerHTML='<div class="text-xs text-gray-400 text-center py-3">Could not load suggestions.</div>';
+    const el=document.getElementById('suggestionsList');
+    if(el)el.innerHTML='<div class="text-xs text-gray-400 text-center py-3">Could not load suggestions.</div>';
   }
 }
 

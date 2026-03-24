@@ -289,10 +289,10 @@ async def security_headers(request: Request, call_next):
     response.headers["Permissions-Policy"] = "geolocation=(), camera=(), microphone=()"
     response.headers["Content-Security-Policy"] = (
         "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://www.googletagmanager.com; "
-        "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; "
+        "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://www.googletagmanager.com https://static.cloudflareinsights.com; "
+        "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://cloudflareinsights.com; "
         "style-src 'self' 'unsafe-inline'; "
-        "img-src 'self' data: https://api.qrserver.com https://www.google.com; "
+        "img-src 'self' data: https://api.qrserver.com https://www.google.com https://*.gstatic.com; "
         "frame-ancestors 'none'"
     )
     if "Via" in response.headers:
