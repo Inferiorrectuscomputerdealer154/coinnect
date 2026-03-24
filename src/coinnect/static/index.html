@@ -1888,29 +1888,6 @@ function renderResults(routes,from,to){
     return;
   }
 
-  const featuredLabels=new Set(Object.keys(FEATURED));
-  let featured=filtered.filter(r=>featuredLabels.has(r.label));
-  let extras=filtered.filter(r=>!featuredLabels.has(r.label));
-
-  // If the best extra is tied with the cheapest featured, move it up
-  const cheapestFeatured=featured.find(r=>r.label==='Cheapest');
-  if(cheapestFeatured&&extras.length&&Math.abs(extras[0].total_cost_pct-cheapestFeatured.total_cost_pct)<=0.1){
-    featured=[...featured,extras[0]];
-    extras=extras.slice(1);
-  }
-
-  // Ensure diversity: if all featured are multi-hop, promote the best single-hop fiat route
-  const bestDirect=extras.find(r=>r.steps.length===1);
-  if(bestDirect && featured.every(r=>r.steps.length>1)){
-    bestDirect.label='Best direct';
-    featured.push(bestDirect);
-    extras=extras.filter(r=>r!==bestDirect);
-  }
-
-  if(_activeFilter!=='all'&&featured.length===0){featured=filtered.slice(0,3);extras=filtered.slice(3);}
-
-  // extras keep their original labels (not used in compact row display anymore)
-
   // Rate freshness badge
   if(_quoteTime){
     const ageSec=Math.round((Date.now()-_quoteTime)/1000);
@@ -1920,67 +1897,63 @@ function renderResults(routes,from,to){
     ageText.textContent=ageSec<10?t('live_rates'):t('rates_ago').replace('{sec}',ageSec);
   }
 
-  // Group tied cheapest routes into one card; randomize, cap at 3
+  // === Layout: ONE featured card (cheapest) + tied siblings, then ALL others as compact rows ===
   const TIE=0.1;
-  const cheapest=featured.find(r=>r.label==='Cheapest');
-  let tiedCheapest=cheapest
-    ? featured.filter(r=>r.label!=='Best direct'&&r.label!=='Fastest'&&Math.abs(r.total_cost_pct-cheapest.total_cost_pct)<=TIE)
-    : [];
-  // Cap tied group at 3 — push overflow to extras
-  if(tiedCheapest.length>3){
-    const overflow=tiedCheapest.slice(3);
-    tiedCheapest=tiedCheapest.slice(0,3);
-    extras=[...overflow,...extras];
-  }
-  const nonTied=featured.filter(r=>!tiedCheapest.includes(r));
-  // Shuffle tied group so no provider always appears first
-  const shuffled=[...tiedCheapest].sort(()=>Math.random()-0.5);
+  const cheapest=filtered[0]; // already sorted by cost
+  if(!cheapest){document.getElementById('results').innerHTML='';return;}
 
-  const tiedBlock=shuffled.length>1
-    ? (()=>{
-        // Featured card for first, rest as compact expandable rows with accent bar
-        const first=shuffled[0];
-        const rest=shuffled.slice(1);
-        const costPct=cheapest.total_cost_pct.toFixed(2);
-        return`<div>
-          ${renderFeaturedCard(first,from,to)}
-          <div class="relative pl-3 mt-2">
-            <div class="absolute left-0 top-2 bottom-2 w-0.5 rounded-full bg-emerald-400 dark:bg-emerald-700"></div>
-            <div class="mb-1 flex items-center gap-2">
-              <span class="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 tracking-wide uppercase">${t('similar_cost')} ~${costPct}%</span>
-              <span class="text-[10px] text-gray-400">${rest.length} more</span>
-            </div>
-            <div class="flex flex-col gap-1">${rest.map(r=>renderCompactRow(r,from,to)).join('')}</div>
-          </div>
-        </div>`;
-      })()
-    : shuffled.map(r=>renderFeaturedCard(r,from,to)).join('');
+  // Find tied with cheapest (within 0.1%), cap at 3
+  let tied=filtered.filter((r,i)=>i>0&&Math.abs(r.total_cost_pct-cheapest.total_cost_pct)<=TIE);
+  if(tied.length>2) tied=tied.slice(0,2); // max 2 siblings
+  const tiedSet=new Set(tied);
 
-  const featuredHtml=[tiedBlock,...nonTied.map(r=>renderFeaturedCard(r,from,to))].join('');
+  // Everything else goes to "more options"
+  let extras=filtered.filter((r,i)=>i>0&&!tiedSet.has(r));
+
+  // Label the fastest among extras
+  const fastest=extras.length?extras.reduce((a,b)=>a.total_time_minutes<b.total_time_minutes?a:b):null;
+  if(fastest&&fastest!==cheapest)fastest.label='Fastest';
+  // Label best direct (single-step) among extras
+  const bestDirect=extras.find(r=>r.steps.length===1);
+  if(bestDirect&&bestDirect!==fastest)bestDirect.label='Best direct';
+
+  // Shuffle tied so no provider gets positional bias
+  const shuffledTied=[...tied].sort(()=>Math.random()-0.5);
+
+  // Build featured block: ONE card + tied accent bar
+  const tiedBar=shuffledTied.length?`
+    <div class="relative pl-3 mt-2">
+      <div class="absolute left-0 top-2 bottom-2 w-0.5 rounded-full bg-emerald-400 dark:bg-emerald-700"></div>
+      <div class="mb-1 flex items-center gap-2">
+        <span class="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 tracking-wide uppercase">${t('similar_cost')} ~${cheapest.total_cost_pct.toFixed(2)}%</span>
+        <span class="text-[10px] text-gray-400">${shuffledTied.length} more</span>
+      </div>
+      <div class="flex flex-col gap-1">${shuffledTied.map(r=>renderCompactRow(r,from,to)).join('')}</div>
+    </div>`:'';
+
+  // Extras: first 7 visible, rest hidden
+  const SHOW_LIMIT=7;
+  const visibleExtras=extras.slice(0,SHOW_LIMIT);
+  const hiddenExtras=extras.slice(SHOW_LIMIT);
 
   document.getElementById('results').innerHTML=`
     ${renderSavings(filtered,parseFloat(document.getElementById('amount').value),from)}
-    <div class="flex flex-col gap-3 mb-5 pt-2">
-      ${featuredHtml}
+    <div class="mb-5 pt-2">
+      ${renderFeaturedCard(cheapest,from,to)}
+      ${tiedBar}
     </div>
-    ${(()=>{
-      if(!extras.length) return '';
-      const SHOW_LIMIT = 5;
-      const visibleExtras = extras.slice(0, SHOW_LIMIT);
-      const hiddenExtras = extras.slice(SHOW_LIMIT);
-      return `
-      <div>
-        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">${t('more_options')}</div>
-        <div class="flex flex-col gap-2">${renderExtrasWithTies(visibleExtras,from,to)}</div>
-        ${hiddenExtras.length?`
-          <button onclick="this.nextElementSibling.classList.remove('hidden');this.classList.add('hidden');"
-            class="w-full mt-3 py-2.5 text-sm text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-            Show ${hiddenExtras.length} more routes
-          </button>
-          <div class="hidden flex flex-col gap-2 mt-2">${renderExtrasWithTies(hiddenExtras,from,to)}</div>
-        `:''}
-      </div>`;
-    })()}
+    ${extras.length?`
+    <div>
+      <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">${t('more_options')}</div>
+      <div class="flex flex-col gap-2">${renderExtrasWithTies(visibleExtras,from,to)}</div>
+      ${hiddenExtras.length?`
+        <button onclick="this.nextElementSibling.classList.remove('hidden');this.classList.add('hidden');"
+          class="w-full mt-3 py-2.5 text-sm text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+          Show ${hiddenExtras.length} more routes
+        </button>
+        <div class="hidden flex flex-col gap-2 mt-2">${renderExtrasWithTies(hiddenExtras,from,to)}</div>
+      `:''}
+    </div>`:''}
     <div class="mt-5 flex justify-center gap-3">
       <button onclick="shareResults()" class="inline-flex items-center gap-1.5 text-xs border border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-cyan-400 hover:text-cyan-500 px-3 py-1.5 rounded-lg transition-colors">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
