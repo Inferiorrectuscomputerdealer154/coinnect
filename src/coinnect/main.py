@@ -125,16 +125,25 @@ async def _refresh_once(force: bool = False) -> int:
         logger.warning("Refresh returned 0 edges")
         return 0
 
-    # Record snapshot for each tracked corridor
+    # Record snapshot + pre-compute quote cache for tracked corridors
     for from_c, to_c, amount in TRACKED_CORRIDORS:
         try:
             result = build_quote(all_edges, from_c, to_c, amount)
             if result.routes:
                 await record_snapshot(from_c, to_c, amount, result.routes)
+                # Cache the full result for instant loading
+                _quote_cache[f"{from_c}-{to_c}-{amount}"] = {
+                    "result": result,
+                    "ts": __import__('time').monotonic(),
+                }
         except Exception as e:
             logger.debug(f"Snapshot failed {from_c}→{to_c}: {e}")
 
     return len(all_edges)
+
+
+# Pre-computed quote cache for popular corridors — filled by _refresh_once
+_quote_cache: dict[str, dict] = {}
 
 
 async def _refresh_loop() -> None:

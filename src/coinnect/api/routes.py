@@ -101,6 +101,45 @@ class QuoteOut(BaseModel):
 
 # ── Endpoints ──────────────────────────────────────────────────────────────────
 
+@router.get("/quote/instant", summary="Instant cached quote for popular corridors")
+async def quote_instant(
+    from_: str = Query(..., alias="from"),
+    to: str = Query(..., description="Destination currency"),
+    amount: float = Query(..., gt=0),
+):
+    """Return pre-computed quote from cache (< 3 min old). Falls back to 404 if not cached."""
+    import time
+    from coinnect.main import _quote_cache
+    key = f"{from_.upper()}-{to.upper()}-{amount}"
+    cached = _quote_cache.get(key)
+    if not cached or (time.monotonic() - cached["ts"]) > 300:
+        raise HTTPException(404, "Not cached — use /v1/quote for live data")
+    result = cached["result"]
+    return {
+        "from_currency": result.from_currency,
+        "to_currency": result.to_currency,
+        "amount": result.amount,
+        "generated_at": result.generated_at.isoformat() + "Z",
+        "cached": True,
+        "cache_age_seconds": round(time.monotonic() - cached["ts"]),
+        "routes": [
+            {
+                "rank": r.rank, "label": r.label,
+                "total_cost_pct": r.total_cost_pct,
+                "total_time_minutes": r.total_time_minutes,
+                "you_send": r.you_send, "they_receive": r.they_receive,
+                "they_receive_currency": r.they_receive_currency,
+                "steps": [{"step": s.step, "from_currency": s.from_currency,
+                           "to_currency": s.to_currency, "via": s.via,
+                           "fee_pct": s.fee_pct, "estimated_minutes": s.estimated_minutes,
+                           "instructions": s.instructions, "exchange_rate": s.exchange_rate,
+                           "min_amount": s.min_amount, "max_amount": s.max_amount}
+                          for s in r.steps]
+            } for r in result.routes
+        ],
+    }
+
+
 @router.get("/quote", response_model=QuoteOut, summary="Get ranked transfer routes")
 async def quote(
     request: Request,

@@ -2022,6 +2022,26 @@ async function getQuote(){
   document.getElementById('searchBtn').disabled=true;
 
   try{
+    // 1. Try instant cache first (< 100ms) — show stale data while fresh loads
+    let showedCached=false;
+    try{
+      const cRes=await fetch(`${API}/v1/quote/instant?from=${from}&to=${to}&amount=${amount}`);
+      if(cRes.ok){
+        const cData=await cRes.json();
+        if(cData.routes&&cData.routes.length){
+          _allRoutes=cData.routes;_quoteTime=Date.now();
+          document.getElementById('filtersBar').classList.remove('hidden');
+          renderResults(_allRoutes,from,to);
+          showedCached=true;
+          // Show "updating" indicator
+          const ageEl=document.getElementById('rateAge');
+          const ageText=document.getElementById('rateAgeText');
+          if(ageEl&&ageText){ageEl.classList.remove('hidden');ageText.textContent=`~${cData.cache_age_seconds||0}s ago · updating...`;}
+        }
+      }
+    }catch(e){/* cache miss, continue to live */}
+
+    // 2. Fetch live data (may take 1-5s)
     let data;
     for(let attempt=0;attempt<2;attempt++){
       const res=await fetch(`${API}/v1/quote?from=${from}&to=${to}&amount=${amount}`);
@@ -2030,10 +2050,13 @@ async function getQuote(){
         if(attempt===0){await new Promise(r=>setTimeout(r,1000));continue;}
         throw new Error('Server is busy. Please try again in a moment.');
       }
-      if(!res.ok)throw new Error(data.detail||'No routes found');
+      if(!res.ok){
+        if(showedCached)break; // keep cached results if live fails
+        throw new Error(data.detail||'No routes found');
+      }
       break;
     }
-    _allRoutes=data.routes;
+    if(data&&data.routes){_allRoutes=data.routes;}
     _quoteTime=Date.now();
 
     document.getElementById('filtersBar').classList.remove('hidden');
