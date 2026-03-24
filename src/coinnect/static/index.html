@@ -1662,15 +1662,21 @@ function renderNarrative(steps,from,to){
   return`<div class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">${lines.join('')}</div>`;
 }
 
+function providerDotColor(via){
+  if(LIVE_PROVIDERS.has(via))return'text-emerald-500';
+  if(OFFICIAL_COUNTRY.has(via))return'text-blue-500';
+  if(REF_PROVIDERS.has(via))return'text-cyan-500';
+  return'text-amber-400';
+}
 function providerDetails(steps) {
   const providers = [...new Set(steps.map(s => s.via))];
   return providers.map(via => {
     const info = PROVIDER_INFO[via];
     if (!info) return '';
-    const isLive = LIVE_PROVIDERS.has(via);
+    const dotClass = providerDotColor(via);
     const feeLink = info.fees ? `· <a href="${info.fees}" target="_blank" rel="noopener" class="hover:text-cyan-500">${t('fee_source')}</a>` : '';
     return `<div class="flex items-start gap-2 text-[10px] text-gray-400 mt-1">
-      <span class="shrink-0">${isLive ? '●' : '○'}</span>
+      <span class="shrink-0 ${dotClass}">●</span>
       <div>
         <a href="${info.url}" target="_blank" rel="noopener" class="text-gray-500 hover:text-cyan-500">${esc(via)}</a>
         — ${info.refresh}
@@ -1751,7 +1757,7 @@ function renderFeaturedCard(r,from,to,insideTied=false){
           </div>
           ${renderReqs(r.steps,to)}
           <details class="mt-2">
-            <summary class="text-[10px] text-gray-400 cursor-pointer hover:text-cyan-500">${t('read_more')}</summary>
+            <summary class="text-[10px] text-gray-400 cursor-pointer hover:text-cyan-500 flex items-center gap-2">${t('read_more')} ${routeDataType(r.steps)}</summary>
             <div class="mt-1 pl-2 border-l border-gray-200 dark:border-gray-700">
               ${providerDetails(r.steps)}
             </div>
@@ -1806,7 +1812,7 @@ function renderCompactRow(r,from,to){
         </div>
         <div class="px-5 pb-5">${renderReqs(r.steps,to)}
           <details class="mt-2">
-            <summary class="text-[10px] text-gray-400 cursor-pointer hover:text-cyan-500">${t('read_more')}</summary>
+            <summary class="text-[10px] text-gray-400 cursor-pointer hover:text-cyan-500 flex items-center gap-2">${t('read_more')} ${routeDataType(r.steps)}</summary>
             <div class="mt-1 pl-2 border-l border-gray-200 dark:border-gray-700">
               ${providerDetails(r.steps)}
             </div>
