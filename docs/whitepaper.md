@@ -1,6 +1,6 @@
 # Coinnect: The Open Route Guide for Global Money
 
-**Version:** 0.7 (March 2026)
+**Version:** 0.8 (March 2026)
 **Author:** Miguel
 **Domain:** coinnect.bot · **Status:** Live — public beta
 **Code:** [github.com/coinnect-dev/coinnect](https://github.com/coinnect-dev/coinnect) · MIT License
@@ -512,7 +512,43 @@ Think of it as: providers publish their rates → nodes replicate the directory 
 
 ---
 
-## 13. Vision
+## 13. Provider Adoption & Open Participation
+
+Coinnect lists providers whether or not they participate. A remittance service with published pricing appears in route results from day one — with estimated fees, labeled accordingly. This creates a natural incentive loop: providers see their listing, notice the accuracy gap, and benefit from closing it.
+
+### 13.1 Integration tiers
+
+Provider data quality follows four tiers, each improving the accuracy score (Section 10) and route visibility:
+
+| Tier | Label | Data source | Accuracy | Refresh |
+|------|-------|-------------|----------|---------|
+| 1 — Estimated | `~est.` | Coinnect researches published fees | 0.40–0.60 | Quarterly |
+| 2 — Automated | `~auto` | Coinnect scrapes or polls the provider's public calculator | 0.70–0.80 | Hourly–daily |
+| 3 — Integrated | `LIVE` | Provider supplies a rate API endpoint | 0.90–1.0 | Every 3 min |
+| 4 — Verified | `LIVE ✓` | Provider actively validates rates and confirms corridor coverage | 1.0 | Real-time |
+
+Every provider starts at Tier 1. Moving up requires no commercial agreement — only better data. A provider that exposes a public rate endpoint is automatically promoted to Tier 3 once integrated. A provider that actively monitors its listing and confirms corridor accuracy reaches Tier 4.
+
+### 13.2 The adoption loop
+
+The mechanism is self-reinforcing:
+
+1. **Users search for routes** — generating demand signal for specific corridors.
+2. **Providers appear in results** with estimated data — visible, but with a lower accuracy score.
+3. **Providers integrate** to improve their accuracy — better data means higher ranking when costs are similar.
+4. **Better data improves routing** — attracting more users, which attracts more providers.
+
+This is structurally similar to how mapping platforms work: a business appears on the map regardless, but providing verified hours, contact details, and real-time availability makes the listing more useful — and more visible. The protocol does not gate participation; it rewards data quality.
+
+### 13.3 The thin routing layer
+
+At scale, Coinnect becomes a thin, low-cost information layer between users (or agents) and providers. The routing query costs fractions of a cent (Section 4). The provider supplies the rate data for free because accurate listings drive volume. The user pays nothing because the information is the product, not the transaction.
+
+In a financial ecosystem trending toward openness — open banking APIs, real-time payment rails, public exchange order books — the providers with the most transparent data win. Coinnect simply makes that transparency legible.
+
+---
+
+## 14. Vision
 
 Before GPS, every driver carried a road atlas. It didn't drive. It didn't own the roads. It had no preference for which highway you took. You trusted it precisely because it had no stake in your route — it just knew every path and showed you all of them.
 
@@ -528,4 +564,4 @@ Eventually: machines consult it automatically, and money moves at its natural co
 
 ---
 
-*Version 0.6 (March 2026) · feedback: miguel@coinnect.bot*
+*Version 0.8 (March 2026) · feedback: miguel@coinnect.bot*
