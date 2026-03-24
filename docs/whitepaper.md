@@ -90,7 +90,25 @@ Coinnect aggregates real-time pricing from exchanges, calculates all viable rout
 
 Coinnect does not execute the transfer. It does not hold funds. It does not require KYC. It shows the map. You drive.
 
-### 2.2 The routing layer
+### 2.2 Beyond routing: the open encyclopedia of money
+
+Coinnect is not just a route finder. It is an open, neutral reference for the global money infrastructure — a Wikipedia for how money moves.
+
+**Three layers, one platform:**
+
+1. **Route engine** — "How do I move money from A to B at the lowest cost?" The core search. Real-time, multi-hop, crypto + fiat + P2P.
+
+2. **Provider profiles** — "What is Wise? Where is it regulated? What currencies does it support?" Factual, neutral reference cards for every provider — like a Wikipedia article, not a review. No scores. No opinions. Just verifiable data: founded, headquarters, licenses, fee model, supported countries. Anyone can verify.
+
+3. **Rate history** — "How has the USD→MXN corridor evolved over time?" Time-series data for every tracked corridor. Sparkline charts, per-provider comparison, open data exports (CC-BY 4.0). The historical record of what money movement actually costs — not what providers advertise.
+
+These three layers reinforce each other. The route engine shows you the best path today. The provider profiles give you confidence in who you're trusting. The rate history shows you whether today's rate is normal or exceptional.
+
+Together, they form something that doesn't exist yet: **an open, agnostic, complete reference for global money movement.** Not owned by any provider. Not funded by affiliate commissions. Not gated behind an account. Available to humans browsing the web, AI agents calling an API, and researchers downloading open datasets.
+
+The closest analogy is not Google Flights or Monito. It's closer to Wikipedia + Waze: a community-maintained, machine-readable knowledge base that happens to also give you real-time directions.
+
+### 2.3 The routing layer
 
 The internet moves data through routers. Routers don't read your emails. They just find the fastest path and hand it off.
 
@@ -98,7 +116,7 @@ Coinnect is the router for money. It doesn't touch the transfer. It finds the pa
 
 **The value is in the information, not the transaction.** Because Coinnect never touches transactions, it needs no money transmitter license and carries minimal regulatory risk under current interpretations, and has no reason — structural or financial — to favor any ecosystem.
 
-### 2.3 For humans, machines, and self-hosters
+### 2.4 For humans, machines, and self-hosters
 
 **For humans:** coinnect.bot — enter amount, origin, destination. No account required.
 
@@ -562,13 +580,13 @@ Before GPS, every driver carried a road atlas. It didn't drive. It didn't own th
 
 Then came Waze: the same neutrality, but live, collaborative, self-updating — and eventually, consulted by autonomous vehicles without any human in the loop.
 
-That is the arc of Coinnect. Free. Open. For humans and bots.
+That is the arc of Coinnect. Standard. Free. Open. For humans and bots.
 
-Today: we show you the map.
-Tomorrow: the map updates itself with community data.
-Eventually: machines consult it automatically, and money moves at its natural cost — without anyone extracting a tax from ignorance.
+Today: we show you the routes and the providers — a complete reference for how money moves.
+Tomorrow: the reference updates itself with community data, rate verification, and provider contributions.
+Eventually: machines consult it automatically, researchers cite it openly, and money moves at its natural cost — without anyone extracting a tax from ignorance.
 
-**The money already knows how to move. Coinnect shows it the cheapest way.**
+**The money already knows how to move. Coinnect maps every path, documents every provider, and records every rate — so you always know the best way.**
 
 ---
 
