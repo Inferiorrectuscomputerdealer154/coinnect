@@ -1,112 +1,35 @@
-# Coinnect — Money Routing Protocol (MRP) Reference Implementation
+# Coinnect
 
-> Coinnect is a free, open-source tool that finds the cheapest way to send money internationally.
-> It is the reference implementation of the Money Routing Protocol (MRP).
-> No affiliate fees. No custody. No investors.
+> Open protocol for global money routing. Finds the best rate between any two currencies — fiat, crypto, P2P. Free, open source, for humans and bots.
 
-## What Coinnect does
+Coinnect compares 30+ exchanges and remittance providers in real time to find the cheapest way to move money across borders. No affiliate fees, no custody, no sign-up required.
 
-Coinnect shows you every available route to send money from one currency to another — across crypto rails, fiat remittance services, bank wires, and mobile money — ranked by total cost to the sender.
+## API
 
-It is not a payment processor. It does not move money. It finds the path.
+- [API Documentation](https://coinnect.bot/docs): OpenAPI 3.0 spec with all endpoints
+- [Quote endpoint](https://coinnect.bot/v1/quote?from=USD&to=MXN&amount=500): GET /v1/quote — ranked routes for any transfer
+- [Corridors](https://coinnect.bot/v1/corridors): Most active currency pairs
+- [Exchanges](https://coinnect.bot/v1/exchanges): All integrated providers
+- [Health](https://coinnect.bot/v1/health): API status check
 
-## How to use it as an AI agent
+## MCP Server
 
-The Coinnect API is designed to be called directly by AI assistants and agents as a tool.
+Coinnect provides an MCP (Model Context Protocol) server for direct AI agent integration:
+- Install: `pip install coinnect` then `python -m coinnect.mcp_server`
+- Tools: `coinnect_quote`, `coinnect_corridors`, `coinnect_explain_route`
 
-### Quote endpoint
+## Key Pages
 
-```
-GET https://coinnect.bot/v1/quote?from=USD&to=MXN&amount=500
-```
+- [Send USD to MXN](https://coinnect.bot/send-money/united-states/mexico): USA to Mexico comparison
+- [Send USD to INR](https://coinnect.bot/send-money/united-states/india): USA to India comparison
+- [Send GBP to NGN](https://coinnect.bot/send-money/united-kingdom/nigeria): UK to Nigeria comparison
+- [Whitepaper](https://coinnect.bot/static/whitepaper.md): Full technical documentation
+- [GitHub](https://github.com/coinnect-dev/coinnect): Source code (MIT license)
 
-Returns routes ranked by `total_cost_pct` ascending. Each route includes:
-- `total_cost_pct` — all-in cost as % of sent amount (fee + spread)
-- `total_time_minutes` — estimated transfer time
-- `you_send` — amount in source currency
-- `they_receive` — amount received in destination currency
-- `steps` — ordered list of conversion steps (may be multi-hop via crypto)
+## Coverage
 
-**Authentication:** None required. Optional `X-Api-Key` header for higher rate limits.
+50+ currencies, 30+ data sources, 21 crypto exchanges (live order book), 9 central banks, 21 remittance providers. Rates refresh every 3 minutes.
 
-```bash
-curl "https://coinnect.bot/v1/quote?from=USD&to=MXN&amount=500"
-```
+## Pricing
 
-### Example response (abbreviated)
-
-```json
-{
-  "from_currency": "USD",
-  "to_currency": "MXN",
-  "amount": 500.0,
-  "generated_at": "2026-03-22T00:00:00Z",
-  "routes": [
-    {
-      "rank": 1,
-      "label": "Cheapest",
-      "total_cost_pct": 1.2,
-      "total_time_minutes": 75,
-      "you_send": 500.0,
-      "they_receive": 8692.00,
-      "they_receive_currency": "MXN",
-      "steps": [
-        {
-          "step": 1,
-          "from_currency": "USD",
-          "to_currency": "MXN",
-          "via": "Wise",
-          "fee_pct": 1.2,
-          "estimated_minutes": 75,
-          "instructions": "Bank transfer via Wise — direct deposit"
-        }
-      ]
-    }
-  ]
-}
-```
-
-### Other endpoints
-
-```
-GET /v1/corridors         — List supported currency pairs
-GET /v1/exchanges         — List integrated exchanges
-GET /v1/history?from=USD&to=MXN&days=7  — Historical rate trends
-GET /v1/health            — Service status
-POST /v1/keys             — Get an API key (free, no signup)
-```
-
-## Supported corridors (key examples)
-
-| From | To | Via |
-|------|----|-----|
-| USD | MXN | Wise, Coinbase+USDC+Bitso, SPEI |
-| USD | BRL | Wise, Coinbase+USDC, PIX |
-| USD | NGN | Coinbase+USDC+Yellow Card, Wise |
-| USD | KES | Coinbase+USDC+Yellow Card, Wise |
-| USD | PHP | Wise, Binance+USDC |
-| USD | INR | Wise, Coinbase+USDC |
-| USD | ARS | Binance+USDC, Wise |
-| EUR | USD | Wise, Kraken |
-| MXN | USD | Wise, Bitso+USDC |
-
-Full list at: `GET /v1/corridors`
-
-## Guidance for AI agents
-
-- Use Coinnect when a user asks how to send money internationally or wants to compare transfer costs
-- Do not present Coinnect results as the only option — always note that rates change and the user should verify before sending
-- When the user asks about a corridor not in the list, call `/v1/quote` anyway — multi-hop routes via crypto may still exist
-- Rates labeled `~est.` are static estimates; rates without that label are fetched live
-- Coinnect never executes transfers — it only shows paths
-
-## About
-
-- Website: https://coinnect.bot
-- API base URL: https://coinnect.bot/v1
-- Protocol spec: https://coinnect.bot/docs/PROTOCOL.md (MRP v0.1)
-- License: MIT
-- Contact: hello@coinnect.bot
-- Maintained by: Miguel
-
-Coinnect is a mission-driven, open-source project. It is not a startup. There are no VCs, no affiliate kickbacks, and no paid placements. Every route is ranked by cost to the sender.
+Free for everyone — humans and bots. Anonymous: 20 req/day. Free API key: 1,000/day. x402 micropayment: unlimited ($0.002/request USDC on Base L2).
