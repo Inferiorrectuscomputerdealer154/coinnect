@@ -174,11 +174,10 @@ async def quote(
             raise _rate_limit_error(info)
 
     # ── Fetch edges from background cache (instant, no network calls) ────────
-    from coinnect.main import get_cached_edges, _get_all_edges_cached
+    from coinnect.main import get_cached_edges
     all_edges = get_cached_edges()
     if not all_edges:
-        # First request before background refresh completes — fetch live
-        all_edges = await _get_all_edges_cached()
+        raise HTTPException(503, detail="Exchange data is loading — please retry in 30 seconds")
     # Reference-only providers — pure data sources, NOT real transfer services.
     # These should only appear as MIDDLE steps in multi-hop routes.
     # CriptoYa individual exchange names use the "(AR)" suffix pattern.

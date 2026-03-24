@@ -2098,17 +2098,31 @@ async function getQuote(){
     // 2. Fetch live data (may take 1-5s)
     let data;
     for(let attempt=0;attempt<2;attempt++){
-      const res=await fetch(`${API}/v1/quote?from=${from}&to=${to}&amount=${amount}`);
-      const text=await res.text();
-      try{data=JSON.parse(text);}catch(e){
-        if(attempt===0){await new Promise(r=>setTimeout(r,1000));continue;}
-        throw new Error('Server is busy. Please try again in a moment.');
+      try{
+        const controller=new AbortController();
+        const tid=setTimeout(()=>controller.abort(),20000);
+        const res=await fetch(`${API}/v1/quote?from=${from}&to=${to}&amount=${amount}`,{signal:controller.signal});
+        clearTimeout(tid);
+        const text=await res.text();
+        try{data=JSON.parse(text);}catch(e){
+          if(attempt===0){await new Promise(r=>setTimeout(r,1500));continue;}
+          console.error('Non-JSON response:',text.substring(0,200));
+          throw new Error('Server returned an unexpected response. Please retry.');
+        }
+        if(!res.ok){
+          if(res.status===503&&attempt===0){await new Promise(r=>setTimeout(r,2000));continue;}
+          if(showedCached)break;
+          throw new Error(data.detail||'No routes found');
+        }
+        break;
+      }catch(e){
+        if(e.name==='AbortError'){
+          if(attempt===0){continue;}
+          if(showedCached)break;
+          throw new Error('Request timed out. Please try again.');
+        }
+        throw e;
       }
-      if(!res.ok){
-        if(showedCached)break; // keep cached results if live fails
-        throw new Error(data.detail||'No routes found');
-      }
-      break;
     }
     if(data&&data.routes){_allRoutes=data.routes;}
     _quoteTime=Date.now();
