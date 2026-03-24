@@ -10,6 +10,7 @@ import json
 import time
 import logging
 from datetime import datetime, UTC
+from pathlib import Path
 from typing import Any
 
 from coinnect.routing.engine import Edge, build_quote, QuoteResult
@@ -802,6 +803,18 @@ def generate_sitemap_xml() -> str:
     # Country pages
     for country_slug in COUNTRY_DATA:
         urls.append((f"https://coinnect.bot/rates/{country_slug}", "hourly", "0.85"))
+
+    # Exchange directory and profile pages
+    urls.append(("https://coinnect.bot/exchanges", "weekly", "0.8"))
+    try:
+        import json as _json
+        _profiles_path = Path(__file__).parent.parent.parent / "data" / "exchange_profiles.json"
+        with open(_profiles_path) as _f:
+            _exchange_data = _json.load(_f)
+        for _ex in _exchange_data.get("exchanges", []):
+            urls.append((f"https://coinnect.bot/exchange/{_ex['slug']}", "weekly", "0.7"))
+    except Exception:
+        pass
 
     xml_parts = ['<?xml version="1.0" encoding="UTF-8"?>']
     xml_parts.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
