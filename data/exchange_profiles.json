@@ -3,40 +3,134 @@
   "$schema_description": "Exchange Profile schema for Coinnect — factual reference data for money service providers",
   "$schema": {
     "type": "object",
-    "required": ["slug", "name", "founded", "headquarters", "website", "integration_status", "coinnect_data_source"],
+    "required": [
+      "slug",
+      "name",
+      "founded",
+      "headquarters",
+      "website",
+      "integration_status",
+      "coinnect_data_source"
+    ],
     "properties": {
-      "slug":                  { "type": "string",  "description": "URL-safe identifier, e.g. 'wise', 'western-union'" },
-      "name":                  { "type": "string",  "description": "Official company name" },
-      "logo_url":              { "type": "string",  "description": "URL to official logo (press kit or brand page)", "format": "uri" },
-      "founded":               { "type": "integer", "description": "Year the company was founded" },
-      "headquarters":          { "type": "object",  "properties": { "city": { "type": "string" }, "country": { "type": "string" } } },
-      "regulated_in":          { "type": "array",   "items": { "type": "string" }, "description": "List of jurisdictions or regulatory bodies" },
-      "supported_currencies":  { "type": ["integer", "string"], "description": "Count or descriptive range of supported currencies" },
-      "supported_countries":   { "type": ["integer", "string"], "description": "Count or descriptive range of supported countries" },
-      "transfer_methods":      { "type": "array",   "items": { "type": "string" }, "description": "Methods: bank, card, mobile money, crypto, cash pickup, etc." },
-      "fee_model":             { "type": "string",  "description": "Brief factual description of how fees work" },
-      "speed":                 { "type": "string",  "description": "Typical transfer times" },
-      "website":               { "type": "string",  "format": "uri" },
-      "api_docs":              { "type": "string",  "format": "uri", "description": "Public API documentation URL, if available" },
+      "slug": {
+        "type": "string",
+        "description": "URL-safe identifier, e.g. 'wise', 'western-union'"
+      },
+      "name": {
+        "type": "string",
+        "description": "Official company name"
+      },
+      "logo_url": {
+        "type": "string",
+        "description": "URL to official logo (press kit or brand page)",
+        "format": "uri"
+      },
+      "founded": {
+        "type": "integer",
+        "description": "Year the company was founded"
+      },
+      "headquarters": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          }
+        }
+      },
+      "regulated_in": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "List of jurisdictions or regulatory bodies"
+      },
+      "supported_currencies": {
+        "type": [
+          "integer",
+          "string"
+        ],
+        "description": "Count or descriptive range of supported currencies"
+      },
+      "supported_countries": {
+        "type": [
+          "integer",
+          "string"
+        ],
+        "description": "Count or descriptive range of supported countries"
+      },
+      "transfer_methods": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Methods: bank, card, mobile money, crypto, cash pickup, etc."
+      },
+      "fee_model": {
+        "type": "string",
+        "description": "Brief factual description of how fees work"
+      },
+      "speed": {
+        "type": "string",
+        "description": "Typical transfer times"
+      },
+      "website": {
+        "type": "string",
+        "format": "uri"
+      },
+      "api_docs": {
+        "type": "string",
+        "format": "uri",
+        "description": "Public API documentation URL, if available"
+      },
       "app_stores": {
         "type": "object",
         "properties": {
-          "ios":     { "type": "string", "format": "uri" },
-          "android": { "type": "string", "format": "uri" }
+          "ios": {
+            "type": "string",
+            "format": "uri"
+          },
+          "android": {
+            "type": "string",
+            "format": "uri"
+          }
         }
       },
-      "interesting_facts":     { "type": "array",   "items": { "type": "string" }, "description": "3-5 factual, positive highlights" },
-      "integration_status":    { "type": "string",  "enum": ["live", "estimated", "planned"], "description": "Current status on Coinnect" },
-      "coinnect_data_source":  { "type": "string",  "description": "How Coinnect gets pricing data: CCXT order book, direct API, published fees" }
+      "interesting_facts": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "3-5 factual, positive highlights"
+      },
+      "integration_status": {
+        "type": "string",
+        "enum": [
+          "live",
+          "estimated",
+          "planned"
+        ],
+        "description": "Current status on Coinnect"
+      },
+      "coinnect_data_source": {
+        "type": "string",
+        "description": "How Coinnect gets pricing data: CCXT order book, direct API, published fees"
+      }
     }
   },
   "exchanges": [
     {
       "slug": "wise",
       "name": "Wise",
-      "logo_url": "https://wise.com/public-resources/assets/logos/wise/brand_logo.svg",
+      "logo_url": null,
       "founded": 2011,
-      "headquarters": { "city": "London", "country": "United Kingdom" },
+      "headquarters": {
+        "city": "London",
+        "country": "United Kingdom"
+      },
       "regulated_in": [
         "UK — FCA (Financial Conduct Authority)",
         "US — FinCEN (Money Services Business)",
@@ -49,7 +143,14 @@
       ],
       "supported_currencies": 54,
       "supported_countries": 80,
-      "transfer_methods": ["bank_transfer", "debit_card", "credit_card", "apple_pay", "google_pay", "wise_balance"],
+      "transfer_methods": [
+        "bank_transfer",
+        "debit_card",
+        "credit_card",
+        "apple_pay",
+        "google_pay",
+        "wise_balance"
+      ],
       "fee_model": "Transparent variable fee (typically 0.33%–4.75% depending on currency pair) applied to the mid-market exchange rate with no markup. Fee shown upfront before confirmation.",
       "speed": "74% of transfers arrive in under 20 seconds; 95% within one day. Some currency pairs may take 1–6 days.",
       "website": "https://wise.com",
@@ -66,14 +167,17 @@
         "Holds 65 regulatory licenses worldwide, operating in over 80 countries."
       ],
       "integration_status": "live",
-      "coinnect_data_source": "Wise public rates API with corridor-specific published fee estimates"
+      "coinnect_data_source": "Public rates page (scraping) + open FX API fallback. No official partnership."
     },
     {
       "slug": "binance",
       "name": "Binance",
-      "logo_url": "https://public.bnbstatic.com/static/images/common/logo.svg",
+      "logo_url": null,
       "founded": 2017,
-      "headquarters": { "city": "Abu Dhabi", "country": "United Arab Emirates" },
+      "headquarters": {
+        "city": "Abu Dhabi",
+        "country": "United Arab Emirates"
+      },
       "regulated_in": [
         "UAE — ADGM (Recognised Investment Exchange, Recognised Clearing House, Broker-Dealer)",
         "France — AMF (registered DASP)",
@@ -84,7 +188,14 @@
       ],
       "supported_currencies": 1300,
       "supported_countries": 180,
-      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit", "mobile_money"],
+      "transfer_methods": [
+        "bank_transfer",
+        "credit_card",
+        "debit_card",
+        "p2p",
+        "crypto_deposit",
+        "mobile_money"
+      ],
       "fee_model": "Spot trading fees start at 0.10% maker/taker, with tiered discounts based on volume and BNB holdings. Fiat deposit/withdrawal fees vary by method and currency.",
       "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits typically 1–3 business days via bank transfer, instant via card.",
       "website": "https://www.binance.com",
@@ -106,9 +217,12 @@
     {
       "slug": "western-union",
       "name": "Western Union",
-      "logo_url": "https://www.westernunion.com/content/dam/wu/brand/logos/wu_logo.svg",
+      "logo_url": null,
       "founded": 1851,
-      "headquarters": { "city": "Denver, Colorado", "country": "United States" },
+      "headquarters": {
+        "city": "Denver, Colorado",
+        "country": "United States"
+      },
       "regulated_in": [
         "US — FinCEN (Money Services Business), state-level money transmitter licenses in all 50 states",
         "EU — various national regulators",
@@ -118,7 +232,14 @@
       ],
       "supported_currencies": 130,
       "supported_countries": 200,
-      "transfer_methods": ["bank_transfer", "cash_pickup", "mobile_wallet", "debit_card", "credit_card", "home_delivery"],
+      "transfer_methods": [
+        "bank_transfer",
+        "cash_pickup",
+        "mobile_wallet",
+        "debit_card",
+        "credit_card",
+        "home_delivery"
+      ],
       "fee_model": "Fees vary by corridor, amount, delivery method, and payment method. Online transfers tend to have lower fees than in-person agent transactions. Exchange rate includes a margin.",
       "speed": "Cash pickup available within minutes in many corridors. Bank transfers typically 1–4 business days depending on destination.",
       "website": "https://www.westernunion.com",
@@ -140,9 +261,12 @@
     {
       "slug": "remitly",
       "name": "Remitly",
-      "logo_url": "https://www.remitly.com/static/images/remitly-logo.svg",
+      "logo_url": null,
       "founded": 2011,
-      "headquarters": { "city": "Seattle, Washington", "country": "United States" },
+      "headquarters": {
+        "city": "Seattle, Washington",
+        "country": "United States"
+      },
       "regulated_in": [
         "US — FinCEN (Money Services Business), state money transmitter licenses",
         "UK — FCA (Financial Conduct Authority)",
@@ -152,7 +276,13 @@
       ],
       "supported_currencies": 100,
       "supported_countries": 170,
-      "transfer_methods": ["bank_transfer", "debit_card", "credit_card", "mobile_wallet", "cash_pickup"],
+      "transfer_methods": [
+        "bank_transfer",
+        "debit_card",
+        "credit_card",
+        "mobile_wallet",
+        "cash_pickup"
+      ],
       "fee_model": "Per-transfer fee varies by corridor and delivery speed (Express or Economy). Typical fees range from $1.49–$3.99 per transfer. Exchange rate includes a margin that varies by corridor.",
       "speed": "Express transfers can arrive in minutes (debit/credit card funding). Economy transfers typically 1–3 business days.",
       "website": "https://www.remitly.com",
@@ -174,9 +304,12 @@
     {
       "slug": "okx",
       "name": "OKX",
-      "logo_url": "https://static.okx.com/cdn/assets/imgs/221/logo.svg",
+      "logo_url": null,
       "founded": 2017,
-      "headquarters": { "city": "San Jose, California", "country": "United States" },
+      "headquarters": {
+        "city": "San Jose, California",
+        "country": "United States"
+      },
       "regulated_in": [
         "Seychelles — FSA (Virtual Asset Service Provider)",
         "UAE — VARA (Virtual Assets Regulatory Authority, Dubai)",
@@ -187,7 +320,14 @@
       ],
       "supported_currencies": 900,
       "supported_countries": 100,
-      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit", "mobile_money"],
+      "transfer_methods": [
+        "bank_transfer",
+        "credit_card",
+        "debit_card",
+        "p2p",
+        "crypto_deposit",
+        "mobile_money"
+      ],
       "fee_model": "Spot trading fees start at 0.08% maker / 0.10% taker, with tiered discounts based on volume and OKB holdings. P2P trading is fee-free for makers.",
       "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits via P2P are typically instant; bank transfers 1–3 business days.",
       "website": "https://www.okx.com",
@@ -209,9 +349,12 @@
     {
       "slug": "kraken",
       "name": "Kraken",
-      "logo_url": "https://www.kraken.com/assets/images/kraken-logo.svg",
+      "logo_url": null,
       "founded": 2011,
-      "headquarters": { "city": "Cheyenne, Wyoming", "country": "United States" },
+      "headquarters": {
+        "city": "Cheyenne, Wyoming",
+        "country": "United States"
+      },
       "regulated_in": [
         "US — FinCEN (Money Services Business), Wyoming SPDI charter (Special Purpose Depository Institution)",
         "UK — FCA (registered)",
@@ -224,7 +367,14 @@
       ],
       "supported_currencies": 430,
       "supported_countries": 190,
-      "transfer_methods": ["bank_transfer", "crypto_deposit", "debit_card", "credit_card", "wire_transfer", "ach"],
+      "transfer_methods": [
+        "bank_transfer",
+        "crypto_deposit",
+        "debit_card",
+        "credit_card",
+        "wire_transfer",
+        "ach"
+      ],
       "fee_model": "Spot trading fees start at 0.16% maker / 0.26% taker for low volume, decreasing with higher 30-day volume. Fiat deposit/withdrawal fees vary by method (ACH free, wire $5–$35).",
       "speed": "Crypto deposits confirmed in minutes. ACH deposits available in 1–5 business days; wire transfers 1–5 business days. Instant buy available via card.",
       "website": "https://www.kraken.com",
@@ -246,9 +396,12 @@
     {
       "slug": "moneygram",
       "name": "MoneyGram",
-      "logo_url": "https://www.moneygram.com/etc.clientlibs/moneygram/clientlibs/clientlib-site/resources/images/moneygram-logo.svg",
+      "logo_url": null,
       "founded": 1988,
-      "headquarters": { "city": "Dallas, Texas", "country": "United States" },
+      "headquarters": {
+        "city": "Dallas, Texas",
+        "country": "United States"
+      },
       "regulated_in": [
         "US — FinCEN (Money Services Business), licensed money transmitter in all 50 states",
         "US — NY Banking Department (Money Transmitter)",
@@ -259,7 +412,14 @@
       ],
       "supported_currencies": 120,
       "supported_countries": 200,
-      "transfer_methods": ["cash_pickup", "bank_transfer", "mobile_wallet", "debit_card", "credit_card", "home_delivery"],
+      "transfer_methods": [
+        "cash_pickup",
+        "bank_transfer",
+        "mobile_wallet",
+        "debit_card",
+        "credit_card",
+        "home_delivery"
+      ],
       "fee_model": "Fees vary by corridor, amount, delivery method, and payment method. The MoneyGram API provides a quote endpoint with send amount, receive amount, fees, and guaranteed FX rate.",
       "speed": "Cash pickup available within minutes at 400,000+ agent locations. Bank deposits typically 1–3 business days. Mobile wallet transfers often same-day.",
       "website": "https://www.moneygram.com",
@@ -281,9 +441,12 @@
     {
       "slug": "payoneer",
       "name": "Payoneer",
-      "logo_url": "https://www.payoneer.com/wp-content/uploads/payoneer-logo.svg",
+      "logo_url": null,
       "founded": 2005,
-      "headquarters": { "city": "New York", "country": "United States" },
+      "headquarters": {
+        "city": "New York",
+        "country": "United States"
+      },
       "regulated_in": [
         "US — FinCEN (Money Services Business), state money transmitter licenses",
         "EU — Electronic Money Institution (Central Bank of Ireland)",
@@ -295,7 +458,13 @@
       ],
       "supported_currencies": 150,
       "supported_countries": 200,
-      "transfer_methods": ["bank_transfer", "payoneer_balance", "local_receiving_accounts", "debit_card", "ach"],
+      "transfer_methods": [
+        "bank_transfer",
+        "payoneer_balance",
+        "local_receiving_accounts",
+        "debit_card",
+        "ach"
+      ],
       "fee_model": "Cross-border payments in 150+ currencies. Balance withdrawals to local bank incur a fee of up to 2%. Currency conversion fee up to 2% above mid-market rate. Receiving payments from marketplaces is free.",
       "speed": "Payments between Payoneer accounts are instant. Bank withdrawals typically 2–5 business days depending on destination country and bank.",
       "website": "https://www.payoneer.com",
@@ -317,9 +486,12 @@
     {
       "slug": "global66",
       "name": "Global66",
-      "logo_url": "https://global66.com/assets/images/logo-global66.svg",
+      "logo_url": null,
       "founded": 2018,
-      "headquarters": { "city": "Santiago", "country": "Chile" },
+      "headquarters": {
+        "city": "Santiago",
+        "country": "Chile"
+      },
       "regulated_in": [
         "Chile — CMF (Comision para el Mercado Financiero)",
         "Colombia — Superintendencia Financiera",
@@ -329,7 +501,12 @@
       ],
       "supported_currencies": 20,
       "supported_countries": 80,
-      "transfer_methods": ["bank_transfer", "debit_card", "global66_balance", "smartcard"],
+      "transfer_methods": [
+        "bank_transfer",
+        "debit_card",
+        "global66_balance",
+        "smartcard"
+      ],
       "fee_model": "No explicit transfer fee for most international transfers. Revenue comes from a markup on the mid-market exchange rate. Domestic transfers may incur a small fee.",
       "speed": "Most transfers completed within one business day. Instant transfers between Global66 users.",
       "website": "https://global66.com",
@@ -351,9 +528,12 @@
     {
       "slug": "bitso",
       "name": "Bitso",
-      "logo_url": "https://bitso.com/assets/images/bitso-logo.svg",
+      "logo_url": null,
       "founded": 2014,
-      "headquarters": { "city": "Mexico City", "country": "Mexico" },
+      "headquarters": {
+        "city": "Mexico City",
+        "country": "Mexico"
+      },
       "regulated_in": [
         "Mexico — CNBV (registered Financial Technology Institution under Fintech Law)",
         "Gibraltar — GFSC (Distributed Ledger Technology license)",
@@ -363,7 +543,13 @@
       ],
       "supported_currencies": 50,
       "supported_countries": 160,
-      "transfer_methods": ["bank_transfer", "spei", "debit_card", "crypto_deposit", "p2p"],
+      "transfer_methods": [
+        "bank_transfer",
+        "spei",
+        "debit_card",
+        "crypto_deposit",
+        "p2p"
+      ],
       "fee_model": "Spot trading fees start at 0.10%–0.60% maker/taker depending on 30-day volume tier. Fiat deposits via SPEI (Mexico) are free; other deposit methods vary.",
       "speed": "Crypto deposits confirmed in minutes. SPEI deposits (Mexico) typically within minutes during banking hours. International fiat 1–3 business days.",
       "website": "https://bitso.com",
@@ -385,9 +571,12 @@
     {
       "slug": "coinbase",
       "name": "Coinbase",
-      "logo_url": "https://www.coinbase.com/img/favicon/apple-touch-icon.png",
+      "logo_url": null,
       "founded": 2012,
-      "headquarters": { "city": "Wilmington, Delaware", "country": "United States" },
+      "headquarters": {
+        "city": "Wilmington, Delaware",
+        "country": "United States"
+      },
       "regulated_in": [
         "US — FinCEN (Money Services Business), state money transmitter licenses in most states",
         "US — NYDFS (BitLicense)",
@@ -399,7 +588,15 @@
       ],
       "supported_currencies": 250,
       "supported_countries": 177,
-      "transfer_methods": ["bank_transfer", "debit_card", "credit_card", "ach", "wire_transfer", "crypto_deposit", "paypal"],
+      "transfer_methods": [
+        "bank_transfer",
+        "debit_card",
+        "credit_card",
+        "ach",
+        "wire_transfer",
+        "crypto_deposit",
+        "paypal"
+      ],
       "fee_model": "Coinbase Advanced spot trading fees start at 0.60% maker / 1.20% taker at base tier, decreasing with 30-day volume. Advanced tiers reach 0.00% maker / 0.05% taker at $500M+ volume.",
       "speed": "Crypto deposits confirmed in minutes. ACH deposits typically 3–5 business days for settlement. Wire transfers 1–3 business days. Instant buy available via debit card.",
       "website": "https://www.coinbase.com",
@@ -421,9 +618,12 @@
     {
       "slug": "gemini",
       "name": "Gemini",
-      "logo_url": "https://www.gemini.com/static/images/gemini-logo.svg",
+      "logo_url": null,
       "founded": 2014,
-      "headquarters": { "city": "New York", "country": "United States" },
+      "headquarters": {
+        "city": "New York",
+        "country": "United States"
+      },
       "regulated_in": [
         "US — NYDFS (New York Trust Company, BitLicense)",
         "EU — MiCA license via Malta Financial Services Authority (MFSA)",
@@ -434,7 +634,14 @@
       ],
       "supported_currencies": 70,
       "supported_countries": 60,
-      "transfer_methods": ["bank_transfer", "debit_card", "credit_card", "wire_transfer", "crypto_deposit", "ach"],
+      "transfer_methods": [
+        "bank_transfer",
+        "debit_card",
+        "credit_card",
+        "wire_transfer",
+        "crypto_deposit",
+        "ach"
+      ],
       "fee_model": "ActiveTrader spot fees start at 0.20% maker / 0.40% taker for low volume, decreasing with higher 30-day volume. Maker rebate of -0.01% available at $500M+ volume tier.",
       "speed": "Crypto deposits confirmed in minutes. ACH deposits available within 4–5 business days. Wire transfers typically 1–3 business days. Instant buy via debit card.",
       "website": "https://www.gemini.com",
@@ -456,9 +663,12 @@
     {
       "slug": "bybit",
       "name": "Bybit",
-      "logo_url": "https://www.bybit.com/common-static/logo/bybit-logo.svg",
+      "logo_url": null,
       "founded": 2018,
-      "headquarters": { "city": "Dubai", "country": "United Arab Emirates" },
+      "headquarters": {
+        "city": "Dubai",
+        "country": "United Arab Emirates"
+      },
       "regulated_in": [
         "UAE — SCA (Virtual Asset Platform Operator License)",
         "Austria — FMA (MiCA CASP authorization, EEA passporting)",
@@ -468,7 +678,13 @@
       ],
       "supported_currencies": 2500,
       "supported_countries": 160,
-      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit"],
+      "transfer_methods": [
+        "bank_transfer",
+        "credit_card",
+        "debit_card",
+        "p2p",
+        "crypto_deposit"
+      ],
       "fee_model": "Spot trading fees start at 0.10% maker / 0.10% taker at base tier, decreasing with 30-day volume. Supports up to 125x leverage on major crypto futures contracts.",
       "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits via P2P typically instant; bank transfers 1–3 business days.",
       "website": "https://www.bybit.com",
@@ -490,9 +706,12 @@
     {
       "slug": "kucoin",
       "name": "KuCoin",
-      "logo_url": "https://assets.staticimg.com/cms/media/1lB3PkckFDyfxz6VBGkNM3.svg",
+      "logo_url": null,
       "founded": 2017,
-      "headquarters": { "city": "Victoria", "country": "Seychelles" },
+      "headquarters": {
+        "city": "Victoria",
+        "country": "Seychelles"
+      },
       "regulated_in": [
         "Austria — FMA (MiCA CASP authorization, EEA passporting)",
         "India — FIU-IND (registered VASP)",
@@ -501,7 +720,13 @@
       ],
       "supported_currencies": 700,
       "supported_countries": 200,
-      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit"],
+      "transfer_methods": [
+        "bank_transfer",
+        "credit_card",
+        "debit_card",
+        "p2p",
+        "crypto_deposit"
+      ],
       "fee_model": "Spot trading fees start at 0.10% maker / 0.10% taker at base tier, decreasing with 30-day volume and KCS holdings. Futures trading fees from 0.02% maker / 0.06% taker.",
       "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits via P2P or third-party partners typically instant to 1 business day.",
       "website": "https://www.kucoin.com",
@@ -523,9 +748,12 @@
     {
       "slug": "gate-io",
       "name": "Gate.io",
-      "logo_url": "https://www.gate.io/images/logo/logo_blue.svg",
+      "logo_url": null,
       "founded": 2013,
-      "headquarters": { "city": "George Town", "country": "Cayman Islands" },
+      "headquarters": {
+        "city": "George Town",
+        "country": "Cayman Islands"
+      },
       "regulated_in": [
         "Malta — MFSA (MiCA license and PSD2 Payment Institution license)",
         "Dubai — VARA (Virtual Assets Regulatory Authority)",
@@ -538,7 +766,13 @@
       ],
       "supported_currencies": 3500,
       "supported_countries": 150,
-      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit"],
+      "transfer_methods": [
+        "bank_transfer",
+        "credit_card",
+        "debit_card",
+        "p2p",
+        "crypto_deposit"
+      ],
       "fee_model": "Spot trading fees start at 0.20% maker / 0.20% taker at base tier, with tiered discounts based on 30-day volume and GT (GateToken) holdings.",
       "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits via third-party payment providers typically instant to 1 business day.",
       "website": "https://www.gate.io",
@@ -560,9 +794,12 @@
     {
       "slug": "bitget",
       "name": "Bitget",
-      "logo_url": "https://img.bitgetimg.com/image/third/1686738498601.png",
+      "logo_url": null,
       "founded": 2018,
-      "headquarters": { "city": "Victoria", "country": "Seychelles" },
+      "headquarters": {
+        "city": "Victoria",
+        "country": "Seychelles"
+      },
       "regulated_in": [
         "Australia — AUSTRAC (Digital Currency Exchange Provider)",
         "Italy — OAM (VASP registration)",
@@ -574,7 +811,13 @@
       ],
       "supported_currencies": 1300,
       "supported_countries": 150,
-      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit"],
+      "transfer_methods": [
+        "bank_transfer",
+        "credit_card",
+        "debit_card",
+        "p2p",
+        "crypto_deposit"
+      ],
       "fee_model": "Spot trading fees start at 0.10% maker / 0.10% taker at base tier, decreasing with 30-day volume and BGB holdings. Copy trading and futures trading available with separate fee schedules.",
       "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits via card or third-party providers typically instant.",
       "website": "https://www.bitget.com",
@@ -596,16 +839,25 @@
     {
       "slug": "mexc",
       "name": "MEXC",
-      "logo_url": "https://www.mexc.com/resource/images/logo/mexc-logo.svg",
+      "logo_url": null,
       "founded": 2018,
-      "headquarters": { "city": "Victoria", "country": "Seychelles" },
+      "headquarters": {
+        "city": "Victoria",
+        "country": "Seychelles"
+      },
       "regulated_in": [
         "UK — FCA (authorized, obtained 2025)",
         "Previously operated under limited offshore regulation"
       ],
       "supported_currencies": 3000,
       "supported_countries": 170,
-      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit"],
+      "transfer_methods": [
+        "bank_transfer",
+        "credit_card",
+        "debit_card",
+        "p2p",
+        "crypto_deposit"
+      ],
       "fee_model": "Spot trading offers 0% maker fees as a promotional rate; taker fees start at 0.05%. Futures fees start at 0.00% maker / 0.02% taker.",
       "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits via third-party providers typically instant to same-day.",
       "website": "https://www.mexc.com",
@@ -627,16 +879,25 @@
     {
       "slug": "htx",
       "name": "HTX",
-      "logo_url": "https://www.htx.com/favicon.ico",
+      "logo_url": null,
       "founded": 2013,
-      "headquarters": { "city": "Victoria", "country": "Seychelles" },
+      "headquarters": {
+        "city": "Victoria",
+        "country": "Seychelles"
+      },
       "regulated_in": [
         "Dubai — VARA (Virtual Assets Regulatory Authority)",
         "Offices in Hong Kong, South Korea, Japan, and the United States"
       ],
       "supported_currencies": 700,
       "supported_countries": 160,
-      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit"],
+      "transfer_methods": [
+        "bank_transfer",
+        "credit_card",
+        "debit_card",
+        "p2p",
+        "crypto_deposit"
+      ],
       "fee_model": "Spot trading fees start at 0.20% maker / 0.20% taker at base tier, decreasing with 30-day volume and HT holdings. Futures trading fees from 0.02% maker / 0.04% taker.",
       "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits via P2P or card typically instant to same-day.",
       "website": "https://www.htx.com",
@@ -658,9 +919,12 @@
     {
       "slug": "crypto-com",
       "name": "Crypto.com",
-      "logo_url": "https://crypto.com/static/images/crypto-com-logo.svg",
+      "logo_url": null,
       "founded": 2016,
-      "headquarters": { "city": "Singapore", "country": "Singapore" },
+      "headquarters": {
+        "city": "Singapore",
+        "country": "Singapore"
+      },
       "regulated_in": [
         "Singapore — MAS (Major Payment Institution license)",
         "Australia — ASIC (Digital Currency Exchange and Financial Services license)",
@@ -675,7 +939,13 @@
       ],
       "supported_currencies": 425,
       "supported_countries": 90,
-      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "crypto_deposit", "crypto_com_pay"],
+      "transfer_methods": [
+        "bank_transfer",
+        "credit_card",
+        "debit_card",
+        "crypto_deposit",
+        "crypto_com_pay"
+      ],
       "fee_model": "Spot trading fees start at 0.075% maker / 0.075% taker at base tier, decreasing with 30-day volume and CRO staking. Crypto.com Visa Card offers cashback on spending.",
       "speed": "Crypto deposits confirmed in minutes. Fiat deposits via bank transfer typically 1–3 business days. Instant buy via card available.",
       "website": "https://crypto.com",
@@ -697,9 +967,12 @@
     {
       "slug": "luno",
       "name": "Luno",
-      "logo_url": "https://www.luno.com/en/static/luno-logo.svg",
+      "logo_url": null,
       "founded": 2013,
-      "headquarters": { "city": "London", "country": "United Kingdom" },
+      "headquarters": {
+        "city": "London",
+        "country": "United Kingdom"
+      },
       "regulated_in": [
         "Malaysia — Securities Commission (registered Digital Asset Exchange)",
         "South Africa — FSCA (registered)",
@@ -708,7 +981,13 @@
       ],
       "supported_currencies": 12,
       "supported_countries": 40,
-      "transfer_methods": ["bank_transfer", "debit_card", "credit_card", "crypto_deposit", "eft"],
+      "transfer_methods": [
+        "bank_transfer",
+        "debit_card",
+        "credit_card",
+        "crypto_deposit",
+        "eft"
+      ],
       "fee_model": "Instant buy/sell fee of approximately 0.75%–1.5% depending on market conditions. Exchange (limit orders) maker fee 0%, taker fee 0.10% at base tier, decreasing with volume.",
       "speed": "Crypto deposits confirmed in minutes. Fiat deposits vary by country: South Africa (EFT) typically same-day; bank transfers in other markets 1–3 business days.",
       "website": "https://www.luno.com",
@@ -730,9 +1009,12 @@
     {
       "slug": "bitstamp",
       "name": "Bitstamp",
-      "logo_url": "https://www.bitstamp.net/static/img/brand/logo.svg",
+      "logo_url": null,
       "founded": 2011,
-      "headquarters": { "city": "Luxembourg City", "country": "Luxembourg" },
+      "headquarters": {
+        "city": "Luxembourg City",
+        "country": "Luxembourg"
+      },
       "regulated_in": [
         "Luxembourg — CSSF (Payment Institution license, passported across EU)",
         "US — NYDFS (BitLicense)",
@@ -743,7 +1025,15 @@
       ],
       "supported_currencies": 107,
       "supported_countries": 100,
-      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "wire_transfer", "crypto_deposit", "ach", "sepa"],
+      "transfer_methods": [
+        "bank_transfer",
+        "credit_card",
+        "debit_card",
+        "wire_transfer",
+        "crypto_deposit",
+        "ach",
+        "sepa"
+      ],
       "fee_model": "Spot trading fees start at 0.30% maker / 0.40% taker for volumes under $10,000/month, decreasing with higher 30-day volume. Stablecoin pairs have reduced fees.",
       "speed": "Crypto deposits confirmed in minutes. SEPA deposits typically 1–3 business days. Wire transfers 2–5 business days. Card purchases instant.",
       "website": "https://www.bitstamp.net",
@@ -765,9 +1055,12 @@
     {
       "slug": "btcturk",
       "name": "BtcTurk",
-      "logo_url": "https://kripto.btcturk.com/images/btcturk-logo.svg",
+      "logo_url": null,
       "founded": 2013,
-      "headquarters": { "city": "Istanbul", "country": "Turkey" },
+      "headquarters": {
+        "city": "Istanbul",
+        "country": "Turkey"
+      },
       "regulated_in": [
         "Turkey — SPK (Capital Markets Board of Turkey, authorized)",
         "Turkey — compliance with AML/KYC requirements as mandated by Turkish financial authorities",
@@ -775,7 +1068,11 @@
       ],
       "supported_currencies": 150,
       "supported_countries": 1,
-      "transfer_methods": ["bank_transfer", "crypto_deposit", "try_deposit"],
+      "transfer_methods": [
+        "bank_transfer",
+        "crypto_deposit",
+        "try_deposit"
+      ],
       "fee_model": "Spot trading fees vary by 30-day volume tier. TRY trading pairs available. Fees decrease with higher trading volume. Fiat deposits via Turkish bank transfer are typically free.",
       "speed": "Crypto deposits confirmed in minutes. TRY deposits via Turkish bank transfer typically processed same-day during banking hours.",
       "website": "https://kripto.btcturk.com",
@@ -797,16 +1094,23 @@
     {
       "slug": "bithumb",
       "name": "Bithumb",
-      "logo_url": "https://www.bithumb.com/react/images/logo.svg",
+      "logo_url": null,
       "founded": 2014,
-      "headquarters": { "city": "Seoul", "country": "South Korea" },
+      "headquarters": {
+        "city": "Seoul",
+        "country": "South Korea"
+      },
       "regulated_in": [
         "South Korea — FIU (registered Virtual Asset Service Provider)",
         "South Korea — compliance with KYC/AML regulations under Korean law"
       ],
       "supported_currencies": 400,
       "supported_countries": 1,
-      "transfer_methods": ["bank_transfer", "crypto_deposit", "krw_deposit"],
+      "transfer_methods": [
+        "bank_transfer",
+        "crypto_deposit",
+        "krw_deposit"
+      ],
       "fee_model": "Spot trading fees start at 0.25% maker / 0.25% taker at base tier, decreasing with 30-day volume. KRW deposit and withdrawal fees apply.",
       "speed": "Crypto deposits confirmed in minutes. KRW deposits via Korean bank transfer typically processed within minutes during banking hours.",
       "website": "https://www.bithumb.com",
@@ -828,9 +1132,12 @@
     {
       "slug": "bitflyer",
       "name": "bitFlyer",
-      "logo_url": "https://bitflyer.com/pub/img/bitflyer-logo.svg",
+      "logo_url": null,
       "founded": 2014,
-      "headquarters": { "city": "Tokyo", "country": "Japan" },
+      "headquarters": {
+        "city": "Tokyo",
+        "country": "Japan"
+      },
       "regulated_in": [
         "Japan — FSA (Japan Financial Services Agency, registered Virtual Currency Exchange Service)",
         "US — NYDFS (BitLicense), FinCEN (Money Services Business)",
@@ -838,7 +1145,11 @@
       ],
       "supported_currencies": 39,
       "supported_countries": 40,
-      "transfer_methods": ["bank_transfer", "crypto_deposit", "wire_transfer"],
+      "transfer_methods": [
+        "bank_transfer",
+        "crypto_deposit",
+        "wire_transfer"
+      ],
       "fee_model": "Spot trading fees vary by market. Japanese market: 0.01%–0.15% depending on pair and volume. US and EU markets have separate fee schedules. Lightning FX (futures) trading available.",
       "speed": "Crypto deposits confirmed in minutes. JPY deposits via Japanese bank transfer typically same-day. International wire transfers 1–5 business days.",
       "website": "https://bitflyer.com",
@@ -860,9 +1171,12 @@
     {
       "slug": "independent-reserve",
       "name": "Independent Reserve",
-      "logo_url": "https://www.independentreserve.com/images/ir-logo.svg",
+      "logo_url": null,
       "founded": 2013,
-      "headquarters": { "city": "Sydney", "country": "Australia" },
+      "headquarters": {
+        "city": "Sydney",
+        "country": "Australia"
+      },
       "regulated_in": [
         "Australia — AUSTRAC (Digital Currency Exchange, DCE-100461150-001)",
         "Singapore — MAS (approved for digital payment token services)",
@@ -870,7 +1184,12 @@
       ],
       "supported_currencies": 40,
       "supported_countries": 4,
-      "transfer_methods": ["bank_transfer", "crypto_deposit", "osko", "payid"],
+      "transfer_methods": [
+        "bank_transfer",
+        "crypto_deposit",
+        "osko",
+        "payid"
+      ],
       "fee_model": "Spot trading fees start at 0.50% for volumes under AUD 100,000/month, decreasing with higher volume tiers. AUD deposits via OSKO/PayID are free.",
       "speed": "Crypto deposits confirmed in minutes. AUD deposits via OSKO typically instant. International bank transfers 1–3 business days.",
       "website": "https://www.independentreserve.com",
@@ -892,9 +1211,12 @@
     {
       "slug": "valr",
       "name": "VALR",
-      "logo_url": "https://www.valr.com/images/valr-logo.svg",
+      "logo_url": null,
       "founded": 2018,
-      "headquarters": { "city": "Johannesburg", "country": "South Africa" },
+      "headquarters": {
+        "city": "Johannesburg",
+        "country": "South Africa"
+      },
       "regulated_in": [
         "South Africa — FSCA (Category I and Category II Crypto Asset Service Provider licenses)",
         "Dubai — VARA (initial approval for virtual asset services)",
@@ -902,7 +1224,12 @@
       ],
       "supported_currencies": 90,
       "supported_countries": 5,
-      "transfer_methods": ["bank_transfer", "crypto_deposit", "eft", "zar_deposit"],
+      "transfer_methods": [
+        "bank_transfer",
+        "crypto_deposit",
+        "eft",
+        "zar_deposit"
+      ],
       "fee_model": "Spot trading fees start at 0.10% maker / 0.25% taker, decreasing with 30-day volume. ZAR deposits via EFT are free. OTC desk available for large orders.",
       "speed": "Crypto deposits confirmed in minutes. ZAR deposits via EFT typically processed same-day. International bank transfers 1–3 business days.",
       "website": "https://www.valr.com",
@@ -924,16 +1251,24 @@
     {
       "slug": "coindcx",
       "name": "CoinDCX",
-      "logo_url": "https://coindcx.com/assets/images/coindcx-logo.svg",
+      "logo_url": null,
       "founded": 2018,
-      "headquarters": { "city": "Mumbai", "country": "India" },
+      "headquarters": {
+        "city": "Mumbai",
+        "country": "India"
+      },
       "regulated_in": [
         "India — FIU-IND (registered reporting entity)",
         "India — compliance with AML/CFT guidelines and KYC requirements"
       ],
       "supported_currencies": 500,
       "supported_countries": 1,
-      "transfer_methods": ["bank_transfer", "upi", "crypto_deposit", "inr_deposit"],
+      "transfer_methods": [
+        "bank_transfer",
+        "upi",
+        "crypto_deposit",
+        "inr_deposit"
+      ],
       "fee_model": "Spot trading fees start at 0.10% maker / 0.10% taker at base tier, decreasing with 30-day volume. INR deposits via UPI and bank transfer available.",
       "speed": "Crypto deposits confirmed in minutes. INR deposits via UPI typically instant. Bank transfers typically same-day during banking hours.",
       "website": "https://coindcx.com",
@@ -955,16 +1290,25 @@
     {
       "slug": "wazirx",
       "name": "WazirX",
-      "logo_url": "https://wazirx.com/static/media/wazirx-logo.svg",
+      "logo_url": null,
       "founded": 2017,
-      "headquarters": { "city": "Mumbai", "country": "India" },
+      "headquarters": {
+        "city": "Mumbai",
+        "country": "India"
+      },
       "regulated_in": [
         "India — FIU-IND (registered reporting entity)",
         "India — member of Bharat Web3 Association (BWA)"
       ],
       "supported_currencies": 200,
       "supported_countries": 1,
-      "transfer_methods": ["bank_transfer", "upi", "crypto_deposit", "p2p", "inr_deposit"],
+      "transfer_methods": [
+        "bank_transfer",
+        "upi",
+        "crypto_deposit",
+        "p2p",
+        "inr_deposit"
+      ],
       "fee_model": "Spot trading fees of 0.20% maker / 0.20% taker. WRX token holders receive fee discounts. P2P trading available for INR on/off-ramp.",
       "speed": "Crypto deposits confirmed in minutes. INR deposits via UPI or bank transfer typically processed same-day.",
       "website": "https://wazirx.com",
@@ -986,16 +1330,24 @@
     {
       "slug": "satoshitango",
       "name": "SatoshiTango",
-      "logo_url": "https://www.satoshitango.com/assets/images/satoshitango-logo.svg",
+      "logo_url": null,
       "founded": 2014,
-      "headquarters": { "city": "Buenos Aires", "country": "Argentina" },
+      "headquarters": {
+        "city": "Buenos Aires",
+        "country": "Argentina"
+      },
       "regulated_in": [
         "Argentina — registered with local financial authorities",
         "Operates across 33 countries in Latin America and beyond"
       ],
       "supported_currencies": 10,
       "supported_countries": 33,
-      "transfer_methods": ["bank_transfer", "crypto_deposit", "debit_card", "ars_deposit"],
+      "transfer_methods": [
+        "bank_transfer",
+        "crypto_deposit",
+        "debit_card",
+        "ars_deposit"
+      ],
       "fee_model": "Buy/sell spread varies by cryptocurrency and payment method. Supports purchases in ARS, USD, BRL, and EUR. Fee structure includes a spread on the exchange rate.",
       "speed": "Crypto purchases processed within minutes. ARS deposits via bank transfer typically same-day during banking hours.",
       "website": "https://www.satoshitango.com",
@@ -1017,9 +1369,12 @@
     {
       "slug": "buda",
       "name": "Buda.com",
-      "logo_url": "https://www.buda.com/static/buda-logo.svg",
+      "logo_url": null,
       "founded": 2015,
-      "headquarters": { "city": "Santiago", "country": "Chile" },
+      "headquarters": {
+        "city": "Santiago",
+        "country": "Chile"
+      },
       "regulated_in": [
         "Chile — registered with local financial authorities",
         "Colombia — registered with local financial authorities",
@@ -1028,7 +1383,10 @@
       ],
       "supported_currencies": 7,
       "supported_countries": 4,
-      "transfer_methods": ["bank_transfer", "crypto_deposit"],
+      "transfer_methods": [
+        "bank_transfer",
+        "crypto_deposit"
+      ],
       "fee_model": "Spot trading fees vary by 30-day volume tier, starting at 0.80% maker / 0.80% taker for low volume. Fiat deposits via local bank transfer are typically free.",
       "speed": "Crypto deposits confirmed in minutes. Local fiat deposits typically processed same-day during banking hours.",
       "website": "https://www.buda.com",
@@ -1050,9 +1408,12 @@
     {
       "slug": "ria-money-transfer",
       "name": "Ria Money Transfer",
-      "logo_url": "https://www.riamoneytransfer.com/images/ria-logo.svg",
+      "logo_url": null,
       "founded": 1987,
-      "headquarters": { "city": "Buena Park, California", "country": "United States" },
+      "headquarters": {
+        "city": "Buena Park, California",
+        "country": "United States"
+      },
       "regulated_in": [
         "US — FinCEN (Money Services Business), state money transmitter licenses",
         "EU — various national regulators",
@@ -1063,7 +1424,14 @@
       ],
       "supported_currencies": 100,
       "supported_countries": 160,
-      "transfer_methods": ["bank_transfer", "cash_pickup", "mobile_wallet", "debit_card", "credit_card", "home_delivery"],
+      "transfer_methods": [
+        "bank_transfer",
+        "cash_pickup",
+        "mobile_wallet",
+        "debit_card",
+        "credit_card",
+        "home_delivery"
+      ],
       "fee_model": "Transfer fees range from $0.99–$9 depending on corridor, amount, and payment/delivery method. Exchange rate includes a markup of 0.25%–3.5% above mid-market rate. Fees shown upfront before confirmation.",
       "speed": "Cash pickup available within minutes at 500,000+ locations. Bank transfers typically 1–4 business days depending on destination. Mobile wallet transfers often same-day.",
       "website": "https://www.riamoneytransfer.com",
@@ -1085,9 +1453,12 @@
     {
       "slug": "worldremit",
       "name": "WorldRemit",
-      "logo_url": "https://www.worldremit.com/images/worldremit-logo.svg",
+      "logo_url": null,
       "founded": 2010,
-      "headquarters": { "city": "London", "country": "United Kingdom" },
+      "headquarters": {
+        "city": "London",
+        "country": "United Kingdom"
+      },
       "regulated_in": [
         "UK — FCA (authorized and regulated)",
         "US — FinCEN (registered), state money transmitter licenses",
@@ -1096,7 +1467,14 @@
       ],
       "supported_currencies": 70,
       "supported_countries": 130,
-      "transfer_methods": ["bank_transfer", "mobile_wallet", "cash_pickup", "airtime_top_up", "debit_card", "credit_card"],
+      "transfer_methods": [
+        "bank_transfer",
+        "mobile_wallet",
+        "cash_pickup",
+        "airtime_top_up",
+        "debit_card",
+        "credit_card"
+      ],
       "fee_model": "Per-transfer fee varies by corridor, delivery method, and payment method. Exchange rate includes a margin. Fees shown upfront in the app or website before confirmation.",
       "speed": "Mobile money transfers often arrive within minutes. Bank transfers typically 1–3 business days. Cash pickup available within minutes at partner locations.",
       "website": "https://www.worldremit.com",
@@ -1118,9 +1496,12 @@
     {
       "slug": "sendwave",
       "name": "Sendwave",
-      "logo_url": "https://www.sendwave.com/images/sendwave-logo.svg",
+      "logo_url": null,
       "founded": 2014,
-      "headquarters": { "city": "Boston, Massachusetts", "country": "United States" },
+      "headquarters": {
+        "city": "Boston, Massachusetts",
+        "country": "United States"
+      },
       "regulated_in": [
         "US — FinCEN (Money Services Business), state money transmitter licenses",
         "UK — FCA (authorized)",
@@ -1128,7 +1509,11 @@
       ],
       "supported_currencies": 15,
       "supported_countries": 20,
-      "transfer_methods": ["mobile_wallet", "bank_transfer", "debit_card"],
+      "transfer_methods": [
+        "mobile_wallet",
+        "bank_transfer",
+        "debit_card"
+      ],
       "fee_model": "No upfront transfer fee on most corridors. Revenue comes from a margin on the exchange rate. Fees are built into the rate shown before confirmation.",
       "speed": "Transfers to mobile wallets in Africa typically arrive within seconds to minutes. Bank transfers may take 1–2 business days.",
       "website": "https://www.sendwave.com",
@@ -1150,9 +1535,12 @@
     {
       "slug": "xoom",
       "name": "Xoom",
-      "logo_url": "https://www.xoom.com/images/xoom-logo.svg",
+      "logo_url": null,
       "founded": 2001,
-      "headquarters": { "city": "San Francisco, California", "country": "United States" },
+      "headquarters": {
+        "city": "San Francisco, California",
+        "country": "United States"
+      },
       "regulated_in": [
         "US — FinCEN (Money Services Business), state money transmitter licenses",
         "Subsidiary of PayPal Holdings, Inc. (NASDAQ: PYPL)",
@@ -1160,7 +1548,16 @@
       ],
       "supported_currencies": 60,
       "supported_countries": 160,
-      "transfer_methods": ["bank_transfer", "cash_pickup", "mobile_wallet", "debit_card", "credit_card", "paypal_balance", "bill_pay", "mobile_reload"],
+      "transfer_methods": [
+        "bank_transfer",
+        "cash_pickup",
+        "mobile_wallet",
+        "debit_card",
+        "credit_card",
+        "paypal_balance",
+        "bill_pay",
+        "mobile_reload"
+      ],
       "fee_model": "Transfer fees vary by corridor, delivery method, and payment method (typically $0–$4.99 per transfer). Exchange rate includes a margin above mid-market rate. PayPal balance funding often has lowest fees.",
       "speed": "Cash pickup and mobile wallet transfers available within minutes. Bank deposits typically 1–4 business days depending on destination.",
       "website": "https://www.xoom.com",
@@ -1182,9 +1579,12 @@
     {
       "slug": "paysend",
       "name": "Paysend",
-      "logo_url": "https://paysend.com/images/paysend-logo.svg",
+      "logo_url": null,
       "founded": 2017,
-      "headquarters": { "city": "London", "country": "United Kingdom" },
+      "headquarters": {
+        "city": "London",
+        "country": "United Kingdom"
+      },
       "regulated_in": [
         "UK — FCA (authorized and regulated, reference 900004)",
         "EU — Central Bank of Ireland (authorized Electronic Money Institution)",
@@ -1193,7 +1593,12 @@
       ],
       "supported_currencies": 100,
       "supported_countries": 170,
-      "transfer_methods": ["bank_transfer", "debit_card", "credit_card", "mobile_wallet"],
+      "transfer_methods": [
+        "bank_transfer",
+        "debit_card",
+        "credit_card",
+        "mobile_wallet"
+      ],
       "fee_model": "Flat fee per transfer (typically £1/$2 or equivalent) on most corridors. Exchange rate includes a margin above mid-market rate. Fee shown upfront before confirmation.",
       "speed": "Card-to-card and mobile wallet transfers typically arrive within minutes to same-day. Bank transfers 1–3 business days depending on destination.",
       "website": "https://paysend.com",
@@ -1215,16 +1620,24 @@
     {
       "slug": "transfergo",
       "name": "TransferGo",
-      "logo_url": "https://www.transfergo.com/images/transfergo-logo.svg",
+      "logo_url": null,
       "founded": 2012,
-      "headquarters": { "city": "London", "country": "United Kingdom" },
+      "headquarters": {
+        "city": "London",
+        "country": "United Kingdom"
+      },
       "regulated_in": [
         "UK — FCA (authorized payment institution, reference 600886), supervised by HMRC",
         "Lithuania — Bank of Lithuania (authorized Electronic Money Institution)"
       ],
       "supported_currencies": 50,
       "supported_countries": 160,
-      "transfer_methods": ["bank_transfer", "debit_card", "credit_card", "mobile_wallet"],
+      "transfer_methods": [
+        "bank_transfer",
+        "debit_card",
+        "credit_card",
+        "mobile_wallet"
+      ],
       "fee_model": "Transfer fees vary by speed tier: NOW (instant), FAST (hours), and STANDARD (1–3 days). Fees start from £0.99/€0.99. Exchange rate includes a small margin.",
       "speed": "NOW transfers arrive within 30 minutes. FAST transfers within a few hours. STANDARD transfers 1–3 business days.",
       "website": "https://www.transfergo.com",
@@ -1246,9 +1659,12 @@
     {
       "slug": "xe",
       "name": "XE",
-      "logo_url": "https://www.xe.com/images/xe-logo.svg",
+      "logo_url": null,
       "founded": 1993,
-      "headquarters": { "city": "Newmarket, Ontario", "country": "Canada" },
+      "headquarters": {
+        "city": "Newmarket, Ontario",
+        "country": "Canada"
+      },
       "regulated_in": [
         "UK — FCA (authorized payment institution, via HiFX Europe Limited)",
         "EU — Dutch Central Bank (authorized payment services provider, licence R149006)",
@@ -1260,7 +1676,10 @@
       ],
       "supported_currencies": 130,
       "supported_countries": 130,
-      "transfer_methods": ["bank_transfer", "wire_transfer"],
+      "transfer_methods": [
+        "bank_transfer",
+        "wire_transfer"
+      ],
       "fee_model": "No upfront transfer fee on most transfers. Revenue comes from a margin on the exchange rate. Live rate information provided on the website and app.",
       "speed": "Most transfers completed within 1–4 business days depending on corridor and banking infrastructure.",
       "website": "https://www.xe.com",
@@ -1282,9 +1701,12 @@
     {
       "slug": "atlantic-money",
       "name": "Atlantic Money",
-      "logo_url": "https://www.atlanticmoney.com/images/atlantic-money-logo.svg",
+      "logo_url": null,
       "founded": 2020,
-      "headquarters": { "city": "London", "country": "United Kingdom" },
+      "headquarters": {
+        "city": "London",
+        "country": "United Kingdom"
+      },
       "regulated_in": [
         "UK — FCA (authorized Payments Institution)",
         "EU — National Bank of Belgium (Payment Institution licence, passported across Europe)",
@@ -1294,7 +1716,9 @@
       ],
       "supported_currencies": 30,
       "supported_countries": 35,
-      "transfer_methods": ["bank_transfer"],
+      "transfer_methods": [
+        "bank_transfer"
+      ],
       "fee_model": "Flat fee of £3/$3/€3 per transfer with the mid-market exchange rate (no markup). One of the simplest and most transparent fee structures in the industry.",
       "speed": "Most transfers arrive within 1–2 business days. Some corridors may take up to 3 business days.",
       "website": "https://www.atlanticmoney.com",
@@ -1316,16 +1740,24 @@
     {
       "slug": "nala",
       "name": "NALA",
-      "logo_url": "https://www.nala.com/images/nala-logo.svg",
+      "logo_url": null,
       "founded": 2017,
-      "headquarters": { "city": "Nairobi", "country": "Kenya" },
+      "headquarters": {
+        "city": "Nairobi",
+        "country": "Kenya"
+      },
       "regulated_in": [
         "UK — FCA (authorized agent of Modulr FS Limited, regulated under Electronic Money Regulations 2011)",
         "PSD2 compliant for strong customer authentication"
       ],
       "supported_currencies": 20,
       "supported_countries": 20,
-      "transfer_methods": ["mobile_wallet", "bank_transfer", "debit_card", "credit_card"],
+      "transfer_methods": [
+        "mobile_wallet",
+        "bank_transfer",
+        "debit_card",
+        "credit_card"
+      ],
       "fee_model": "Zero transfer fees on many corridors (UK to Africa). Revenue from exchange rate margin. Fee structure shown upfront before confirmation.",
       "speed": "Transfers to mobile wallets in Africa typically arrive within seconds to minutes. Bank transfers may take 1–2 business days.",
       "website": "https://www.nala.com",
@@ -1347,9 +1779,12 @@
     {
       "slug": "taptap-send",
       "name": "Taptap Send",
-      "logo_url": "https://www.taptapsend.com/images/taptap-send-logo.svg",
+      "logo_url": null,
       "founded": 2018,
-      "headquarters": { "city": "London", "country": "United Kingdom" },
+      "headquarters": {
+        "city": "London",
+        "country": "United Kingdom"
+      },
       "regulated_in": [
         "UK — FCA (authorized)",
         "US — state money transmitter licenses",
@@ -1360,7 +1795,13 @@
       ],
       "supported_currencies": 35,
       "supported_countries": 40,
-      "transfer_methods": ["mobile_wallet", "bank_transfer", "debit_card", "credit_card", "cash_pickup"],
+      "transfer_methods": [
+        "mobile_wallet",
+        "bank_transfer",
+        "debit_card",
+        "credit_card",
+        "cash_pickup"
+      ],
       "fee_model": "No upfront transfer fee. Revenue comes from a margin on the exchange rate. Fee structure shown upfront before confirmation.",
       "speed": "Mobile money and mobile wallet transfers typically arrive within minutes. Bank transfers 1–3 business days depending on destination.",
       "website": "https://www.taptapsend.com",
@@ -1382,9 +1823,12 @@
     {
       "slug": "yellow-card",
       "name": "Yellow Card",
-      "logo_url": "https://yellowcard.io/images/yellow-card-logo.svg",
+      "logo_url": null,
       "founded": 2016,
-      "headquarters": { "city": "Atlanta, Georgia", "country": "United States" },
+      "headquarters": {
+        "city": "Atlanta, Georgia",
+        "country": "United States"
+      },
       "regulated_in": [
         "South Africa — FSCA (Crypto Asset Service Provider license)",
         "VASP licenses in 20+ African countries",
@@ -1393,7 +1837,12 @@
       ],
       "supported_currencies": 20,
       "supported_countries": 34,
-      "transfer_methods": ["bank_transfer", "mobile_money", "crypto_deposit", "stablecoin"],
+      "transfer_methods": [
+        "bank_transfer",
+        "mobile_money",
+        "crypto_deposit",
+        "stablecoin"
+      ],
       "fee_model": "Fees vary by transaction type and country. Stablecoin on/off-ramp fees apply. B2B infrastructure pricing available for business partners.",
       "speed": "Stablecoin transactions typically confirmed within minutes. Fiat settlements via mobile money or bank transfer vary by country, typically same-day to 1 business day.",
       "website": "https://yellowcard.io",
@@ -1415,9 +1864,12 @@
     {
       "slug": "strike",
       "name": "Strike",
-      "logo_url": "https://strike.me/images/strike-logo.svg",
+      "logo_url": null,
       "founded": 2018,
-      "headquarters": { "city": "Chicago, Illinois", "country": "United States" },
+      "headquarters": {
+        "city": "Chicago, Illinois",
+        "country": "United States"
+      },
       "regulated_in": [
         "US — NYDFS (BitLicense, obtained March 2026), FinCEN (Money Services Business), state money transmitter licenses",
         "El Salvador — licensed under digital assets regulatory framework",
@@ -1426,7 +1878,13 @@
       ],
       "supported_currencies": 3,
       "supported_countries": 100,
-      "transfer_methods": ["bank_transfer", "bitcoin_lightning", "bitcoin_onchain", "debit_card", "ach"],
+      "transfer_methods": [
+        "bank_transfer",
+        "bitcoin_lightning",
+        "bitcoin_onchain",
+        "debit_card",
+        "ach"
+      ],
       "fee_model": "No fees on peer-to-peer Bitcoin payments over Lightning Network. Spread on buy/sell orders. ACH deposits are free. Competitive rates for cross-border payments via Bitcoin rails.",
       "speed": "Lightning Network payments settle in seconds. On-chain Bitcoin transactions confirmed in minutes. ACH deposits 1–3 business days. Cross-border payments via Lightning near-instant.",
       "website": "https://strike.me",

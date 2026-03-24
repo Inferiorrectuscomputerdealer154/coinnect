@@ -240,7 +240,7 @@ app = FastAPI(
         "Rate limits: 20 req/day / 50/hr anonymous (beta) · 1,000/day free key · "
         "5,000/day agent key · see coinnect.bot/#pricing"
     ),
-    version="2026.03.24.1",
+    version="2026.03.24.2",
     contact={"name": "Coinnect", "url": "https://coinnect.bot"},
     license_info={"name": "MIT"},
     lifespan=lifespan,
@@ -394,7 +394,7 @@ async def well_known_agent():
         "name": "Coinnect",
         "description": "Open protocol for global money routing. Finds the cheapest path between any two currencies — fiat, crypto, P2P.",
         "url": "https://coinnect.bot",
-        "version": "2026.03.24.1",
+        "version": "2026.03.24.2",
         "license": "MIT",
         "contact": "miguel@coinnect.bot",
         "capabilities": {

@@ -142,13 +142,33 @@
     /* Pill badge */
     .pill{display:inline-flex;align-items:center;gap:.3rem;font-size:.65rem;font-weight:600;letter-spacing:.05em;padding:.2rem .55rem;border-radius:9999px;border-width:1px;}
     #heroDemo{transition:opacity 0.3s ease;}
+    /* Sticky header compact state */
+    header{transition:padding .25s ease, box-shadow .25s ease, backdrop-filter .25s ease;}
+    header .header-inner{transition:height .25s ease;}
+    header #langPicker,header #navDonate,header #navApiKey,header .whitepaper-link{transition:opacity .25s ease, transform .25s ease;}
+    header.header-compact{
+      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      background:rgba(255,255,255,.85);
+      border-bottom-color:rgba(229,231,235,.7);
+      box-shadow:0 1px 3px rgba(0,0,0,.06);
+    }
+    .dark header.header-compact{
+      background:rgba(17,24,39,.85);
+      border-bottom-color:rgba(55,65,81,.7);
+      box-shadow:0 1px 3px rgba(0,0,0,.3);
+    }
+    header.header-compact .header-inner{height:2.75rem;}
+    header.header-compact #langPicker,
+    header.header-compact #navDonate,
+    header.header-compact #navApiKey,
+    header.header-compact .whitepaper-link{opacity:0;pointer-events:none;transform:translateY(-4px);width:0;overflow:hidden;padding:0;margin:0;}
   </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-200">
 
 <!-- ── Header ────────────────────────────────────────────────────────────── -->
 <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-20">
-  <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between gap-4">
+  <div class="header-inner max-w-5xl mx-auto px-5 h-14 flex items-center justify-between gap-4">
 
     <!-- Logo -->
     <a href="/" class="flex items-center gap-2.5 shrink-0">
@@ -821,6 +841,24 @@ document.addEventListener('DOMContentLoaded',function(){
   },100);
 });
 </script>
+<script>
+// Sticky header: compact on scroll, restore on top
+(function(){
+  const hdr=document.querySelector('header');
+  if(!hdr)return;
+  let ticking=false;
+  window.addEventListener('scroll',function(){
+    if(!ticking){
+      requestAnimationFrame(function(){
+        if(window.scrollY>120){hdr.classList.add('header-compact');}
+        else{hdr.classList.remove('header-compact');}
+        ticking=false;
+      });
+      ticking=true;
+    }
+  },{passive:true});
+})();
+</script>
 
 <footer class="text-xs text-gray-400 dark:text-gray-600 py-8 border-t border-gray-100 dark:border-gray-800">
   <div class="max-w-5xl mx-auto px-4 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-5 mb-6">
@@ -897,7 +935,7 @@ document.addEventListener('DOMContentLoaded',function(){
       <span>·</span>
       <span>MIT License</span>
       <span>·</span>
-      <span class="opacity-50">v2026.03.23.1</span>
+      <span class="opacity-50">v2026.03.24.2</span>
     </div>
   </div>
 </footer>
