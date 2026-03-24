@@ -209,7 +209,7 @@
         Compare every way to send money <span class="text-cyan-600 dark:text-cyan-400">anywhere</span>
       </h1>
       <p class="text-gray-500 dark:text-gray-400 text-sm max-w-md mx-auto" data-i18n="hero_sub">
-        The cheapest path between any two currencies — fiat, crypto, P2P. Free. Open. For humans &amp; bots.
+        The cheapest path between any two currencies — fiat, crypto, P2P. Standard. Free. Open. For humans &amp; bots.
       </p>
       <p class="mt-2 text-base text-cyan-600 dark:text-cyan-400 font-medium" id="taglineRotator"></p>
       <!-- Stats -->
@@ -447,7 +447,6 @@
       <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="crypto" onclick="setFilter('crypto')" data-i18n="filter_crypto">Crypto</button>
       <div class="ml-auto flex items-center gap-2">
         <a href="/suggest" class="text-xs px-2.5 py-1.5 rounded-full border border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium no-underline" data-i18n="suggest_corridor">+ Suggest corridor</a>
-        <button onclick="openFeedback('bug')" class="text-xs px-2.5 py-1.5 rounded-full border border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium" data-i18n="report_bug">Report bug</button>
         <div id="routeCount" class="text-xs text-gray-400"></div>
         <div id="rateAge" class="text-xs text-gray-400 hidden">🟢 <span id="rateAgeText"></span></div>
         <!-- View toggle -->
@@ -2621,5 +2620,7 @@ async function getFingerprint(){
   </div>
 </div>
 
+<!-- Floating bug report button -->
+<button onclick="openFeedback('bug')" class="fixed bottom-4 right-4 z-40 w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all shadow-sm flex items-center justify-center text-sm" title="Report a bug">🐛</button>
 </body>
 </html>

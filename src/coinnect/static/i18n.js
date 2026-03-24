@@ -23,7 +23,7 @@ const I18N={
 en:{
   nav_api:'API docs',nav_whitepaper:'Whitepaper',nav_pricing:'Pricing',nav_support:'❤️ Support',
   hero_h1:'The free open map for <span class="gradient-text">global money</span>',
-  hero_sub:'The cheapest path between any two currencies — fiat, crypto, P2P. Free. Open. For humans & bots.',
+  hero_sub:'The cheapest path between any two currencies — fiat, crypto, P2P. Standard. Free. Open. For humans & bots.',
   for_humans:'For humans',for_agents:'For AI agents',
   h_1:'→ Pick currencies & amount',h_2:'→ Compare all routes instantly',
   h_3:'→ See step-by-step instructions',h_4:'→ Know exactly how much arrives',
@@ -101,7 +101,7 @@ en:{
 es:{
   nav_api:'API docs',nav_whitepaper:'Libro blanco',nav_pricing:'Precios',nav_support:'❤️ Apoyar',
   hero_h1:'El mapa abierto y gratuito para <span class="gradient-text">el dinero global</span>',
-  hero_sub:'La ruta más barata entre cualquier par de divisas — fiat, cripto, P2P. Gratis. Abierto. Para humanos y bots.',
+  hero_sub:'La ruta más barata entre cualquier par de divisas — fiat, cripto, P2P. Estándar. Gratis. Abierto. Para humanos y bots.',
   for_humans:'Para personas',for_agents:'Para agentes IA',
   h_1:'→ Elige monedas y monto',h_2:'→ Compara rutas al instante',
   h_3:'→ Ve instrucciones paso a paso',h_4:'→ Sabe exactamente cuánto llega',
@@ -178,7 +178,7 @@ es:{
 pt:{
   nav_api:'API docs',nav_whitepaper:'White paper',nav_pricing:'Preços',nav_support:'❤️ Apoiar',
   hero_h1:'O mapa aberto e gratuito para <span class="gradient-text">o dinheiro global</span>',
-  hero_sub:'O caminho mais barato entre quaisquer duas moedas — fiat, cripto, P2P. Grátis. Aberto. Para humanos e bots.',
+  hero_sub:'O caminho mais barato entre quaisquer duas moedas — fiat, cripto, P2P. Padrão. Grátis. Aberto. Para humanos e bots.',
   for_humans:'Para pessoas',for_agents:'Para agentes IA',
   h_1:'→ Escolha moedas e valor',h_2:'→ Compare rotas instantaneamente',
   h_3:'→ Veja instruções passo a passo',h_4:'→ Saiba exatamente quanto chega',
@@ -254,7 +254,7 @@ pt:{
 fr:{
   nav_api:'Docs API',nav_whitepaper:'Livre blanc',nav_pricing:'Tarifs',nav_support:'❤️ Soutenir',
   hero_h1:'La carte ouverte et gratuite pour <span class="gradient-text">l\'argent mondial</span>',
-  hero_sub:'Le chemin le moins cher entre deux devises — fiat, crypto, P2P. Gratuit. Ouvert. Pour humains et bots.',
+  hero_sub:'Le chemin le moins cher entre deux devises — fiat, crypto, P2P. Standard. Gratuit. Ouvert. Pour humains et bots.',
   for_humans:'Pour les humains',for_agents:'Pour les agents IA',
   h_1:'→ Choisissez devises et montant',h_2:'→ Comparez toutes les routes instantanément',
   h_3:'→ Consultez les instructions étape par étape',h_4:'→ Sachez exactement combien arrive',
@@ -330,7 +330,7 @@ fr:{
 ar:{
   nav_api:'توثيق API',nav_whitepaper:'الورقة البيضاء',nav_pricing:'الأسعار',nav_support:'❤️ دعم',
   hero_h1:'الخريطة المفتوحة والمجانية <span class="gradient-text">للمال العالمي</span>',
-  hero_sub:'أرخص مسار بين أي عملتين — فيات، كريبتو، P2P. مجاني. مفتوح. للبشر والروبوتات.',
+  hero_sub:'أرخص مسار بين أي عملتين — فيات، كريبتو، P2P. معياري. مجاني. مفتوح. للبشر والروبوتات.',
   for_humans:'للبشر',for_agents:'لعملاء الذكاء الاصطناعي',
   h_1:'← اختر العملات والمبلغ',h_2:'← قارن جميع المسارات فوراً',
   h_3:'← اطلع على التعليمات خطوة بخطوة',h_4:'← اعرف بالضبط كم يصل',
@@ -406,7 +406,7 @@ ar:{
 hi:{
   nav_api:'API दस्तावेज़',nav_whitepaper:'श्वेत पत्र',nav_pricing:'मूल्य निर्धारण',nav_support:'❤️ समर्थन करें',
   hero_h1:'<span class="gradient-text">वैश्विक धन</span> के लिए मुफ़्त और खुला नक्शा',
-  hero_sub:'किन्हीं दो मुद्राओं के बीच सबसे सस्ता रास्ता — फिएट, क्रिप्टो, P2P। मुफ्त। खुला। इंसानों और बॉट्स के लिए।',
+  hero_sub:'किन्हीं दो मुद्राओं के बीच सबसे सस्ता रास्ता — फिएट, क्रिप्टो, P2P। मानक। मुफ्त। खुला। इंसानों और बॉट्स के लिए।',
   for_humans:'लोगों के लिए',for_agents:'AI एजेंट के लिए',
   h_1:'→ मुद्राएं और राशि चुनें',h_2:'→ तुरंत सभी मार्गों की तुलना करें',
   h_3:'→ चरण-दर-चरण निर्देश देखें',h_4:'→ जानें कि ठीक कितना पहुंचेगा',
@@ -482,7 +482,7 @@ hi:{
 bn:{
   nav_api:'API ডকস',nav_whitepaper:'শ্বেতপত্র',nav_pricing:'মূল্য',nav_support:'❤️ সমর্থন',
   hero_h1:'<span class="gradient-text">বৈশ্বিক অর্থের</span> বিনামূল্যে উন্মুক্ত মানচিত্র',
-  hero_sub:'যেকোনো দুটি মুদ্রার মধ্যে সবচেয়ে সস্তা পথ — ফিয়াট, ক্রিপ্টো, P2P। বিনামূল্যে। উন্মুক্ত। মানুষ ও বটদের জন্য।',
+  hero_sub:'যেকোনো দুটি মুদ্রার মধ্যে সবচেয়ে সস্তা পথ — ফিয়াট, ক্রিপ্টো, P2P। মানসম্মত। বিনামূল্যে। উন্মুক্ত। মানুষ ও বটদের জন্য।',
   for_humans:'মানুষের জন্য',for_agents:'AI এজেন্টের জন্য',
   h_1:'→ মুদ্রা ও পরিমাণ বেছে নিন',h_2:'→ তাৎক্ষণিকভাবে সব রুট তুলনা করুন',
   h_3:'→ ধাপে ধাপে নির্দেশনা দেখুন',h_4:'→ ঠিক কতটুকু পৌঁছাবে জানুন',
@@ -558,7 +558,7 @@ bn:{
 id:{
   nav_api:'Dok API',nav_whitepaper:'Makalah',nav_pricing:'Harga',nav_support:'❤️ Dukung',
   hero_h1:'Peta terbuka dan gratis untuk <span class="gradient-text">uang global</span>',
-  hero_sub:'Jalur termurah antar dua mata uang — fiat, kripto, P2P. Gratis. Terbuka. Untuk manusia & bot.',
+  hero_sub:'Jalur termurah antar dua mata uang — fiat, kripto, P2P. Standar. Gratis. Terbuka. Untuk manusia & bot.',
   for_humans:'Untuk manusia',for_agents:'Untuk agen AI',
   h_1:'→ Pilih mata uang & jumlah',h_2:'→ Bandingkan semua rute seketika',
   h_3:'→ Lihat instruksi langkah demi langkah',h_4:'→ Ketahui persis berapa yang diterima',
@@ -634,7 +634,7 @@ id:{
 ja:{
   nav_api:'APIドキュメント',nav_whitepaper:'ホワイトペーパー',nav_pricing:'料金',nav_support:'❤️ サポート',
   hero_h1:'<span class="gradient-text">グローバルマネー</span>のための無料オープンマップ',
-  hero_sub:'どの2通貨間でも最安ルート — 法定通貨、暗号通貨、P2P。無料。オープン。人間とボットのために。',
+  hero_sub:'どの2通貨間でも最安ルート — 法定通貨、暗号通貨、P2P。標準。無料。オープン。人間とボットのために。',
   for_humans:'ユーザー向け',for_agents:'AIエージェント向け',
   h_1:'→ 通貨と金額を選ぶ',h_2:'→ すべての経路を即座に比較',
   h_3:'→ ステップごとの説明を見る',h_4:'→ 到着額を正確に把握する',
@@ -710,7 +710,7 @@ ja:{
 de:{
   nav_api:'API Doku',nav_whitepaper:'Whitepaper',nav_pricing:'Preise',nav_support:'❤️ Unterstützen',
   hero_h1:'Die freie offene Karte für <span class="gradient-text">globales Geld</span>',
-  hero_sub:'Der günstigste Weg zwischen zwei Währungen — Fiat, Krypto, P2P. Kostenlos. Offen. Für Menschen & Bots.',
+  hero_sub:'Der günstigste Weg zwischen zwei Währungen — Fiat, Krypto, P2P. Standard. Kostenlos. Offen. Für Menschen & Bots.',
   for_humans:'Für Menschen',for_agents:'Für KI-Agenten',
   h_1:'→ Währungen & Betrag wählen',h_2:'→ Alle Routen sofort vergleichen',
   h_3:'→ Schritt-für-Schritt-Anleitung sehen',h_4:'→ Genau wissen was ankommt',
@@ -786,7 +786,7 @@ de:{
 tl:{
   nav_api:'API docs',nav_whitepaper:'Whitepaper',nav_pricing:'Presyo',nav_support:'❤️ Suportahan',
   hero_h1:'Ang libreng bukas na mapa para sa <span class="gradient-text">pandaigdigang pera</span>',
-  hero_sub:'Ang pinakamura na landas sa pagitan ng dalawang pera — fiat, crypto, P2P. Libre. Bukas. Para sa mga tao at bot.',
+  hero_sub:'Ang pinakamura na landas sa pagitan ng dalawang pera — fiat, crypto, P2P. Standard. Libre. Bukas. Para sa mga tao at bot.',
   for_humans:'Para sa mga tao',for_agents:'Para sa mga AI agent',
   h_1:'→ Pumili ng pera at halaga',h_2:'→ Ihambing lahat ng ruta agad',
   h_3:'→ Tingnan ang mga tagubilin',h_4:'→ Malaman ang eksaktong matatanggap',
@@ -862,7 +862,7 @@ tl:{
 vi:{
   nav_api:'Tài liệu API',nav_whitepaper:'Sách trắng',nav_pricing:'Bảng giá',nav_support:'❤️ Ủng hộ',
   hero_h1:'Bản đồ mở và miễn phí cho <span class="gradient-text">tiền tệ toàn cầu</span>',
-  hero_sub:'Con đường rẻ nhất giữa hai loại tiền tệ — fiat, crypto, P2P. Miễn phí. Mở. Cho con người & bot.',
+  hero_sub:'Con đường rẻ nhất giữa hai loại tiền tệ — fiat, crypto, P2P. Tiêu chuẩn. Miễn phí. Mở. Cho con người & bot.',
   for_humans:'Dành cho người dùng',for_agents:'Dành cho AI agent',
   h_1:'→ Chọn tiền tệ & số tiền',h_2:'→ So sánh tất cả tuyến ngay',
   h_3:'→ Xem hướng dẫn từng bước',h_4:'→ Biết chính xác số tiền nhận được',
@@ -938,7 +938,7 @@ vi:{
 th:{
   nav_api:'เอกสาร API',nav_whitepaper:'เอกสารสีขาว',nav_pricing:'ราคา',nav_support:'❤️ สนับสนุน',
   hero_h1:'แผนที่เปิดและฟรีสำหรับ <span class="gradient-text">เงินทั่วโลก</span>',
-  hero_sub:'เส้นทางที่ถูกที่สุดระหว่างสองสกุลเงิน — เฟียต, คริปโต, P2P. ฟรี. เปิด. สำหรับมนุษย์และบอท.',
+  hero_sub:'เส้นทางที่ถูกที่สุดระหว่างสองสกุลเงิน — เฟียต, คริปโต, P2P. มาตรฐาน. ฟรี. เปิด. สำหรับมนุษย์และบอท.',
   for_humans:'สำหรับผู้ใช้',for_agents:'สำหรับ AI agent',
   h_1:'→ เลือกสกุลเงินและจำนวน',h_2:'→ เปรียบเทียบเส้นทางทั้งหมดทันที',
   h_3:'→ ดูคำแนะนำทีละขั้นตอน',h_4:'→ รู้ว่าจะได้รับเท่าไหร่',
@@ -1014,7 +1014,7 @@ th:{
 sw:{
   nav_api:'Nyaraka za API',nav_whitepaper:'Karatasi nyeupe',nav_pricing:'Bei',nav_support:'❤️ Saidia',
   hero_h1:'Ramani wazi na ya bure kwa <span class="gradient-text">pesa ya kimataifa</span>',
-  hero_sub:'Njia ya bei nafuu zaidi kati ya sarafu mbili — fiat, crypto, P2P. Bure. Wazi. Kwa wanadamu na boti.',
+  hero_sub:'Njia ya bei nafuu zaidi kati ya sarafu mbili — fiat, crypto, P2P. Kiwango. Bure. Wazi. Kwa wanadamu na boti.',
   for_humans:'Kwa wanadamu',for_agents:'Kwa mawakala wa AI',
   h_1:'→ Chagua sarafu na kiasi',h_2:'→ Linganisha njia zote mara moja',
   h_3:'→ Angalia maelekezo hatua kwa hatua',h_4:'→ Jua hasa kiasi kitakachofika',
@@ -1090,7 +1090,7 @@ sw:{
 ur:{
   nav_api:'API دستاویزات',nav_whitepaper:'وائٹ پیپر',nav_pricing:'قیمتیں',nav_support:'❤️ مدد کریں',
   hero_h1:'<span class="gradient-text">عالمی رقم</span> کے لیے مفت اور کھلا نقشہ',
-  hero_sub:'کسی بھی دو کرنسیوں کے درمیان سب سے سستا راستہ — فیاٹ، کرپٹو، P2P۔ مفت۔ کھلا۔ انسانوں اور بوٹس کے لیے۔',
+  hero_sub:'کسی بھی دو کرنسیوں کے درمیان سب سے سستا راستہ — فیاٹ، کرپٹو، P2P۔ معیاری۔ مفت۔ کھلا۔ انسانوں اور بوٹس کے لیے۔',
   for_humans:'لوگوں کے لیے',for_agents:'AI ایجنٹس کے لیے',
   h_1:'← کرنسی اور رقم منتخب کریں',h_2:'← تمام راستوں کا فوری موازنہ کریں',
   h_3:'← قدم بہ قدم ہدایات دیکھیں',h_4:'← جانیں کہ بالکل کتنا پہنچے گا',
@@ -1166,7 +1166,7 @@ ur:{
 'zh-CN':{
   nav_api:'API 文档',nav_whitepaper:'白皮书',nav_pricing:'价格',nav_support:'❤️ 支持我们',
   hero_h1:'<span class="gradient-text">全球汇款</span>的免费开放地图',
-  hero_sub:'任意两种货币之间最便宜的路径——法币、加密货币、P2P。免费、开放，人与机器皆可用。',
+  hero_sub:'任意两种货币之间最便宜的路径——法币、加密货币、P2P。标准、免费、开放，人与机器皆可用。',
   for_humans:'给用户',for_agents:'给 AI 代理',
   h_1:'→ 选择货币和金额',h_2:'→ 即时比较所有路线',
   h_3:'→ 查看分步操作指南',h_4:'→ 准确知道对方收到多少',
@@ -1244,7 +1244,7 @@ ur:{
 'zh-TW':{
   nav_api:'API 文件',nav_whitepaper:'白皮書',nav_pricing:'價格',nav_support:'❤️ 支持我們',
   hero_h1:'<span class="gradient-text">全球匯款</span>的免費開放地圖',
-  hero_sub:'任意兩種貨幣之間最便宜的路徑——法幣、加密貨幣、P2P。免費、開放，人與機器皆可用。',
+  hero_sub:'任意兩種貨幣之間最便宜的路徑——法幣、加密貨幣、P2P。標準、免費、開放，人與機器皆可用。',
   for_humans:'給使用者',for_agents:'給 AI 代理',
   h_1:'→ 選擇貨幣和金額',h_2:'→ 即時比較所有路線',
   h_3:'→ 查看逐步操作指南',h_4:'→ 精確知道對方收到多少',
