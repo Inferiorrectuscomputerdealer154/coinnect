@@ -381,6 +381,1069 @@
       ],
       "integration_status": "live",
       "coinnect_data_source": "Direct API (live order book via Bitso REST API — not in CCXT, custom adapter)"
+    },
+    {
+      "slug": "coinbase",
+      "name": "Coinbase",
+      "logo_url": "https://www.coinbase.com/img/favicon/apple-touch-icon.png",
+      "founded": 2012,
+      "headquarters": { "city": "Wilmington, Delaware", "country": "United States" },
+      "regulated_in": [
+        "US — FinCEN (Money Services Business), state money transmitter licenses in most states",
+        "US — NYDFS (BitLicense)",
+        "EU — MiFID-regulated entity for crypto futures across 26 European countries",
+        "UK — FCA (registered)",
+        "Singapore — MAS (Major Payment Institution license)",
+        "Japan — FSA (via local entity)",
+        "Multiple additional licenses globally"
+      ],
+      "supported_currencies": 250,
+      "supported_countries": 177,
+      "transfer_methods": ["bank_transfer", "debit_card", "credit_card", "ach", "wire_transfer", "crypto_deposit", "paypal"],
+      "fee_model": "Coinbase Advanced spot trading fees start at 0.60% maker / 1.20% taker at base tier, decreasing with 30-day volume. Advanced tiers reach 0.00% maker / 0.05% taker at $500M+ volume.",
+      "speed": "Crypto deposits confirmed in minutes. ACH deposits typically 3–5 business days for settlement. Wire transfers 1–3 business days. Instant buy available via debit card.",
+      "website": "https://www.coinbase.com",
+      "api_docs": "https://docs.cdp.coinbase.com/exchange/docs/welcome",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/coinbase-buy-bitcoin-crypto/id886427730",
+        "android": "https://play.google.com/store/apps/details?id=com.coinbase.android"
+      },
+      "interesting_facts": [
+        "Founded in 2012 by Brian Armstrong and Fred Ehrsam.",
+        "Became the first major cryptocurrency exchange to go public, listing on NASDAQ under ticker symbol COIN in April 2021.",
+        "Operates as a remote-first company, serving over 100 million verified users in 177 countries.",
+        "Launched Base, a Layer 2 blockchain built on the OP Stack, in August 2023.",
+        "Offers crypto futures trading across 26 European countries through its MiFID-regulated entity."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.coinbase)"
+    },
+    {
+      "slug": "gemini",
+      "name": "Gemini",
+      "logo_url": "https://www.gemini.com/static/images/gemini-logo.svg",
+      "founded": 2014,
+      "headquarters": { "city": "New York", "country": "United States" },
+      "regulated_in": [
+        "US — NYDFS (New York Trust Company, BitLicense)",
+        "EU — MiCA license via Malta Financial Services Authority (MFSA)",
+        "Malta — MFSA (European headquarters)",
+        "UK — FCA (registered)",
+        "Singapore — MAS",
+        "Available in all 50 US states"
+      ],
+      "supported_currencies": 70,
+      "supported_countries": 60,
+      "transfer_methods": ["bank_transfer", "debit_card", "credit_card", "wire_transfer", "crypto_deposit", "ach"],
+      "fee_model": "ActiveTrader spot fees start at 0.20% maker / 0.40% taker for low volume, decreasing with higher 30-day volume. Maker rebate of -0.01% available at $500M+ volume tier.",
+      "speed": "Crypto deposits confirmed in minutes. ACH deposits available within 4–5 business days. Wire transfers typically 1–3 business days. Instant buy via debit card.",
+      "website": "https://www.gemini.com",
+      "api_docs": "https://docs.gemini.com",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/gemini-buy-bitcoin-crypto/id1408914447",
+        "android": "https://play.google.com/store/apps/details?id=com.gemini.android.app"
+      },
+      "interesting_facts": [
+        "Founded in 2014 by Cameron and Tyler Winklevoss; went live in October 2015.",
+        "Regulated as a New York Trust Company, one of the earliest crypto-native entities to hold this charter.",
+        "Obtained a MiCA license from the Malta Financial Services Authority in August 2025, enabling operation across all 27 EU member states.",
+        "Went public on the NASDAQ Global Select Market under ticker symbol GEMI in September 2025.",
+        "Issued the Gemini Dollar (GUSD), one of the first regulated stablecoins backed 1:1 by USD."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.gemini)"
+    },
+    {
+      "slug": "bybit",
+      "name": "Bybit",
+      "logo_url": "https://www.bybit.com/common-static/logo/bybit-logo.svg",
+      "founded": 2018,
+      "headquarters": { "city": "Dubai", "country": "United Arab Emirates" },
+      "regulated_in": [
+        "UAE — SCA (Virtual Asset Platform Operator License)",
+        "Austria — FMA (MiCA CASP authorization, EEA passporting)",
+        "Kazakhstan — AFSA (registered)",
+        "Georgia — National Bank (registered)",
+        "India — FIU-IND (registered VASP)"
+      ],
+      "supported_currencies": 2500,
+      "supported_countries": 160,
+      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit"],
+      "fee_model": "Spot trading fees start at 0.10% maker / 0.10% taker at base tier, decreasing with 30-day volume. Supports up to 125x leverage on major crypto futures contracts.",
+      "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits via P2P typically instant; bank transfers 1–3 business days.",
+      "website": "https://www.bybit.com",
+      "api_docs": "https://bybit-exchange.github.io/docs/v5/intro",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/bybit-buy-trade-crypto/id1488296980",
+        "android": "https://play.google.com/store/apps/details?id=com.bybit.app"
+      },
+      "interesting_facts": [
+        "Founded in 2018 by Ben Zhou, a former forex broker executive.",
+        "Relocated global headquarters from Singapore to Dubai in 2022.",
+        "Lists over 2,500 cryptocurrencies, making it one of the largest exchanges by asset count.",
+        "Received MiCA CASP authorization from Austria's FMA, enabling regulated services across the EEA.",
+        "Available in over 160 countries, serving a global user base focused on derivatives and spot trading."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bybit)"
+    },
+    {
+      "slug": "kucoin",
+      "name": "KuCoin",
+      "logo_url": "https://assets.staticimg.com/cms/media/1lB3PkckFDyfxz6VBGkNM3.svg",
+      "founded": 2017,
+      "headquarters": { "city": "Victoria", "country": "Seychelles" },
+      "regulated_in": [
+        "Austria — FMA (MiCA CASP authorization, EEA passporting)",
+        "India — FIU-IND (registered VASP)",
+        "Australia — AUSTRAC (Digital Currency Exchange)",
+        "Turks and Caicos Islands — re-domiciled operating entity (2025)"
+      ],
+      "supported_currencies": 700,
+      "supported_countries": 200,
+      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit"],
+      "fee_model": "Spot trading fees start at 0.10% maker / 0.10% taker at base tier, decreasing with 30-day volume and KCS holdings. Futures trading fees from 0.02% maker / 0.06% taker.",
+      "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits via P2P or third-party partners typically instant to 1 business day.",
+      "website": "https://www.kucoin.com",
+      "api_docs": "https://www.kucoin.com/docs/beginners/introduction",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/kucoin-buy-bitcoin-crypto/id1378956601",
+        "android": "https://play.google.com/store/apps/details?id=com.kubi.kucoin"
+      },
+      "interesting_facts": [
+        "Founded in 2017 by Chun Gan, Ke Tang, and Johnny Lyu.",
+        "Serves users in over 200 countries with support for 700+ cryptocurrencies.",
+        "Received MiCA CASP authorization from Austria's FMA for compliant services across the EEA.",
+        "Known for early listing of emerging tokens, earning the nickname 'The People's Exchange.'",
+        "Offers KuCoin Earn, lending, and bot trading alongside standard spot and futures markets."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.kucoin)"
+    },
+    {
+      "slug": "gate-io",
+      "name": "Gate.io",
+      "logo_url": "https://www.gate.io/images/logo/logo_blue.svg",
+      "founded": 2013,
+      "headquarters": { "city": "George Town", "country": "Cayman Islands" },
+      "regulated_in": [
+        "Malta — MFSA (MiCA license and PSD2 Payment Institution license)",
+        "Dubai — VARA (Virtual Assets Regulatory Authority)",
+        "Japan — FSA (registered)",
+        "Gibraltar — GFSC",
+        "Cyprus — CySEC",
+        "Australia — AUSTRAC",
+        "Bahamas — SCB",
+        "Hong Kong — TCSP"
+      ],
+      "supported_currencies": 3500,
+      "supported_countries": 150,
+      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit"],
+      "fee_model": "Spot trading fees start at 0.20% maker / 0.20% taker at base tier, with tiered discounts based on 30-day volume and GT (GateToken) holdings.",
+      "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits via third-party payment providers typically instant to 1 business day.",
+      "website": "https://www.gate.io",
+      "api_docs": "https://www.gate.io/docs/developers/apiv4/en/",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/gate-io-buy-bitcoin-crypto/id1294998195",
+        "android": "https://play.google.com/store/apps/details?id=com.gateio.gateio"
+      },
+      "interesting_facts": [
+        "Originally launched as Bter.com in 2013, rebranded to Gate.io in 2017.",
+        "Lists over 3,500 tokens, one of the highest asset counts among global exchanges.",
+        "Serves over 46 million users across 150+ countries.",
+        "Obtained a PSD2 Payment Institution license from Malta's MFSA in February 2026.",
+        "Holds regulatory approvals in 8+ jurisdictions including Malta, Dubai, Japan, and Gibraltar."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.gateio)"
+    },
+    {
+      "slug": "bitget",
+      "name": "Bitget",
+      "logo_url": "https://img.bitgetimg.com/image/third/1686738498601.png",
+      "founded": 2018,
+      "headquarters": { "city": "Victoria", "country": "Seychelles" },
+      "regulated_in": [
+        "Australia — AUSTRAC (Digital Currency Exchange Provider)",
+        "Italy — OAM (VASP registration)",
+        "Poland — Ministry of Finance (VASP registration)",
+        "Lithuania — Center of Registers (VASP)",
+        "El Salvador — BCR (Bitcoin Services Provider) and CNAD (Digital Asset Service Provider)",
+        "Argentina — CNV (registered)",
+        "UK — partnered with FCA-authorized entity"
+      ],
+      "supported_currencies": 1300,
+      "supported_countries": 150,
+      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit"],
+      "fee_model": "Spot trading fees start at 0.10% maker / 0.10% taker at base tier, decreasing with 30-day volume and BGB holdings. Copy trading and futures trading available with separate fee schedules.",
+      "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits via card or third-party providers typically instant.",
+      "website": "https://www.bitget.com",
+      "api_docs": "https://www.bitget.com/api-doc/common/intro",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/bitget-buy-bitcoin-crypto/id1442778704",
+        "android": "https://play.google.com/store/apps/details?id=com.bitget.exchange"
+      },
+      "interesting_facts": [
+        "Founded in 2018; one of the leading copy trading platforms in the cryptocurrency space.",
+        "Supports over 1,300 cryptocurrencies with 900+ spot trading pairs.",
+        "Registered as a VASP in multiple European and Latin American jurisdictions.",
+        "Holds both a Bitcoin Services Provider and Digital Asset Service Provider license in El Salvador.",
+        "Available in over 150 countries with a focus on derivatives and social trading features."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bitget)"
+    },
+    {
+      "slug": "mexc",
+      "name": "MEXC",
+      "logo_url": "https://www.mexc.com/resource/images/logo/mexc-logo.svg",
+      "founded": 2018,
+      "headquarters": { "city": "Victoria", "country": "Seychelles" },
+      "regulated_in": [
+        "UK — FCA (authorized, obtained 2025)",
+        "Previously operated under limited offshore regulation"
+      ],
+      "supported_currencies": 3000,
+      "supported_countries": 170,
+      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit"],
+      "fee_model": "Spot trading offers 0% maker fees as a promotional rate; taker fees start at 0.05%. Futures fees start at 0.00% maker / 0.02% taker.",
+      "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits via third-party providers typically instant to same-day.",
+      "website": "https://www.mexc.com",
+      "api_docs": "https://mexcdevelop.github.io/apidocs/spot_v3_en/",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/mexc-buy-bitcoin-crypto/id1482585855",
+        "android": "https://play.google.com/store/apps/details?id=com.mexc.spot"
+      },
+      "interesting_facts": [
+        "Founded in 2018; lists over 3,000 cryptocurrencies, one of the widest selections globally.",
+        "Known for rapid new token listings, often among the first exchanges to list emerging projects.",
+        "Obtained FCA authorization in the UK in 2025, expanding its regulated presence.",
+        "Serves users in over 170 countries with support for multiple fiat on-ramp partners.",
+        "Offers zero maker fees on spot trading as a competitive differentiator."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.mexc)"
+    },
+    {
+      "slug": "htx",
+      "name": "HTX",
+      "logo_url": "https://www.htx.com/favicon.ico",
+      "founded": 2013,
+      "headquarters": { "city": "Victoria", "country": "Seychelles" },
+      "regulated_in": [
+        "Dubai — VARA (Virtual Assets Regulatory Authority)",
+        "Offices in Hong Kong, South Korea, Japan, and the United States"
+      ],
+      "supported_currencies": 700,
+      "supported_countries": 160,
+      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "p2p", "crypto_deposit"],
+      "fee_model": "Spot trading fees start at 0.20% maker / 0.20% taker at base tier, decreasing with 30-day volume and HT holdings. Futures trading fees from 0.02% maker / 0.04% taker.",
+      "speed": "Crypto deposits confirmed in minutes depending on blockchain. Fiat deposits via P2P or card typically instant to same-day.",
+      "website": "https://www.htx.com",
+      "api_docs": "https://www.htx.com/en-us/opend/newApiPages/",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/htx-buy-crypto-bitcoin/id1023263342",
+        "android": "https://play.google.com/store/apps/details?id=com.huobi.pro"
+      },
+      "interesting_facts": [
+        "Founded in 2013 by Leon Li; originally launched as Huobi, rebranded to HTX in September 2023.",
+        "Serves over 45 million registered users across 160+ countries.",
+        "Supports over 700 digital currencies and tokens for spot and derivatives trading.",
+        "Holds a Virtual Assets Regulatory Authority (VARA) license in Dubai.",
+        "One of the earliest cryptocurrency exchanges founded in China, later relocating internationally."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.htx)"
+    },
+    {
+      "slug": "crypto-com",
+      "name": "Crypto.com",
+      "logo_url": "https://crypto.com/static/images/crypto-com-logo.svg",
+      "founded": 2016,
+      "headquarters": { "city": "Singapore", "country": "Singapore" },
+      "regulated_in": [
+        "Singapore — MAS (Major Payment Institution license)",
+        "Australia — ASIC (Digital Currency Exchange and Financial Services license)",
+        "Hong Kong — SFC (Virtual Asset Trading Platform license)",
+        "South Korea — VASP and Electronic Financial Transaction Act",
+        "Dubai — VARA (Virtual Assets Service Provider license)",
+        "Abu Dhabi — ADGM (Category 3A license)",
+        "Bahrain — Payment Service Provider license",
+        "Brazil — Payment Institution license and COAF registration",
+        "Canada — FINTRAC and provincial securities registrations",
+        "UK — FCA (registered crypto asset service provider)"
+      ],
+      "supported_currencies": 425,
+      "supported_countries": 90,
+      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "crypto_deposit", "crypto_com_pay"],
+      "fee_model": "Spot trading fees start at 0.075% maker / 0.075% taker at base tier, decreasing with 30-day volume and CRO staking. Crypto.com Visa Card offers cashback on spending.",
+      "speed": "Crypto deposits confirmed in minutes. Fiat deposits via bank transfer typically 1–3 business days. Instant buy via card available.",
+      "website": "https://crypto.com",
+      "api_docs": "https://exchange-docs.crypto.com/exchange/v1/rest-ws/index.html",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/crypto-com-buy-bitcoin-ether/id1262148500",
+        "android": "https://play.google.com/store/apps/details?id=co.mona.android"
+      },
+      "interesting_facts": [
+        "Founded in 2016 by Bobby Bao, Gary Or, Kris Marszalek, and Rafael Melo.",
+        "Originally based in Hong Kong, relocated headquarters to Singapore in 2021.",
+        "Holds licenses in 10+ jurisdictions spanning Asia-Pacific, Middle East, Americas, and Europe.",
+        "Offers the Crypto.com Visa Card with tiered cashback rewards based on CRO staking.",
+        "Secured naming rights for the former Staples Center in Los Angeles, now Crypto.com Arena, in a 20-year deal."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.cryptocom)"
+    },
+    {
+      "slug": "luno",
+      "name": "Luno",
+      "logo_url": "https://www.luno.com/en/static/luno-logo.svg",
+      "founded": 2013,
+      "headquarters": { "city": "London", "country": "United Kingdom" },
+      "regulated_in": [
+        "Malaysia — Securities Commission (registered Digital Asset Exchange)",
+        "South Africa — FSCA (registered)",
+        "Singapore — MAS (registered)",
+        "Indonesia — registered with local regulators"
+      ],
+      "supported_currencies": 12,
+      "supported_countries": 40,
+      "transfer_methods": ["bank_transfer", "debit_card", "credit_card", "crypto_deposit", "eft"],
+      "fee_model": "Instant buy/sell fee of approximately 0.75%–1.5% depending on market conditions. Exchange (limit orders) maker fee 0%, taker fee 0.10% at base tier, decreasing with volume.",
+      "speed": "Crypto deposits confirmed in minutes. Fiat deposits vary by country: South Africa (EFT) typically same-day; bank transfers in other markets 1–3 business days.",
+      "website": "https://www.luno.com",
+      "api_docs": "https://www.luno.com/en/developers/api",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/luno-buy-bitcoin-crypto/id927362479",
+        "android": "https://play.google.com/store/apps/details?id=co.bitx.android.wallet"
+      },
+      "interesting_facts": [
+        "Founded in 2013 as BitX by Marcus Swanepoel and Timothy Stranex; rebranded to Luno in 2016.",
+        "Serves over 11 million users across 40+ countries in Africa, Southeast Asia, and Europe.",
+        "Regulated by the Securities Commission Malaysia, one of the first crypto exchanges to receive this approval.",
+        "Offices in London, Cape Town, and Singapore.",
+        "Focused on emerging markets, particularly South Africa, Nigeria, Malaysia, and Indonesia."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.luno)"
+    },
+    {
+      "slug": "bitstamp",
+      "name": "Bitstamp",
+      "logo_url": "https://www.bitstamp.net/static/img/brand/logo.svg",
+      "founded": 2011,
+      "headquarters": { "city": "Luxembourg City", "country": "Luxembourg" },
+      "regulated_in": [
+        "Luxembourg — CSSF (Payment Institution license, passported across EU)",
+        "US — NYDFS (BitLicense)",
+        "EU — MiFID II (Multilateral Trading Facility approval)",
+        "UK — FCA (registered)",
+        "Singapore — MAS",
+        "50+ global licenses and registrations"
+      ],
+      "supported_currencies": 107,
+      "supported_countries": 100,
+      "transfer_methods": ["bank_transfer", "credit_card", "debit_card", "wire_transfer", "crypto_deposit", "ach", "sepa"],
+      "fee_model": "Spot trading fees start at 0.30% maker / 0.40% taker for volumes under $10,000/month, decreasing with higher 30-day volume. Stablecoin pairs have reduced fees.",
+      "speed": "Crypto deposits confirmed in minutes. SEPA deposits typically 1–3 business days. Wire transfers 2–5 business days. Card purchases instant.",
+      "website": "https://www.bitstamp.net",
+      "api_docs": "https://www.bitstamp.net/api/",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/bitstamp-buy-crypto/id917000848",
+        "android": "https://play.google.com/store/apps/details?id=net.bitstamp.app"
+      },
+      "interesting_facts": [
+        "Founded in August 2011 by Nejc Kodric and Damijan Merlak in Slovenia; one of the longest-operating crypto exchanges.",
+        "First crypto exchange to receive a Payment Institution license in the EU (Luxembourg, 2016).",
+        "Holds over 50 global licenses and registrations, including a BitLicense in New York.",
+        "Approved as a Multilateral Trading Facility (MTF) under MiFID II.",
+        "Offices in Luxembourg, Ljubljana, Singapore, London, and the USA."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bitstamp)"
+    },
+    {
+      "slug": "btcturk",
+      "name": "BtcTurk",
+      "logo_url": "https://kripto.btcturk.com/images/btcturk-logo.svg",
+      "founded": 2013,
+      "headquarters": { "city": "Istanbul", "country": "Turkey" },
+      "regulated_in": [
+        "Turkey — SPK (Capital Markets Board of Turkey, authorized)",
+        "Turkey — compliance with AML/KYC requirements as mandated by Turkish financial authorities",
+        "Founding member of AKDEP (Association of Cryptocurrency Platforms, self-regulatory organization)"
+      ],
+      "supported_currencies": 150,
+      "supported_countries": 1,
+      "transfer_methods": ["bank_transfer", "crypto_deposit", "try_deposit"],
+      "fee_model": "Spot trading fees vary by 30-day volume tier. TRY trading pairs available. Fees decrease with higher trading volume. Fiat deposits via Turkish bank transfer are typically free.",
+      "speed": "Crypto deposits confirmed in minutes. TRY deposits via Turkish bank transfer typically processed same-day during banking hours.",
+      "website": "https://kripto.btcturk.com",
+      "api_docs": "https://docs.btcturk.com",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/btcturk-kripto/id1335498405",
+        "android": "https://play.google.com/store/apps/details?id=com.btcturk"
+      },
+      "interesting_facts": [
+        "Founded in 2013; the first cryptocurrency trading platform in Turkey.",
+        "Authorized under SPK (Capital Markets Board of Turkey) licensing.",
+        "Founding member of AKDEP, a self-regulatory organization for Turkish crypto platforms established in 2021.",
+        "Supports 150+ cryptocurrencies traded against the Turkish lira (TRY).",
+        "Deeply integrated with Turkish banking infrastructure, offering localized services for the Turkish market."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.btcturk)"
+    },
+    {
+      "slug": "bithumb",
+      "name": "Bithumb",
+      "logo_url": "https://www.bithumb.com/react/images/logo.svg",
+      "founded": 2014,
+      "headquarters": { "city": "Seoul", "country": "South Korea" },
+      "regulated_in": [
+        "South Korea — FIU (registered Virtual Asset Service Provider)",
+        "South Korea — compliance with KYC/AML regulations under Korean law"
+      ],
+      "supported_currencies": 400,
+      "supported_countries": 1,
+      "transfer_methods": ["bank_transfer", "crypto_deposit", "krw_deposit"],
+      "fee_model": "Spot trading fees start at 0.25% maker / 0.25% taker at base tier, decreasing with 30-day volume. KRW deposit and withdrawal fees apply.",
+      "speed": "Crypto deposits confirmed in minutes. KRW deposits via Korean bank transfer typically processed within minutes during banking hours.",
+      "website": "https://www.bithumb.com",
+      "api_docs": "https://apidocs.bithumb.com",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/bithumb-bitcoin-crypto/id1299421592",
+        "android": "https://play.google.com/store/apps/details?id=com.bthmb.app"
+      },
+      "interesting_facts": [
+        "Founded in 2014; originally named Xcoin, rebranded to Bithumb in 2015.",
+        "One of the largest cryptocurrency exchanges in South Korea by trading volume.",
+        "Headquartered in the Gangnam district of Seoul, a major financial hub.",
+        "Supports over 400 cryptocurrencies traded against the Korean won (KRW).",
+        "Registered as a Virtual Asset Service Provider (VASP) with South Korea's Financial Intelligence Unit."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bithumb)"
+    },
+    {
+      "slug": "bitflyer",
+      "name": "bitFlyer",
+      "logo_url": "https://bitflyer.com/pub/img/bitflyer-logo.svg",
+      "founded": 2014,
+      "headquarters": { "city": "Tokyo", "country": "Japan" },
+      "regulated_in": [
+        "Japan — FSA (Japan Financial Services Agency, registered Virtual Currency Exchange Service)",
+        "US — NYDFS (BitLicense), FinCEN (Money Services Business)",
+        "EU — licensed to operate across EU/EEA member states"
+      ],
+      "supported_currencies": 39,
+      "supported_countries": 40,
+      "transfer_methods": ["bank_transfer", "crypto_deposit", "wire_transfer"],
+      "fee_model": "Spot trading fees vary by market. Japanese market: 0.01%–0.15% depending on pair and volume. US and EU markets have separate fee schedules. Lightning FX (futures) trading available.",
+      "speed": "Crypto deposits confirmed in minutes. JPY deposits via Japanese bank transfer typically same-day. International wire transfers 1–5 business days.",
+      "website": "https://bitflyer.com",
+      "api_docs": "https://bitflyer.com/en-us/api",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/bitflyer-bitcoin-crypto/id1164758541",
+        "android": "https://play.google.com/store/apps/details?id=com.bitflyer.android.app"
+      },
+      "interesting_facts": [
+        "Founded in 2014 by Yuzo Kano, a former Goldman Sachs derivatives and bonds trader.",
+        "One of the largest cryptocurrency exchanges in Japan by trading volume.",
+        "Licensed to operate in Japan, the US (including New York), and Europe — one of the few exchanges with licenses in all three regions.",
+        "Supports 39 cryptocurrencies including Bitcoin, Ethereum, and Litecoin.",
+        "Operates bitFlyer Lightning, a professional trading platform for spot and derivatives."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.bitflyer)"
+    },
+    {
+      "slug": "independent-reserve",
+      "name": "Independent Reserve",
+      "logo_url": "https://www.independentreserve.com/images/ir-logo.svg",
+      "founded": 2013,
+      "headquarters": { "city": "Sydney", "country": "Australia" },
+      "regulated_in": [
+        "Australia — AUSTRAC (Digital Currency Exchange, DCE-100461150-001)",
+        "Singapore — MAS (approved for digital payment token services)",
+        "Acquired by IG Group Holdings plc in January 2026"
+      ],
+      "supported_currencies": 40,
+      "supported_countries": 4,
+      "transfer_methods": ["bank_transfer", "crypto_deposit", "osko", "payid"],
+      "fee_model": "Spot trading fees start at 0.50% for volumes under AUD 100,000/month, decreasing with higher volume tiers. AUD deposits via OSKO/PayID are free.",
+      "speed": "Crypto deposits confirmed in minutes. AUD deposits via OSKO typically instant. International bank transfers 1–3 business days.",
+      "website": "https://www.independentreserve.com",
+      "api_docs": "https://www.independentreserve.com/api",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/independent-reserve/id1565498481",
+        "android": "https://play.google.com/store/apps/details?id=com.independentreserve.app"
+      },
+      "interesting_facts": [
+        "Founded in 2013 by Adrian Przelozny, Adam Tepper, and Lasanka Perera.",
+        "Registered with AUSTRAC as a Digital Currency Exchange and approved by MAS in Singapore.",
+        "Acquired by IG Group Holdings plc in January 2026, with the transaction completing after MAS regulatory approval.",
+        "Serves users primarily in Australia, Singapore, New Zealand, and expanding to the UAE.",
+        "One of the longest-operating cryptocurrency exchanges in Australia."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.independentreserve)"
+    },
+    {
+      "slug": "valr",
+      "name": "VALR",
+      "logo_url": "https://www.valr.com/images/valr-logo.svg",
+      "founded": 2018,
+      "headquarters": { "city": "Johannesburg", "country": "South Africa" },
+      "regulated_in": [
+        "South Africa — FSCA (Category I and Category II Crypto Asset Service Provider licenses)",
+        "Dubai — VARA (initial approval for virtual asset services)",
+        "EU — approved to offer services in European markets"
+      ],
+      "supported_currencies": 90,
+      "supported_countries": 5,
+      "transfer_methods": ["bank_transfer", "crypto_deposit", "eft", "zar_deposit"],
+      "fee_model": "Spot trading fees start at 0.10% maker / 0.25% taker, decreasing with 30-day volume. ZAR deposits via EFT are free. OTC desk available for large orders.",
+      "speed": "Crypto deposits confirmed in minutes. ZAR deposits via EFT typically processed same-day. International bank transfers 1–3 business days.",
+      "website": "https://www.valr.com",
+      "api_docs": "https://docs.valr.com",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/valr-buy-bitcoin-crypto/id1463310",
+        "android": "https://play.google.com/store/apps/details?id=com.valr.exchange"
+      },
+      "interesting_facts": [
+        "Founded in 2018; Africa's largest crypto exchange by trade volume.",
+        "Licensed by South Africa's FSCA with both Category I and Category II Crypto Asset Service Provider licenses.",
+        "Serves over 1 million users globally, including 1,100+ corporate and institutional clients.",
+        "Received initial approval from Dubai's VARA for virtual asset services.",
+        "Backed by investors including Pantera Capital, Coinbase Ventures, and Distributed Global."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.valr)"
+    },
+    {
+      "slug": "coindcx",
+      "name": "CoinDCX",
+      "logo_url": "https://coindcx.com/assets/images/coindcx-logo.svg",
+      "founded": 2018,
+      "headquarters": { "city": "Mumbai", "country": "India" },
+      "regulated_in": [
+        "India — FIU-IND (registered reporting entity)",
+        "India — compliance with AML/CFT guidelines and KYC requirements"
+      ],
+      "supported_currencies": 500,
+      "supported_countries": 1,
+      "transfer_methods": ["bank_transfer", "upi", "crypto_deposit", "inr_deposit"],
+      "fee_model": "Spot trading fees start at 0.10% maker / 0.10% taker at base tier, decreasing with 30-day volume. INR deposits via UPI and bank transfer available.",
+      "speed": "Crypto deposits confirmed in minutes. INR deposits via UPI typically instant. Bank transfers typically same-day during banking hours.",
+      "website": "https://coindcx.com",
+      "api_docs": "https://coindcx.com/developers",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/coindcx-crypto-investment/id1455585828",
+        "android": "https://play.google.com/store/apps/details?id=com.coindcx"
+      },
+      "interesting_facts": [
+        "Founded in 2018 by Sumit Gupta and Neeraj Khandelwal.",
+        "India's largest crypto exchange, serving over 15 million registered users.",
+        "Registered with FIU-IND as a reporting entity for AML/CFT compliance.",
+        "Supports 500+ cryptocurrencies with INR trading pairs.",
+        "Backed by investors including Pantera Capital, Steadview Capital, and Coinbase Ventures."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.coindcx)"
+    },
+    {
+      "slug": "wazirx",
+      "name": "WazirX",
+      "logo_url": "https://wazirx.com/static/media/wazirx-logo.svg",
+      "founded": 2017,
+      "headquarters": { "city": "Mumbai", "country": "India" },
+      "regulated_in": [
+        "India — FIU-IND (registered reporting entity)",
+        "India — member of Bharat Web3 Association (BWA)"
+      ],
+      "supported_currencies": 200,
+      "supported_countries": 1,
+      "transfer_methods": ["bank_transfer", "upi", "crypto_deposit", "p2p", "inr_deposit"],
+      "fee_model": "Spot trading fees of 0.20% maker / 0.20% taker. WRX token holders receive fee discounts. P2P trading available for INR on/off-ramp.",
+      "speed": "Crypto deposits confirmed in minutes. INR deposits via UPI or bank transfer typically processed same-day.",
+      "website": "https://wazirx.com",
+      "api_docs": "https://docs.wazirx.com",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/wazirx-bitcoin-crypto-trading/id1349082789",
+        "android": "https://play.google.com/store/apps/details?id=com.wrx.wazirx"
+      },
+      "interesting_facts": [
+        "Founded in 2017 by Nischal Shetty, Sameer Mhatre, and Siddharth Menon.",
+        "One of India's most widely used cryptocurrency exchanges, serving over 16 million users.",
+        "Registered with FIU-IND as a reporting entity and member of the Bharat Web3 Association.",
+        "Offers P2P trading for INR deposits and withdrawals alongside standard exchange features.",
+        "Supports 200+ cryptocurrencies with INR and USDT trading pairs."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.wazirx)"
+    },
+    {
+      "slug": "satoshitango",
+      "name": "SatoshiTango",
+      "logo_url": "https://www.satoshitango.com/assets/images/satoshitango-logo.svg",
+      "founded": 2014,
+      "headquarters": { "city": "Buenos Aires", "country": "Argentina" },
+      "regulated_in": [
+        "Argentina — registered with local financial authorities",
+        "Operates across 33 countries in Latin America and beyond"
+      ],
+      "supported_currencies": 10,
+      "supported_countries": 33,
+      "transfer_methods": ["bank_transfer", "crypto_deposit", "debit_card", "ars_deposit"],
+      "fee_model": "Buy/sell spread varies by cryptocurrency and payment method. Supports purchases in ARS, USD, BRL, and EUR. Fee structure includes a spread on the exchange rate.",
+      "speed": "Crypto purchases processed within minutes. ARS deposits via bank transfer typically same-day during banking hours.",
+      "website": "https://www.satoshitango.com",
+      "api_docs": "https://satoshitango.com/api",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/satoshi-tango/id1445826082",
+        "android": "https://play.google.com/store/apps/details?id=com.SatoshiTango.SatoshiTango"
+      },
+      "interesting_facts": [
+        "Founded in 2014 in Buenos Aires; one of the pioneering cryptocurrency platforms in Argentina.",
+        "Available in 33 countries, primarily serving Latin American users.",
+        "Supports purchases in multiple fiat currencies including Argentine pesos, US dollars, Brazilian reals, and euros.",
+        "Offers a range of cryptocurrencies including BTC, ETH, LTC, XRP, USDT, USDC, and ADA.",
+        "Known for supporting various local payment methods across Latin America."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.satoshitango)"
+    },
+    {
+      "slug": "buda",
+      "name": "Buda.com",
+      "logo_url": "https://www.buda.com/static/buda-logo.svg",
+      "founded": 2015,
+      "headquarters": { "city": "Santiago", "country": "Chile" },
+      "regulated_in": [
+        "Chile — registered with local financial authorities",
+        "Colombia — registered with local financial authorities",
+        "Peru — registered with local financial authorities",
+        "Argentina — registered with local financial authorities"
+      ],
+      "supported_currencies": 7,
+      "supported_countries": 4,
+      "transfer_methods": ["bank_transfer", "crypto_deposit"],
+      "fee_model": "Spot trading fees vary by 30-day volume tier, starting at 0.80% maker / 0.80% taker for low volume. Fiat deposits via local bank transfer are typically free.",
+      "speed": "Crypto deposits confirmed in minutes. Local fiat deposits typically processed same-day during banking hours.",
+      "website": "https://www.buda.com",
+      "api_docs": "https://api.buda.com",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/buda-com/id1389498498",
+        "android": "https://play.google.com/store/apps/details?id=com.buda.wallet"
+      },
+      "interesting_facts": [
+        "Founded in 2015 by Guillermo Torrealba and Alejandro Beltran; formerly known as SurBTC.",
+        "Serves four Latin American markets: Chile, Colombia, Peru, and Argentina.",
+        "Supports Bitcoin, Ether, Litecoin, Bitcoin Cash, and USDC with local fiat pairs.",
+        "One of the first cryptocurrency exchanges in Chile, pioneering crypto adoption in the region.",
+        "Focuses on compliance with local regulatory requirements across each Latin American market it serves."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.buda)"
+    },
+    {
+      "slug": "ria-money-transfer",
+      "name": "Ria Money Transfer",
+      "logo_url": "https://www.riamoneytransfer.com/images/ria-logo.svg",
+      "founded": 1987,
+      "headquarters": { "city": "Buena Park, California", "country": "United States" },
+      "regulated_in": [
+        "US — FinCEN (Money Services Business), state money transmitter licenses",
+        "EU — various national regulators",
+        "UK — FCA",
+        "Nigeria — Central Bank of Nigeria (approved international money transfer operator)",
+        "Subsidiary of Euronet Worldwide, Inc. (NASDAQ: EEFT)",
+        "Licensed in 160+ countries"
+      ],
+      "supported_currencies": 100,
+      "supported_countries": 160,
+      "transfer_methods": ["bank_transfer", "cash_pickup", "mobile_wallet", "debit_card", "credit_card", "home_delivery"],
+      "fee_model": "Transfer fees range from $0.99–$9 depending on corridor, amount, and payment/delivery method. Exchange rate includes a markup of 0.25%–3.5% above mid-market rate. Fees shown upfront before confirmation.",
+      "speed": "Cash pickup available within minutes at 500,000+ locations. Bank transfers typically 1–4 business days depending on destination. Mobile wallet transfers often same-day.",
+      "website": "https://www.riamoneytransfer.com",
+      "api_docs": null,
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/ria-money-transfer-send-money/id335564420",
+        "android": "https://play.google.com/store/apps/details?id=com.ria.sendmoney"
+      },
+      "interesting_facts": [
+        "Founded in 1987, growing from a single storefront in New York City to a global network.",
+        "Subsidiary of Euronet Worldwide, Inc. (NASDAQ: EEFT) since 2007.",
+        "Operates a network of over 500,000 agent locations across 160+ countries.",
+        "One of the largest money transfer companies worldwide by network size.",
+        "Approved by the Central Bank of Nigeria as an international money transfer operator for diaspora remittances."
+      ],
+      "integration_status": "estimated",
+      "coinnect_data_source": "Published fee estimates and exchange rate markup data (no public rate API)"
+    },
+    {
+      "slug": "worldremit",
+      "name": "WorldRemit",
+      "logo_url": "https://www.worldremit.com/images/worldremit-logo.svg",
+      "founded": 2010,
+      "headquarters": { "city": "London", "country": "United Kingdom" },
+      "regulated_in": [
+        "UK — FCA (authorized and regulated)",
+        "US — FinCEN (registered), state money transmitter licenses",
+        "Canada — FINTRAC (authorized)",
+        "Australia — AUSTRAC (authorized)"
+      ],
+      "supported_currencies": 70,
+      "supported_countries": 130,
+      "transfer_methods": ["bank_transfer", "mobile_wallet", "cash_pickup", "airtime_top_up", "debit_card", "credit_card"],
+      "fee_model": "Per-transfer fee varies by corridor, delivery method, and payment method. Exchange rate includes a margin. Fees shown upfront in the app or website before confirmation.",
+      "speed": "Mobile money transfers often arrive within minutes. Bank transfers typically 1–3 business days. Cash pickup available within minutes at partner locations.",
+      "website": "https://www.worldremit.com",
+      "api_docs": null,
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/worldremit-money-transfer/id548189027",
+        "android": "https://play.google.com/store/apps/details?id=com.worldremit.android"
+      },
+      "interesting_facts": [
+        "Founded in 2010 by Ismail Ahmed, Catherine Wines, and Richard Igoe.",
+        "Part of Zepz (formerly WorldRemit Group), which also operates Sendwave.",
+        "Serves users in 130+ countries with 70+ supported currencies.",
+        "Digital-first remittance service supporting mobile wallet, bank transfer, cash pickup, and airtime top-up.",
+        "Regional offices in the US, Poland, Canada, Australia, and multiple African and Asian countries."
+      ],
+      "integration_status": "estimated",
+      "coinnect_data_source": "Published fee estimates with open FX rate fallback (corridor-specific static estimates)"
+    },
+    {
+      "slug": "sendwave",
+      "name": "Sendwave",
+      "logo_url": "https://www.sendwave.com/images/sendwave-logo.svg",
+      "founded": 2014,
+      "headquarters": { "city": "Boston, Massachusetts", "country": "United States" },
+      "regulated_in": [
+        "US — FinCEN (Money Services Business), state money transmitter licenses",
+        "UK — FCA (authorized)",
+        "Part of Zepz (formerly WorldRemit Group)"
+      ],
+      "supported_currencies": 15,
+      "supported_countries": 20,
+      "transfer_methods": ["mobile_wallet", "bank_transfer", "debit_card"],
+      "fee_model": "No upfront transfer fee on most corridors. Revenue comes from a margin on the exchange rate. Fees are built into the rate shown before confirmation.",
+      "speed": "Transfers to mobile wallets in Africa typically arrive within seconds to minutes. Bank transfers may take 1–2 business days.",
+      "website": "https://www.sendwave.com",
+      "api_docs": null,
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/sendwave-send-transfer-money/id846717081",
+        "android": "https://play.google.com/store/apps/details?id=com.sendwave.app"
+      },
+      "interesting_facts": [
+        "Founded in 2014; acquired by WorldRemit (now Zepz) in 2021.",
+        "Specializes in instant money transfers from North America, Europe, and Asia to Africa and South Asia.",
+        "Supports transfers to mobile wallets and bank accounts in countries including Kenya, Uganda, Tanzania, Ghana, Nigeria, Senegal, and Bangladesh.",
+        "No upfront transfer fees on most corridors — one of the simplest pricing models in the remittance space.",
+        "Focused on serving the diaspora community with fast, affordable mobile-first transfers."
+      ],
+      "integration_status": "estimated",
+      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)"
+    },
+    {
+      "slug": "xoom",
+      "name": "Xoom",
+      "logo_url": "https://www.xoom.com/images/xoom-logo.svg",
+      "founded": 2001,
+      "headquarters": { "city": "San Francisco, California", "country": "United States" },
+      "regulated_in": [
+        "US — FinCEN (Money Services Business), state money transmitter licenses",
+        "Subsidiary of PayPal Holdings, Inc. (NASDAQ: PYPL)",
+        "Regulated under PayPal's global licenses across multiple jurisdictions"
+      ],
+      "supported_currencies": 60,
+      "supported_countries": 160,
+      "transfer_methods": ["bank_transfer", "cash_pickup", "mobile_wallet", "debit_card", "credit_card", "paypal_balance", "bill_pay", "mobile_reload"],
+      "fee_model": "Transfer fees vary by corridor, delivery method, and payment method (typically $0–$4.99 per transfer). Exchange rate includes a margin above mid-market rate. PayPal balance funding often has lowest fees.",
+      "speed": "Cash pickup and mobile wallet transfers available within minutes. Bank deposits typically 1–4 business days depending on destination.",
+      "website": "https://www.xoom.com",
+      "api_docs": null,
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/xoom-money-transfer/id710aborr5839",
+        "android": "https://play.google.com/store/apps/details?id=com.xoom.android.app"
+      },
+      "interesting_facts": [
+        "Founded in 2001 by Alan Braverman and Kevin Hartz.",
+        "Acquired by PayPal in 2015 for $890 million.",
+        "Supports money transfers to over 160 countries, with bill pay and mobile reload services in select markets.",
+        "Deeply integrated with PayPal, allowing users to fund transfers from PayPal balance.",
+        "Strong presence in Mexico, India, the Philippines, China, and Brazil."
+      ],
+      "integration_status": "estimated",
+      "coinnect_data_source": "Published fee estimates and exchange rate data (no public consumer rate API)"
+    },
+    {
+      "slug": "paysend",
+      "name": "Paysend",
+      "logo_url": "https://paysend.com/images/paysend-logo.svg",
+      "founded": 2017,
+      "headquarters": { "city": "London", "country": "United Kingdom" },
+      "regulated_in": [
+        "UK — FCA (authorized and regulated, reference 900004)",
+        "EU — Central Bank of Ireland (authorized Electronic Money Institution)",
+        "US — state-level money transmitter licenses",
+        "Canada — MSB license"
+      ],
+      "supported_currencies": 100,
+      "supported_countries": 170,
+      "transfer_methods": ["bank_transfer", "debit_card", "credit_card", "mobile_wallet"],
+      "fee_model": "Flat fee per transfer (typically £1/$2 or equivalent) on most corridors. Exchange rate includes a margin above mid-market rate. Fee shown upfront before confirmation.",
+      "speed": "Card-to-card and mobile wallet transfers typically arrive within minutes to same-day. Bank transfers 1–3 business days depending on destination.",
+      "website": "https://paysend.com",
+      "api_docs": null,
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/paysend-money-transfer/id1227498498",
+        "android": "https://play.google.com/store/apps/details?id=com.paysend.app"
+      },
+      "interesting_facts": [
+        "Founded in 2017; headquartered in London with global reach to 170+ countries.",
+        "Authorized and regulated by the FCA (UK) and Central Bank of Ireland.",
+        "Operates on a simple flat-fee model for most corridors.",
+        "Supports sending from 49 countries and receiving in 170+ countries.",
+        "Offers card-to-card transfers as a distinctive feature alongside bank and mobile wallet delivery."
+      ],
+      "integration_status": "estimated",
+      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)"
+    },
+    {
+      "slug": "transfergo",
+      "name": "TransferGo",
+      "logo_url": "https://www.transfergo.com/images/transfergo-logo.svg",
+      "founded": 2012,
+      "headquarters": { "city": "London", "country": "United Kingdom" },
+      "regulated_in": [
+        "UK — FCA (authorized payment institution, reference 600886), supervised by HMRC",
+        "Lithuania — Bank of Lithuania (authorized Electronic Money Institution)"
+      ],
+      "supported_currencies": 50,
+      "supported_countries": 160,
+      "transfer_methods": ["bank_transfer", "debit_card", "credit_card", "mobile_wallet"],
+      "fee_model": "Transfer fees vary by speed tier: NOW (instant), FAST (hours), and STANDARD (1–3 days). Fees start from £0.99/€0.99. Exchange rate includes a small margin.",
+      "speed": "NOW transfers arrive within 30 minutes. FAST transfers within a few hours. STANDARD transfers 1–3 business days.",
+      "website": "https://www.transfergo.com",
+      "api_docs": null,
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/transfergo-money-transfer/id1110641576",
+        "android": "https://play.google.com/store/apps/details?id=com.transfergo.android"
+      },
+      "interesting_facts": [
+        "Founded in 2012 by Daumantas Dvilinskas, Justinas Lasevicius, and Edvinas Sershniovas.",
+        "Serves over 8 million customers in more than 160 countries.",
+        "Offers three speed tiers (NOW, FAST, STANDARD) allowing users to choose between speed and cost.",
+        "Offices in the UK, Lithuania, Germany, Poland, and Turkey.",
+        "Authorized as a payment institution by the FCA and the Bank of Lithuania."
+      ],
+      "integration_status": "estimated",
+      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)"
+    },
+    {
+      "slug": "xe",
+      "name": "XE",
+      "logo_url": "https://www.xe.com/images/xe-logo.svg",
+      "founded": 1993,
+      "headquarters": { "city": "Newmarket, Ontario", "country": "Canada" },
+      "regulated_in": [
+        "UK — FCA (authorized payment institution, via HiFX Europe Limited)",
+        "EU — Dutch Central Bank (authorized payment services provider, licence R149006)",
+        "US — NYDFS and FinCEN (authorized money transmitter in all operating jurisdictions)",
+        "Canada — FINTRAC",
+        "Australia — ASIC",
+        "New Zealand — FMA",
+        "Subsidiary of Euronet Worldwide, Inc. (NASDAQ: EEFT)"
+      ],
+      "supported_currencies": 130,
+      "supported_countries": 130,
+      "transfer_methods": ["bank_transfer", "wire_transfer"],
+      "fee_model": "No upfront transfer fee on most transfers. Revenue comes from a margin on the exchange rate. Live rate information provided on the website and app.",
+      "speed": "Most transfers completed within 1–4 business days depending on corridor and banking infrastructure.",
+      "website": "https://www.xe.com",
+      "api_docs": "https://xecdapi.xe.com",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/xe-currency-money-transfers/id315241195",
+        "android": "https://play.google.com/store/apps/details?id=com.xe.currency"
+      },
+      "interesting_facts": [
+        "Founded in 1993; one of the most recognized online foreign exchange rate sources worldwide.",
+        "Acquired by Euronet Worldwide, Inc. in 2015; sister company to Ria Money Transfer.",
+        "Provides live exchange rate data used by millions of individuals and businesses daily.",
+        "Supports money transfers in 130+ currencies across 130+ countries.",
+        "Regulated across 6+ jurisdictions including the UK, EU, US, Canada, Australia, and New Zealand."
+      ],
+      "integration_status": "estimated",
+      "coinnect_data_source": "XE Currency Data API (XECDAPI) for live rates + published fee estimates"
+    },
+    {
+      "slug": "atlantic-money",
+      "name": "Atlantic Money",
+      "logo_url": "https://www.atlanticmoney.com/images/atlantic-money-logo.svg",
+      "founded": 2020,
+      "headquarters": { "city": "London", "country": "United Kingdom" },
+      "regulated_in": [
+        "UK — FCA (authorized Payments Institution)",
+        "EU — National Bank of Belgium (Payment Institution licence, passported across Europe)",
+        "US — FinCEN (federal Money Services Business registration)",
+        "Canada — licensed (own licence)",
+        "Australia — licensed (own licence)"
+      ],
+      "supported_currencies": 30,
+      "supported_countries": 35,
+      "transfer_methods": ["bank_transfer"],
+      "fee_model": "Flat fee of £3/$3/€3 per transfer with the mid-market exchange rate (no markup). One of the simplest and most transparent fee structures in the industry.",
+      "speed": "Most transfers arrive within 1–2 business days. Some corridors may take up to 3 business days.",
+      "website": "https://www.atlanticmoney.com",
+      "api_docs": null,
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/atlantic-money/id1602194498",
+        "android": "https://play.google.com/store/apps/details?id=com.atlanticmoney.app"
+      },
+      "interesting_facts": [
+        "Founded in 2020, launched in 2022; a London-based fintech focused on ultra-low-cost international transfers.",
+        "Charges a flat £3/$3/€3 fee with the mid-market exchange rate and no markup.",
+        "Authorized as a Payments Institution by the FCA and the National Bank of Belgium.",
+        "Expanded to the US, Canada, and Australia in 2024.",
+        "Positions itself as one of the most cost-effective options for large international transfers."
+      ],
+      "integration_status": "estimated",
+      "coinnect_data_source": "Published fee structure (flat fee + mid-market rate) with open FX rate data"
+    },
+    {
+      "slug": "nala",
+      "name": "NALA",
+      "logo_url": "https://www.nala.com/images/nala-logo.svg",
+      "founded": 2017,
+      "headquarters": { "city": "Nairobi", "country": "Kenya" },
+      "regulated_in": [
+        "UK — FCA (authorized agent of Modulr FS Limited, regulated under Electronic Money Regulations 2011)",
+        "PSD2 compliant for strong customer authentication"
+      ],
+      "supported_currencies": 20,
+      "supported_countries": 20,
+      "transfer_methods": ["mobile_wallet", "bank_transfer", "debit_card", "credit_card"],
+      "fee_model": "Zero transfer fees on many corridors (UK to Africa). Revenue from exchange rate margin. Fee structure shown upfront before confirmation.",
+      "speed": "Transfers to mobile wallets in Africa typically arrive within seconds to minutes. Bank transfers may take 1–2 business days.",
+      "website": "https://www.nala.com",
+      "api_docs": null,
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/nala-send-money-globally/id1549983218",
+        "android": "https://play.google.com/store/apps/details?id=com.nala.app"
+      },
+      "interesting_facts": [
+        "Founded in 2017 by Benjamin Fernandes, a Stanford MBA graduate.",
+        "Y Combinator alumnus focused on building payments for the next billion users.",
+        "Specializes in transfers from the UK, US, and EU to Africa and Asia.",
+        "Supports mobile wallet delivery to Tanzania, Kenya, Uganda, Ghana, Nigeria, Senegal, and other African markets.",
+        "Team spans 18 countries, with hubs in London, Nairobi, and Dakar."
+      ],
+      "integration_status": "estimated",
+      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)"
+    },
+    {
+      "slug": "taptap-send",
+      "name": "Taptap Send",
+      "logo_url": "https://www.taptapsend.com/images/taptap-send-logo.svg",
+      "founded": 2018,
+      "headquarters": { "city": "London", "country": "United Kingdom" },
+      "regulated_in": [
+        "UK — FCA (authorized)",
+        "US — state money transmitter licenses",
+        "EU — authorized in multiple member states",
+        "Canada — authorized",
+        "Australia — authorized",
+        "UAE — authorized"
+      ],
+      "supported_currencies": 35,
+      "supported_countries": 40,
+      "transfer_methods": ["mobile_wallet", "bank_transfer", "debit_card", "credit_card", "cash_pickup"],
+      "fee_model": "No upfront transfer fee. Revenue comes from a margin on the exchange rate. Fee structure shown upfront before confirmation.",
+      "speed": "Mobile money and mobile wallet transfers typically arrive within minutes. Bank transfers 1–3 business days depending on destination.",
+      "website": "https://www.taptapsend.com",
+      "api_docs": null,
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/taptap-send/id1457012973",
+        "android": "https://play.google.com/store/apps/details?id=com.taptapsend.app"
+      },
+      "interesting_facts": [
+        "Founded in 2018 by Michael Faye and Fatimatou Ousmanou.",
+        "App-based money transfer service sending from the UK, EU, US, UAE, Canada, and Australia.",
+        "Supports payments to 30+ receiving countries across Africa, Asia, and Latin America.",
+        "No upfront transfer fee — one of the simplest pricing models in the remittance space.",
+        "Particularly strong in West African corridors including Senegal, Mali, Guinea, Ghana, and Cameroon."
+      ],
+      "integration_status": "estimated",
+      "coinnect_data_source": "Published fee estimates and exchange rate data (no public API)"
+    },
+    {
+      "slug": "yellow-card",
+      "name": "Yellow Card",
+      "logo_url": "https://yellowcard.io/images/yellow-card-logo.svg",
+      "founded": 2016,
+      "headquarters": { "city": "Atlanta, Georgia", "country": "United States" },
+      "regulated_in": [
+        "South Africa — FSCA (Crypto Asset Service Provider license)",
+        "VASP licenses in 20+ African countries",
+        "Nigeria — registered with relevant authorities",
+        "Botswana, Mauritius, Namibia — licensed"
+      ],
+      "supported_currencies": 20,
+      "supported_countries": 34,
+      "transfer_methods": ["bank_transfer", "mobile_money", "crypto_deposit", "stablecoin"],
+      "fee_model": "Fees vary by transaction type and country. Stablecoin on/off-ramp fees apply. B2B infrastructure pricing available for business partners.",
+      "speed": "Stablecoin transactions typically confirmed within minutes. Fiat settlements via mobile money or bank transfer vary by country, typically same-day to 1 business day.",
+      "website": "https://yellowcard.io",
+      "api_docs": "https://docs.yellowcard.io",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/yellow-card-buy-sell-crypto/id1502083636",
+        "android": "https://play.google.com/store/apps/details?id=io.yellowcard.app"
+      },
+      "interesting_facts": [
+        "Founded in 2016 by Chris Maurice and Justin Poiroux; launched in Nigeria in 2019.",
+        "Operates across 34 countries, including 20+ in Africa — one of the largest licensed stablecoin infrastructure providers on the continent.",
+        "Licensed as a Crypto Asset Service Provider (CASP) by South Africa's FSCA.",
+        "Pivoted to B2B stablecoin infrastructure in 2026, powering payments, fiat settlements, and custody for businesses.",
+        "Backed by investors including Blockchain Capital, Polychain Capital, and Block (formerly Square)."
+      ],
+      "integration_status": "estimated",
+      "coinnect_data_source": "Yellow Card API for stablecoin rates + published fee estimates"
+    },
+    {
+      "slug": "strike",
+      "name": "Strike",
+      "logo_url": "https://strike.me/images/strike-logo.svg",
+      "founded": 2018,
+      "headquarters": { "city": "Chicago, Illinois", "country": "United States" },
+      "regulated_in": [
+        "US — NYDFS (BitLicense, obtained March 2026), FinCEN (Money Services Business), state money transmitter licenses",
+        "El Salvador — licensed under digital assets regulatory framework",
+        "UK — registered for bitcoin and crypto services",
+        "Available in 100+ countries and territories"
+      ],
+      "supported_currencies": 3,
+      "supported_countries": 100,
+      "transfer_methods": ["bank_transfer", "bitcoin_lightning", "bitcoin_onchain", "debit_card", "ach"],
+      "fee_model": "No fees on peer-to-peer Bitcoin payments over Lightning Network. Spread on buy/sell orders. ACH deposits are free. Competitive rates for cross-border payments via Bitcoin rails.",
+      "speed": "Lightning Network payments settle in seconds. On-chain Bitcoin transactions confirmed in minutes. ACH deposits 1–3 business days. Cross-border payments via Lightning near-instant.",
+      "website": "https://strike.me",
+      "api_docs": "https://docs.strike.me",
+      "app_stores": {
+        "ios": "https://apps.apple.com/app/strike-bitcoin-payments/id1488724463",
+        "android": "https://play.google.com/store/apps/details?id=zapsolutions.strike"
+      },
+      "interesting_facts": [
+        "Founded in 2018 by Jack Mallers; focused on Bitcoin and Lightning Network payments.",
+        "Secured a New York BitLicense in March 2026, enabling bitcoin financial services for New York residents.",
+        "Available in 100+ countries and territories, including the US, UK, EU, Latin America, and Africa.",
+        "Uses the Bitcoin Lightning Network for near-instant, low-cost cross-border payments.",
+        "One of the first companies licensed under El Salvador's digital assets regulatory framework."
+      ],
+      "integration_status": "live",
+      "coinnect_data_source": "CCXT order book (live bid/ask via ccxt.strike)"
     }
   ]
 }

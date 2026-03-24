@@ -20,6 +20,7 @@ from coinnect.db.keys import init_keys_db
 from coinnect.db.analytics import init_analytics_db
 from coinnect.seo_pages import (
     render_corridor_page, render_country_page, generate_sitemap_xml,
+    generate_exchange_page, generate_exchanges_directory, resolve_country_corridor,
     TOP_CORRIDORS, COUNTRY_DATA, _cache_get, _cache_set,
 )
 
@@ -1059,6 +1060,31 @@ async def suggest_page():
 </html>""")
 
 
+@app.get("/send/{from_country}/{to_country}", include_in_schema=False)
+async def corridor_page_by_country(from_country: str, to_country: str):
+    """SEO corridor page by country name: /send/united-states/mexico"""
+    pair = resolve_country_corridor(from_country, to_country)
+    if not pair:
+        return HTMLResponse(
+            "<html><body><h2>Country not found</h2>"
+            "<p><a href='/explore'>See all corridors</a></p></body></html>",
+            status_code=404,
+        )
+    from_c, to_c = pair
+    cache_key = f"corridor:{from_c}:{to_c}"
+    cached = _cache_get(cache_key)
+    if cached:
+        return HTMLResponse(cached)
+
+    edges = await _get_all_edges_cached()
+    if not edges:
+        return HTMLResponse("<html><body><h2>Exchange data temporarily unavailable</h2><p><a href='/'>Back</a></p></body></html>", status_code=503)
+
+    page_html = render_corridor_page(from_c, to_c, edges)
+    _cache_set(cache_key, page_html)
+    return HTMLResponse(page_html)
+
+
 @app.get("/send/{corridor}", include_in_schema=False)
 async def corridor_page(corridor: str):
     """SEO corridor page: /send/usd-to-mxn"""
@@ -1233,177 +1259,28 @@ async def snapshot_page_inner(snapshot_id: int):
 
 
 @app.get("/exchanges", include_in_schema=False)
-async def exchanges_directory():
+async def exchanges_directory_page():
     """List all exchange profiles."""
-    import json
-    profiles_path = Path(__file__).parent.parent.parent / "data" / "exchange_profiles.json"
-    try:
-        with open(profiles_path) as f:
-            data = json.load(f)
-        exchanges = data.get("exchanges", [])
-    except FileNotFoundError:
-        exchanges = []
-
-    cards = ""
-    for ex in sorted(exchanges, key=lambda x: x["name"]):
-        status = ex.get("integration_status", "planned")
-        badge_cls = {"live":"bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400","estimated":"bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400"}.get(status, "bg-gray-100 text-gray-500")
-        hq = ex.get("headquarters", {})
-        cards += f'''<a href="/exchange/{ex['slug']}" class="block p-4 border border-gray-200 dark:border-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors no-underline">
-          <div class="flex items-center justify-between mb-1">
-            <span class="font-medium text-sm text-gray-900 dark:text-white">{ex['name']}</span>
-            <span class="px-2 py-0.5 text-[10px] font-bold {badge_cls} rounded-full uppercase">{status}</span>
-          </div>
-          <p class="text-xs text-gray-500 dark:text-gray-400">{hq.get('city','')}, {hq.get('country','')} · Founded {ex.get('founded','')}</p>
-          <p class="text-xs text-gray-400 mt-1">{ex.get('supported_currencies','?')} currencies · {ex.get('supported_countries','?')} countries</p>
-        </a>'''
-
-    page_html = f"""<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Exchange Directory — Coinnect</title>
-<meta name="description" content="Factual profiles of money transfer providers and exchanges on Coinnect. Neutral, no affiliate fees, open data.">
-<link rel="icon" type="image/svg+xml" href="/static/logo.svg">
-<link rel="stylesheet" href="/static/tailwind.css">
-<style>body{{font-family:'Inter','Noto Sans SC','Noto Sans TC',system-ui,sans-serif;}}</style>
-</head>
-<body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-white min-h-screen">
-<nav class="border-b border-gray-200 dark:border-gray-800 px-5 py-3">
-  <div class="max-w-3xl mx-auto flex items-center justify-between">
-    <a href="/" class="text-sm font-bold text-gray-700 dark:text-gray-300 no-underline">← Coinnect</a>
-    <span class="text-[10px] text-gray-400 uppercase tracking-wider">Exchange Directory</span>
-  </div>
-</nav>
-<main class="max-w-3xl mx-auto px-5 py-10">
-  <h1 class="text-2xl font-bold tracking-tight mb-2">Exchange Directory</h1>
-  <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">Factual profiles of the providers Coinnect compares. No reviews, no scores, no affiliate fees — just public data.</p>
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-    {cards}
-  </div>
-  <div class="mt-10 text-xs text-gray-400">
-    <p>All information is sourced from official websites, press releases, and regulatory filings. Coinnect is not affiliated with any listed provider.</p>
-  </div>
-</main>
-</body>
-</html>"""
-
+    cache_key = "exchanges_directory"
+    cached = _cache_get(cache_key)
+    if cached:
+        return HTMLResponse(cached)
+    page_html = generate_exchanges_directory()
+    _cache_set(cache_key, page_html)
     return HTMLResponse(page_html)
 
 
 @app.get("/exchange/{slug}", include_in_schema=False)
 async def exchange_profile(slug: str):
     """Serve an exchange profile page — Wikipedia-style factual reference."""
-    import json
-    profiles_path = Path(__file__).parent.parent.parent / "data" / "exchange_profiles.json"
-    try:
-        with open(profiles_path) as f:
-            data = json.load(f)
-        exchange = None
-        for ex in data.get("exchanges", []):
-            if ex["slug"] == slug:
-                exchange = ex
-                break
-        if not exchange:
-            raise HTTPException(404, detail="Exchange not found")
-    except FileNotFoundError:
-        raise HTTPException(404, detail="Exchange data not available")
-
-    # Build HTML page
-    name = exchange["name"]
-    hq = exchange.get("headquarters", {})
-    hq_str = f"{hq.get('city', '')}, {hq.get('country', '')}" if hq else "—"
-    facts_html = "".join(f"<li>{f}</li>" for f in exchange.get("interesting_facts", []))
-    methods = ", ".join(m.replace("_", " ").title() for m in exchange.get("transfer_methods", []))
-    regulated = "".join(f"<li class='text-xs text-gray-500 dark:text-gray-400'>{r}</li>" for r in exchange.get("regulated_in", []))
-
-    status_badge = {
-        "live": '<span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 rounded-full uppercase">Live</span>',
-        "estimated": '<span class="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 rounded-full uppercase">Estimated</span>',
-        "planned": '<span class="px-2 py-0.5 text-[10px] font-bold bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 rounded-full uppercase">Planned</span>',
-    }.get(exchange.get("integration_status", ""), "")
-
-    page_html = f"""<!DOCTYPE html>
-<html lang="en" class="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{name} — Coinnect Exchange Profile</title>
-<meta name="description" content="{name} on Coinnect: factual profile, regulation, fees, supported currencies, and integration status. Free, neutral, no affiliate fees.">
-<link rel="icon" type="image/svg+xml" href="/static/logo.svg">
-<link rel="stylesheet" href="/static/tailwind.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Noto+Sans+TC:wght@400;700&display=swap" media="print" onload="this.media='all'">
-<style>body{{font-family:'Inter','Noto Sans SC','Noto Sans TC',system-ui,sans-serif;}}</style>
-<script type="application/ld+json">
-{{"@context":"https://schema.org","@type":"Organization","name":"{name}","url":"{exchange.get('website','')}","foundingDate":"{exchange.get('founded','')}","address":{{"@type":"PostalAddress","addressLocality":"{hq.get('city','')}","addressCountry":"{hq.get('country','')}"}}}}
-</script>
-</head>
-<body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-white min-h-screen">
-<nav class="border-b border-gray-200 dark:border-gray-800 px-5 py-3">
-  <div class="max-w-3xl mx-auto flex items-center justify-between">
-    <a href="/" class="text-sm font-bold text-gray-700 dark:text-gray-300 no-underline">← Coinnect</a>
-    <span class="text-[10px] text-gray-400 uppercase tracking-wider">Exchange Profile</span>
-  </div>
-</nav>
-<main class="max-w-3xl mx-auto px-5 py-10">
-  <div class="flex items-start gap-4 mb-8">
-    <div>
-      <h1 class="text-2xl font-bold tracking-tight">{name}</h1>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Founded {exchange.get('founded','')} · {hq_str}</p>
-      <div class="flex items-center gap-2 mt-2">
-        {status_badge}
-        <span class="text-[10px] text-gray-400">{exchange.get('coinnect_data_source','')}</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
-    <div class="space-y-4">
-      <div>
-        <span class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Supported currencies</span>
-        <p class="text-sm mt-1">{exchange.get('supported_currencies','—')}</p>
-      </div>
-      <div>
-        <span class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Supported countries</span>
-        <p class="text-sm mt-1">{exchange.get('supported_countries','—')}</p>
-      </div>
-      <div>
-        <span class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Transfer methods</span>
-        <p class="text-sm mt-1">{methods or '—'}</p>
-      </div>
-      <div>
-        <span class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Typical speed</span>
-        <p class="text-sm mt-1">{exchange.get('speed','—')}</p>
-      </div>
-    </div>
-    <div class="space-y-4">
-      <div>
-        <span class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Fee model</span>
-        <p class="text-sm mt-1">{exchange.get('fee_model','—')}</p>
-      </div>
-      <div>
-        <span class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Website</span>
-        <p class="text-sm mt-1"><a href="{exchange.get('website','#')}" target="_blank" rel="noopener" class="text-cyan-600 dark:text-cyan-400 underline">{exchange.get('website','—')}</a></p>
-      </div>
-      {'<div><span class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">API docs</span><p class="text-sm mt-1"><a href="' + exchange['api_docs'] + '" target="_blank" rel="noopener" class="text-cyan-600 dark:text-cyan-400 underline">' + exchange['api_docs'] + '</a></p></div>' if exchange.get('api_docs') else ''}
-    </div>
-  </div>
-
-  {'<div class="mb-10"><span class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Regulation</span><ul class="mt-2 space-y-1 list-none p-0">' + regulated + '</ul></div>' if regulated else ''}
-
-  {'<div class="mb-10"><span class="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Key facts</span><ul class="mt-2 space-y-2 list-disc list-inside text-sm text-gray-600 dark:text-gray-300">' + facts_html + '</ul></div>' if facts_html else ''}
-
-  <div class="border-t border-gray-200 dark:border-gray-800 pt-6 text-xs text-gray-400">
-    <p>This profile contains publicly available, factual information only. Coinnect is not affiliated with, endorsed by, or sponsored by {name}. Data sourced from official websites, press releases, and regulatory filings.</p>
-    <p class="mt-2"><a href="/" class="text-cyan-600 dark:text-cyan-400 underline">← Back to Coinnect</a> · <a href="/?from=USD&to=MXN&amount=500" class="text-cyan-600 dark:text-cyan-400 underline">Compare rates now</a></p>
-  </div>
-</main>
-</body>
-</html>"""
-
+    cache_key = f"exchange:{slug}"
+    cached = _cache_get(cache_key)
+    if cached:
+        return HTMLResponse(cached)
+    page_html = generate_exchange_page(slug)
+    if not page_html:
+        raise HTTPException(404, detail="Exchange not found")
+    _cache_set(cache_key, page_html)
     return HTMLResponse(page_html)
 
 

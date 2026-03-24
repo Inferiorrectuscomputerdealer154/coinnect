@@ -335,7 +335,8 @@ def _footer_html() -> str:
     return f"""<footer class="footer">
   <p>Rates updated every 3 minutes. Last render: {html.escape(now)}</p>
   <p>Mission-driven. No affiliate fees. Open data (CC-BY 4.0).</p>
-  <p><a href="/">Home</a> &middot; <a href="/whitepaper">Whitepaper</a> &middot;
+  <p><a href="/">Home</a> &middot; <a href="/exchanges">Exchanges</a> &middot;
+     <a href="/explore">Corridors</a> &middot; <a href="/whitepaper">Whitepaper</a> &middot;
      <a href="/docs">API Docs</a> &middot; <a href="/sitemap.xml">Sitemap</a></p>
   <p>&copy; {datetime.now(UTC).year} <a href="{BASE_URL}">Coinnect</a> — The open map for global money</p>
 </footer>"""
@@ -804,6 +805,24 @@ def generate_sitemap_xml() -> str:
     for country_slug in COUNTRY_DATA:
         urls.append((f"https://coinnect.bot/rates/{country_slug}", "hourly", "0.85"))
 
+    # Country-based corridor pages (e.g. /send/united-states/mexico)
+    _seen_pairs = set()
+    for from_slug, from_data in COUNTRY_DATA.items():
+        from_kebab = from_data["name"].lower().replace(" ", "-")
+        for to_slug, to_data in COUNTRY_DATA.items():
+            if from_slug == to_slug:
+                continue
+            pair_key = (from_data["currency"], to_data["currency"])
+            if pair_key in _seen_pairs:
+                continue
+            # Only add if this is a real corridor (appears in outbound/inbound)
+            for fc, tc in from_data.get("outbound", []):
+                if tc == to_data["currency"]:
+                    to_kebab = to_data["name"].lower().replace(" ", "-")
+                    urls.append((f"https://coinnect.bot/send/{from_kebab}/{to_kebab}", "hourly", "0.85"))
+                    _seen_pairs.add(pair_key)
+                    break
+
     # Exchange directory and profile pages
     urls.append(("https://coinnect.bot/exchanges", "weekly", "0.8"))
     try:
@@ -828,3 +847,337 @@ def generate_sitemap_xml() -> str:
     xml_parts.append("</urlset>")
 
     return "\n".join(xml_parts)
+
+
+# ── Exchange profile data loading ─────────────────────────────────────────────
+
+def _load_exchange_profiles() -> list[dict]:
+    """Load exchange profiles from data/exchange_profiles.json."""
+    profiles_path = Path(__file__).parent.parent.parent / "data" / "exchange_profiles.json"
+    try:
+        with open(profiles_path) as f:
+            data = json.load(f)
+        return data.get("exchanges", [])
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+
+def _find_exchange(slug: str) -> dict | None:
+    """Find a single exchange by slug."""
+    for ex in _load_exchange_profiles():
+        if ex["slug"] == slug:
+            return ex
+    return None
+
+
+# ── Exchange profile page ─────────────────────────────────────────────────────
+
+def generate_exchange_page(slug: str) -> str | None:
+    """Render a full SSR exchange profile page for /exchange/{slug}.
+
+    Returns None if the exchange is not found.
+    Uses the same design language as corridor/country pages (light mode, inline CSS,
+    same nav/footer, Schema.org JSON-LD).
+    """
+    exchange = _find_exchange(slug)
+    if not exchange:
+        return None
+
+    name = html.escape(exchange["name"])
+    hq = exchange.get("headquarters", {})
+    hq_city = html.escape(hq.get("city", ""))
+    hq_country = html.escape(hq.get("country", ""))
+    hq_str = f"{hq_city}, {hq_country}" if hq_city else ""
+    founded = exchange.get("founded", "")
+    website = html.escape(exchange.get("website", ""))
+    api_docs = html.escape(exchange.get("api_docs", "") or "")
+    fee_model = html.escape(exchange.get("fee_model", ""))
+    speed = html.escape(exchange.get("speed", ""))
+    supported_currencies = exchange.get("supported_currencies", "")
+    supported_countries = exchange.get("supported_countries", "")
+    status = exchange.get("integration_status", "planned")
+    data_source = html.escape(exchange.get("coinnect_data_source", ""))
+
+    # Transfer methods
+    methods = exchange.get("transfer_methods", [])
+    methods_str = ", ".join(html.escape(m.replace("_", " ").title()) for m in methods)
+
+    # Status badge
+    status_map = {
+        "live": ("badge-green", "Live on Coinnect"),
+        "estimated": ("badge-blue", "Estimated rates"),
+        "planned": ("badge-gray", "Planned"),
+    }
+    badge_cls, badge_label = status_map.get(status, ("badge-gray", "Unknown"))
+
+    # Regulation list
+    regulated = exchange.get("regulated_in", [])
+    regulated_html = ""
+    if regulated:
+        items = "".join(f"<li>{html.escape(r)}</li>" for r in regulated)
+        regulated_html = f'<div class="card"><h3>Regulation &amp; Licenses</h3><ul style="padding-left:1.5rem;color:#475569;font-size:.88rem">{items}</ul></div>'
+
+    # Key facts
+    facts = exchange.get("interesting_facts", [])
+    facts_html = ""
+    if facts:
+        items = "".join(f"<li style=\"margin:.4rem 0\">{html.escape(f)}</li>" for f in facts)
+        facts_html = f'<div class="card"><h3>Key Facts</h3><ul style="padding-left:1.5rem;color:#475569;font-size:.88rem">{items}</ul></div>'
+
+    # App store links
+    app_stores = exchange.get("app_stores", {})
+    app_links_html = ""
+    if app_stores:
+        links = []
+        if app_stores.get("ios"):
+            links.append(f'<a href="{html.escape(app_stores["ios"])}" target="_blank" rel="noopener" style="color:#06b6d4">iOS App Store</a>')
+        if app_stores.get("android"):
+            links.append(f'<a href="{html.escape(app_stores["android"])}" target="_blank" rel="noopener" style="color:#06b6d4">Google Play</a>')
+        if links:
+            app_links_html = f'<p style="font-size:.88rem;color:#475569">Download: {" &middot; ".join(links)}</p>'
+
+    # API docs link
+    api_docs_html = ""
+    if api_docs:
+        api_docs_html = f'<p style="font-size:.88rem"><span style="color:#64748b">API docs:</span> <a href="{api_docs}" target="_blank" rel="noopener" style="color:#06b6d4">{api_docs}</a></p>'
+
+    path = f"/exchange/{slug}"
+    canonical = f"{BASE_URL}{path}"
+    meta_desc = (
+        f"{exchange['name']} on Coinnect: factual profile, regulation, fees, "
+        f"supported currencies, and integration status. Free, neutral, no affiliate fees."
+    )
+
+    # JSON-LD
+    json_ld = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": exchange["name"],
+        "url": exchange.get("website", ""),
+        "foundingDate": str(founded),
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": hq.get("city", ""),
+            "addressCountry": hq.get("country", ""),
+        },
+    }
+
+    breadcrumb_ld = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Coinnect", "item": f"{BASE_URL}/"},
+            {"@type": "ListItem", "position": 2, "name": "Exchanges", "item": f"{BASE_URL}/exchanges"},
+            {"@type": "ListItem", "position": 3, "name": exchange["name"], "item": canonical},
+        ],
+    }
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{name} — Coinnect Exchange Profile</title>
+  <meta name="description" content="{html.escape(meta_desc)}">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{canonical}">
+{_hreflang_tags(path)}
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{name} — Coinnect Exchange Profile">
+  <meta property="og:description" content="{html.escape(meta_desc)}">
+  <meta property="og:url" content="{canonical}">
+  <meta property="og:site_name" content="Coinnect">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{name} — Coinnect Exchange Profile">
+  <meta name="twitter:description" content="{html.escape(meta_desc)}">
+  <script type="application/ld+json">{json.dumps(json_ld)}</script>
+  <script type="application/ld+json">{json.dumps(breadcrumb_ld)}</script>
+  <style>{_base_style()}</style>
+</head>
+<body>
+{_nav_html()}
+<main class="container">
+  <nav class="breadcrumb">
+    <a href="/">Home</a> &rsaquo; <a href="/exchanges">Exchanges</a> &rsaquo; {name}
+  </nav>
+
+  <h1>{name}</h1>
+  <p class="subtitle">Founded {founded} &middot; {hq_str}</p>
+  <p><span class="badge {badge_cls}">{html.escape(badge_label)}</span>
+     <span style="font-size:.78rem;color:#94a3b8;margin-left:.5rem">{data_source}</span></p>
+
+  <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+    <div>
+      <h3 style="margin-top:0">Supported currencies</h3>
+      <p>{supported_currencies}</p>
+      <h3>Supported countries</h3>
+      <p>{supported_countries}</p>
+      <h3>Transfer methods</h3>
+      <p>{methods_str or '&mdash;'}</p>
+      <h3>Typical speed</h3>
+      <p>{speed or '&mdash;'}</p>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Fee model</h3>
+      <p>{fee_model or '&mdash;'}</p>
+      <h3>Website</h3>
+      <p><a href="{website}" target="_blank" rel="noopener" style="color:#06b6d4">{website or '&mdash;'}</a></p>
+      {api_docs_html}
+      {app_links_html}
+    </div>
+  </div>
+
+  {regulated_html}
+  {facts_html}
+
+  <div class="card" style="text-align:center">
+    <p style="font-size:1.05rem;font-weight:600;margin-bottom:.5rem">See {name} rates on Coinnect</p>
+    <p><a href="/" class="cta" style="display:inline-block;padding:.6rem 1.5rem;font-size:1rem">Compare rates now</a></p>
+  </div>
+
+  <div style="font-size:.78rem;color:#94a3b8;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #e2e8f0">
+    <p>This profile contains publicly available, factual information only. Coinnect is not affiliated with,
+    endorsed by, or sponsored by {name}. Data sourced from official websites, press releases, and regulatory filings.</p>
+  </div>
+</main>
+{_footer_html()}
+</body>
+</html>"""
+
+
+# ── Exchange directory page ───────────────────────────────────────────────────
+
+def generate_exchanges_directory() -> str:
+    """Render the /exchanges listing page with all exchange profiles."""
+    exchanges = _load_exchange_profiles()
+    exchanges_sorted = sorted(exchanges, key=lambda x: x["name"])
+
+    cards_html = ""
+    for ex in exchanges_sorted:
+        slug = html.escape(ex["slug"])
+        name = html.escape(ex["name"])
+        status = ex.get("integration_status", "planned")
+        hq = ex.get("headquarters", {})
+        hq_str = html.escape(f"{hq.get('city', '')}, {hq.get('country', '')}") if hq.get("city") else ""
+        founded = ex.get("founded", "")
+        currencies = ex.get("supported_currencies", "?")
+        countries = ex.get("supported_countries", "?")
+
+        status_map = {
+            "live": ("badge-green", "Live"),
+            "estimated": ("badge-blue", "Estimated"),
+            "planned": ("badge-gray", "Planned"),
+        }
+        badge_cls, badge_label = status_map.get(status, ("badge-gray", "Unknown"))
+
+        cards_html += f"""<a href="/exchange/{slug}" class="corridor-link"
+   style="display:block;padding:.8rem 1rem;margin:.4rem 0;border-radius:10px;text-decoration:none">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.25rem">
+    <span style="font-weight:600;color:#0f172a;font-size:.92rem">{name}</span>
+    <span class="badge {badge_cls}" style="font-size:.68rem">{html.escape(badge_label)}</span>
+  </div>
+  <p style="font-size:.78rem;color:#64748b;margin:0">{hq_str} &middot; Founded {founded}</p>
+  <p style="font-size:.75rem;color:#94a3b8;margin:.2rem 0 0">{currencies} currencies &middot; {countries} countries</p>
+</a>"""
+
+    path = "/exchanges"
+    canonical = f"{BASE_URL}{path}"
+    meta_desc = (
+        "Factual profiles of money transfer providers and exchanges on Coinnect. "
+        "Neutral, no affiliate fees, open data."
+    )
+
+    json_ld = {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Exchange Directory",
+        "description": meta_desc,
+        "url": canonical,
+        "provider": {
+            "@type": "Organization",
+            "name": "Coinnect",
+            "url": BASE_URL,
+        },
+    }
+
+    breadcrumb_ld = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Coinnect", "item": f"{BASE_URL}/"},
+            {"@type": "ListItem", "position": 2, "name": "Exchanges", "item": canonical},
+        ],
+    }
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exchange Directory — Coinnect</title>
+  <meta name="description" content="{html.escape(meta_desc)}">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{canonical}">
+{_hreflang_tags(path)}
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Exchange Directory — Coinnect">
+  <meta property="og:description" content="{html.escape(meta_desc)}">
+  <meta property="og:url" content="{canonical}">
+  <meta property="og:site_name" content="Coinnect">
+  <meta name="twitter:card" content="summary">
+  <script type="application/ld+json">{json.dumps(json_ld)}</script>
+  <script type="application/ld+json">{json.dumps(breadcrumb_ld)}</script>
+  <style>{_base_style()}</style>
+</head>
+<body>
+{_nav_html()}
+<main class="container">
+  <nav class="breadcrumb">
+    <a href="/">Home</a> &rsaquo; Exchanges
+  </nav>
+
+  <h1>Exchange Directory</h1>
+  <p class="subtitle">Factual profiles of the providers Coinnect compares. No reviews, no scores, no affiliate fees &mdash; just public data.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:.5rem">
+    {cards_html}
+  </div>
+
+  <div style="font-size:.78rem;color:#94a3b8;margin-top:2rem">
+    <p>All information is sourced from official websites, press releases, and regulatory filings.
+    Coinnect is not affiliated with any listed provider.</p>
+  </div>
+</main>
+{_footer_html()}
+</body>
+</html>"""
+
+
+# ── Country-to-currency mapping (for /send/{from_country}/{to_country}) ───────
+
+COUNTRY_TO_SLUG: dict[str, str] = {}
+for _slug, _cdata in COUNTRY_DATA.items():
+    # Build mapping from various name forms to country slug
+    # e.g. "united-states" -> "usa", "mexico" -> "mexico"
+    COUNTRY_TO_SLUG[_slug] = _slug
+    # Also add kebab-case version of the full name
+    _kebab = _cdata["name"].lower().replace(" ", "-")
+    COUNTRY_TO_SLUG[_kebab] = _slug
+
+
+def resolve_country_corridor(from_country: str, to_country: str) -> tuple[str, str] | None:
+    """Resolve country slugs to a (from_currency, to_currency) pair.
+
+    Accepts both country data keys ('usa', 'mexico') and kebab-case names
+    ('united-states', 'south-africa').
+    Returns None if either country is unknown.
+    """
+    from_slug = COUNTRY_TO_SLUG.get(from_country.lower())
+    to_slug = COUNTRY_TO_SLUG.get(to_country.lower())
+    if not from_slug or not to_slug:
+        return None
+    from_data = COUNTRY_DATA[from_slug]
+    to_data = COUNTRY_DATA[to_slug]
+    from_currency = from_data["currency"]
+    to_currency = to_data["currency"]
+    return (from_currency, to_currency)
