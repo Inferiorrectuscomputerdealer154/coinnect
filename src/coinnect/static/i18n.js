@@ -92,6 +92,7 @@ en:{
   fb_provider_down:'Provider unavailable',fb_fee_wrong:'Fee was different',fb_other:'Other issue',
   fb_thanks:'Thanks for the feedback!',fb_note:'Optional note',
   read_more:'Read more — data sources & refresh rates',fee_source:'Published fees',
+  similar_cost:'Similar cost',n_routes:'{n} routes',
 },
 es:{
   nav_api:'API docs',nav_whitepaper:'Libro blanco',nav_pricing:'Precios',nav_support:'❤️ Apoyar',
@@ -166,6 +167,7 @@ es:{
   fb_provider_down:'Proveedor no disponible',fb_fee_wrong:'La comisión fue diferente',fb_other:'Otro problema',
   fb_thanks:'¡Gracias por el feedback!',fb_note:'Nota opcional',
   read_more:'Leer más — fuentes de datos y frecuencia de actualización',fee_source:'Comisiones publicadas',
+  similar_cost:'Costo similar',n_routes:'{n} rutas',
 },
 pt:{
   nav_api:'API docs',nav_whitepaper:'White paper',nav_pricing:'Preços',nav_support:'❤️ Apoiar',

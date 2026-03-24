@@ -1823,22 +1823,16 @@ function renderExtrasWithTies(extras,from,to){
   }
   return groups.map(group=>{
     if(group.length===1) return renderCompactRow(group[0],from,to);
-    // Tied group — first as compact row, rest as inline chips in same box
-    const first=group[0];
-    const rest=group.slice(1);
-    const chips=rest.map(r=>{
-      const vl=[...new Set(r.steps.map(s=>s.via))];
-      return`<div class="inline-flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-300">
-        ${viaWithLogos(vl,12)}
-        <span class="font-mono font-semibold">${fmtNum(r.they_receive,to)}</span>
-      </div>`;
-    }).join('<span class="text-gray-300 dark:text-gray-600 text-xs">,</span>');
-    return`<div class="bg-cyan-50/40 dark:bg-cyan-950/15 border border-cyan-200 dark:border-cyan-800 rounded-xl overflow-hidden">
-      ${renderCompactRow(first,from,to)}
-      <div class="px-5 py-2 border-t border-cyan-100 dark:border-cyan-900/40 flex items-center gap-2 flex-wrap">
-        <span class="text-[10px] text-cyan-500 font-medium shrink-0">~ ${rest.length} more</span>
-        ${chips}
+    // Tied group — left accent bar, each route independent and expandable
+    const shuffled=[...group].sort(()=>Math.random()-0.5);
+    const costPct=shuffled[0].total_cost_pct.toFixed(2);
+    return`<div class="relative pl-3">
+      <div class="absolute left-0 top-2 bottom-2 w-0.5 rounded-full bg-cyan-300 dark:bg-cyan-700"></div>
+      <div class="mb-1 flex items-center gap-2">
+        <span class="text-[10px] font-medium text-cyan-600 dark:text-cyan-400 tracking-wide uppercase">${t('similar_cost')} ~${costPct}%</span>
+        <span class="text-[10px] text-gray-400">${(t('n_routes')||'{n} routes').replace('{n}',shuffled.length)}</span>
       </div>
+      <div class="flex flex-col gap-1">${shuffled.map(r=>renderCompactRow(r,from,to)).join('')}</div>
     </div>`;
   }).join('');
 }
@@ -1895,22 +1889,19 @@ function renderResults(routes,from,to){
 
   const tiedBlock=shuffled.length>1
     ? (()=>{
+        // Featured card for first, rest as compact expandable rows with accent bar
         const first=shuffled[0];
         const rest=shuffled.slice(1);
-        // Render tied alternatives as inline chips in a single row
-        const tiedChips=rest.map(r=>{
-          const vl=[...new Set(r.steps.map(s=>s.via))];
-          return`<div class="inline-flex items-center gap-1.5 bg-white dark:bg-gray-900 border border-emerald-200 dark:border-emerald-800 rounded-lg px-3 py-2">
-            ${viaWithLogos(vl,14)}
-            <span class="font-mono text-sm font-semibold text-gray-900 dark:text-white ml-1">${fmtNum(r.they_receive,to)}</span>
-            <span class="text-gray-400 text-xs">${to}</span>
-          </div>`;
-        }).join('');
+        const costPct=cheapest.total_cost_pct.toFixed(2);
         return`<div>
           ${renderFeaturedCard(first,from,to)}
-          <div class="mt-1.5 bg-emerald-50/40 dark:bg-emerald-950/15 border border-emerald-200 dark:border-emerald-800 rounded-xl px-4 py-2.5">
-            <div class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium mb-2">~ ${rest.length} more at ~${cheapest.total_cost_pct.toFixed(2)}%</div>
-            <div class="flex flex-wrap gap-2">${tiedChips}</div>
+          <div class="relative pl-3 mt-2">
+            <div class="absolute left-0 top-2 bottom-2 w-0.5 rounded-full bg-emerald-400 dark:bg-emerald-700"></div>
+            <div class="mb-1 flex items-center gap-2">
+              <span class="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 tracking-wide uppercase">${t('similar_cost')} ~${costPct}%</span>
+              <span class="text-[10px] text-gray-400">${rest.length} more</span>
+            </div>
+            <div class="flex flex-col gap-1">${rest.map(r=>renderCompactRow(r,from,to)).join('')}</div>
           </div>
         </div>`;
       })()
