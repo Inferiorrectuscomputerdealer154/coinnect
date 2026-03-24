@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coinnect — The free open map for global money</title>
-  <meta name="description" content="Find the cheapest path to move money anywhere. Free API for humans and AI agents. Mission-driven, no affiliate fees.">
+  <meta name="description" content="Find the best rate to move money anywhere. Free API for humans and AI agents. Mission-driven, no affiliate fees.">
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
@@ -13,11 +13,11 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://coinnect.bot">
   <meta property="og:title" content="Coinnect — The free open map for global money">
-  <meta property="og:description" content="Compare every way to send money across borders. 25+ providers, real-time rates. Free, open source, no affiliate fees.">
+  <meta property="og:description" content="The cheapest path between any two currencies. Free. Open. For humans & bots. No affiliate fees.">
   <meta property="og:image" content="https://coinnect.bot/static/logo.svg">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Coinnect — The free open map for global money">
-  <meta name="twitter:description" content="Compare every way to send money across borders. Free, open source, no affiliate fees.">
+  <meta name="twitter:description" content="The cheapest path between any two currencies. Free. Open. For humans & bots. No affiliate fees.">
 
   <!-- Canonical + hreflang -->
   <link rel="canonical" href="https://coinnect.bot/">
@@ -181,6 +181,8 @@
           <button onclick="setLang('th')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇹🇭 ภาษาไทย</button>
           <button onclick="setLang('sw')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇰🇪 Kiswahili</button>
           <button onclick="setLang('ur')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇵🇰 اردو</button>
+          <button onclick="setLang('zh-CN')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇨🇳 简体中文</button>
+          <button onclick="setLang('zh-TW')" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-2">🇹🇼 繁體中文</button>
         </div>
       </div>
       <button onclick="toggleTheme()" id="themeBtn"
@@ -201,7 +203,7 @@
         Compare every way to send money <span class="text-cyan-600 dark:text-cyan-400">anywhere</span>
       </h1>
       <p class="text-gray-500 dark:text-gray-400 text-sm max-w-md mx-auto" data-i18n="hero_sub">
-        25+ providers. Real-time rates. No affiliate fees. Free for personal use.
+        The cheapest path between any two currencies — fiat, crypto, P2P. Free. Open. For humans &amp; bots.
       </p>
       <p class="mt-2 text-base text-cyan-600 dark:text-cyan-400 font-medium" id="taglineRotator"></p>
       <!-- Stats -->
@@ -209,8 +211,8 @@
         <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Live rates every 3 min</span>
         <span>22+ exchanges</span>
         <span>50+ currencies</span>
-        <span>Free for personal use</span>
-        <span>Open source</span>
+        <span>Free for everyone</span>
+        <span>Open protocol</span>
       </div>
     </div>
 
@@ -433,7 +435,7 @@
     <div class="flex flex-wrap items-center gap-2">
       <span class="text-xs text-gray-400 mr-1" data-i18n="filter_label">Filter:</span>
       <button class="filter-btn active text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all" data-filter="all" onclick="setFilter('all')" data-i18n="filter_all">All</button>
-      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="cheap" onclick="setFilter('cheap')" data-i18n="filter_cheap">Cheapest</button>
+      <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="cheap" onclick="setFilter('cheap')" data-i18n="filter_cheap">Best rate</button>
       <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="fast" onclick="setFilter('fast')" data-i18n="filter_fast">Fastest</button>
       <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="nocrypto" onclick="setFilter('nocrypto')" data-i18n="filter_nocrypto">Bank only</button>
       <button class="filter-btn text-xs border border-gray-300 dark:border-gray-700 rounded-full px-3 py-1.5 transition-all text-gray-500 dark:text-gray-400" data-filter="crypto" onclick="setFilter('crypto')" data-i18n="filter_crypto">Crypto</button>
@@ -541,7 +543,7 @@
     <div class="text-center mb-10">
       <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2" data-i18n-html="pricing_title">Pricing: $0</h2>
       <p class="text-gray-500 dark:text-gray-400 text-sm max-w-md mx-auto" data-i18n-html="pricing_sub">
-        Free for personal use. No credit card. No sign-up. No affiliate fees — ever.
+        Free. No credit card. No sign-up. No affiliate fees — ever.
       </p>
     </div>
 
@@ -936,6 +938,7 @@ const LOCALE_CURRENCY={
   'id':'IDR','vi':'VND','th':'THB','ur':'PKR',
   'en-GB':'GBP','de':'EUR','fr':'EUR','es':'EUR',
   'ja':'JPY','zh':'CNY',
+  'es-PY':'PYG','es-UY':'UYU',
 };
 
 const REQS={
@@ -964,7 +967,7 @@ const REQS={
   'Binance P2P':{sender:['Binance account','KYC (government ID + selfie)','Crypto or fiat in Binance wallet'],recipient:['Binance account or bank account (per trader terms)'],kyc:'Required on Binance'},
 };
 
-const FEATURED={'Cheapest':'','Fastest':''};
+const FEATURED={'Cheapest':'','Fastest':''}; // internal labels, translated via tag_cheapest/tag_fastest
 const PROVIDER_INFO = {
   'Binance': {url:'https://binance.com',refresh:'~3 min (live order book)',contact:'https://www.binance.com/en/support',fees:'https://www.binance.com/en/fee/schedule'},
   'Kraken': {url:'https://kraken.com',refresh:'~3 min (live order book)',contact:'https://support.kraken.com',fees:'https://www.kraken.com/features/fee-schedule'},

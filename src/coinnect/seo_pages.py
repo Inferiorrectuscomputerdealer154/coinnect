@@ -27,6 +27,7 @@ TOP_CORRIDORS: list[tuple[str, str]] = [
     ("GBP", "INR"), ("GBP", "PHP"), ("GBP", "NGN"), ("GBP", "PKR"),
     ("AED", "INR"), ("AED", "PHP"), ("AED", "PKR"),
     ("CAD", "PHP"), ("CAD", "INR"),
+    ("USD", "PYG"), ("USD", "UYU"), ("PYG", "USD"), ("UYU", "USD"),
     ("MXN", "USD"), ("BRL", "USD"), ("PHP", "USD"), ("INR", "USD"),
     ("NGN", "USD"), ("KES", "USD"),
 ]
@@ -35,7 +36,7 @@ TOP_CORRIDORS: list[tuple[str, str]] = [
 DEFAULT_AMOUNTS: dict[str, float] = {
     "USD": 500, "EUR": 500, "GBP": 400, "CAD": 600, "AED": 2000,
     "MXN": 10000, "BRL": 2500, "PHP": 25000, "INR": 40000,
-    "NGN": 500000, "KES": 50000,
+    "NGN": 500000, "KES": 50000, "PYG": 5000000, "UYU": 5000,
 }
 
 # ── Country definitions ───────────────────────────────────────────────────────
@@ -172,6 +173,16 @@ COUNTRY_DATA: dict[str, dict[str, Any]] = {
         "inbound": [("USD", "AUD"), ("GBP", "AUD")],
         "outbound": [("AUD", "USD"), ("AUD", "INR"), ("AUD", "PHP")],
     },
+    "paraguay": {
+        "name": "Paraguay", "currency": "PYG", "flag": "PY",
+        "inbound": [("USD", "PYG"), ("EUR", "PYG"), ("BRL", "PYG"), ("ARS", "PYG")],
+        "outbound": [("PYG", "USD"), ("PYG", "EUR"), ("PYG", "BRL"), ("PYG", "ARS")],
+    },
+    "uruguay": {
+        "name": "Uruguay", "currency": "UYU", "flag": "UY",
+        "inbound": [("USD", "UYU"), ("EUR", "UYU"), ("BRL", "UYU"), ("ARS", "UYU")],
+        "outbound": [("UYU", "USD"), ("UYU", "EUR"), ("UYU", "BRL"), ("UYU", "ARS")],
+    },
     "chile": {
         "name": "Chile", "currency": "CLP", "flag": "CL",
         "inbound": [("USD", "CLP"), ("EUR", "CLP")],
@@ -201,6 +212,7 @@ CURRENCY_NAMES: dict[str, str] = {
     "THB": "Thai Baht", "VND": "Vietnamese Dong", "AUD": "Australian Dollar",
     "CLP": "Chilean Peso", "PEN": "Peruvian Sol", "EGP": "Egyptian Pound",
     "ARS": "Argentine Peso", "JPY": "Japanese Yen", "ZAR": "South African Rand",
+    "PYG": "Paraguayan Guaraní", "UYU": "Uruguayan Peso",
 }
 
 # ── HTML cache ────────────────────────────────────────────────────────────────

@@ -218,13 +218,13 @@ app = FastAPI(
         "The open map for global money.\n\n"
         "Finds the cheapest path between any two currencies — "
         "across traditional remittance, crypto exchanges, and P2P platforms.\n\n"
-        "**Mission-driven. No affiliate fees. No custody. Free for personal use.**\n\n"
+        "**Our mission is to map the money rails of the internet.** No affiliate fees. No custody. Free. Open. For humans & bots.\n\n"
         "**For AI agents:** call `/v1/quote` as a tool with `from`, `to`, and `amount` parameters. "
         "Or use the MCP server (`python -m coinnect.mcp_server`) for Claude/MCP-compatible agents.\n\n"
         "Rate limits: 20 req/day / 50/hr anonymous (beta) · 1,000/day free key · "
         "5,000/day agent key · see coinnect.bot/#pricing"
     ),
-    version="2026.03.23.1",
+    version="2026.03.24.1",
     contact={"name": "Coinnect", "url": "https://coinnect.bot"},
     license_info={"name": "MIT"},
     lifespan=lifespan,
@@ -346,6 +346,47 @@ async def security_txt():
         "Expires: 2027-01-01T00:00:00Z\n"
     )
     return PlainTextResponse(content)
+
+
+@app.get("/.well-known/agent", include_in_schema=False)
+async def well_known_agent():
+    agent_manifest = {
+        "name": "Coinnect",
+        "description": "Open protocol for global money routing. Finds the cheapest path between any two currencies — fiat, crypto, P2P.",
+        "url": "https://coinnect.bot",
+        "version": "2026.03.24.1",
+        "license": "MIT",
+        "contact": "miguel@coinnect.bot",
+        "capabilities": {
+            "protocols": ["REST/JSON", "MCP", "OpenAI Tool Use", "Anthropic Tool Use", "x402"],
+            "authentication": [
+                {"scheme": "anonymous", "rateLimit": "20/day"},
+                {"scheme": "apiKey", "header": "Authorization", "registration": "/v1/keys", "rateLimit": "1000/day"},
+                {"scheme": "x402", "cost": "$0.002 USDC/request", "rateLimit": "unlimited"},
+            ],
+        },
+        "services": [
+            {
+                "name": "Quote API",
+                "endpoint": "/v1/quote",
+                "method": "GET",
+                "params": {"from": "currency code", "to": "currency code", "amount": "number"},
+                "description": "Ranked routes for a currency transfer.",
+            },
+            {"name": "Corridors", "endpoint": "/v1/corridors", "method": "GET"},
+            {"name": "Exchanges", "endpoint": "/v1/exchanges", "method": "GET"},
+            {"name": "History", "endpoint": "/v1/history", "method": "GET"},
+            {"name": "Health", "endpoint": "/v1/health", "method": "GET"},
+            {"name": "Daily Snapshot", "endpoint": "/v1/snapshot/daily", "method": "GET", "license": "CC-BY-4.0"},
+        ],
+        "mcp": {
+            "command": "python -m coinnect.mcp_server",
+            "tools": ["coinnect_quote", "coinnect_corridors", "coinnect_explain_route"],
+        },
+        "openapi": "https://coinnect.bot/docs",
+    }
+    from fastapi.responses import JSONResponse
+    return JSONResponse(agent_manifest)
 
 
 async def _get_all_edges_cached() -> list:
@@ -679,6 +720,8 @@ async def suggest_page():
               <option value="ARS">ARS &mdash; Argentine Peso</option>
               <option value="PEN">PEN &mdash; Peruvian Sol</option>
               <option value="CLP">CLP &mdash; Chilean Peso</option>
+              <option value="PYG">PYG &mdash; Paraguayan Guaraní 🇵🇾</option>
+              <option value="UYU">UYU &mdash; Uruguayan Peso 🇺🇾</option>
               <option value="VES">VES &mdash; Venezuelan Bolivar</option>
             </optgroup>
             <optgroup label="Asia">
@@ -722,6 +765,8 @@ async def suggest_page():
               <option value="ARS">ARS &mdash; Argentina</option>
               <option value="PEN">PEN &mdash; Peru</option>
               <option value="CLP">CLP &mdash; Chile</option>
+              <option value="PYG">PYG &mdash; Paraguay 🇵🇾</option>
+              <option value="UYU">UYU &mdash; Uruguay 🇺🇾</option>
               <option value="VES">VES &mdash; Venezuela</option>
             </optgroup>
             <optgroup label="Asia">

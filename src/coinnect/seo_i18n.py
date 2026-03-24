@@ -112,6 +112,22 @@ CORRIDOR_SEO = {
     "KES-USD": {
         "en": {"title": "Send KES to USD — Cheapest Routes", "desc": "Send money from Kenya to USA."},
     },
+    "USD-PYG": {
+        "en": {"title": "Send USD to Paraguay (PYG) — Cheapest Routes", "desc": "Compare providers to send money from USA to Paraguay."},
+        "es": {"title": "Enviar dólares a Paraguay — Rutas más baratas", "desc": "Compara proveedores para enviar dinero de EE.UU. a Paraguay."},
+    },
+    "USD-UYU": {
+        "en": {"title": "Send USD to Uruguay (UYU) — Cheapest Routes", "desc": "Compare providers to send money from USA to Uruguay."},
+        "es": {"title": "Enviar dólares a Uruguay — Rutas más baratas", "desc": "Compara proveedores para enviar dinero de EE.UU. a Uruguay."},
+    },
+    "PYG-USD": {
+        "en": {"title": "Send PYG to USD — Cheapest Routes from Paraguay", "desc": "Compare providers to send money from Paraguay to USA."},
+        "es": {"title": "Enviar guaraníes a dólares — Rutas más baratas", "desc": "Compara proveedores para enviar dinero de Paraguay a EE.UU."},
+    },
+    "UYU-USD": {
+        "en": {"title": "Send UYU to USD — Cheapest Routes from Uruguay", "desc": "Compare providers to send money from Uruguay to USA."},
+        "es": {"title": "Enviar pesos uruguayos a dólares — Rutas más baratas", "desc": "Compara proveedores para enviar dinero de Uruguay a EE.UU."},
+    },
 }
 
 # Map: country slug -> {name, currencies, languages, flag}
@@ -176,4 +192,10 @@ COUNTRY_SEO = {
     "south-africa": {"name": "South Africa", "flag": "🇿🇦", "currencies": ["ZAR"], "lang": "en",
         "title_en": "Send Money from South Africa — Compare All Routes", "title_local": "Send Money from South Africa — Compare All Routes",
         "desc_en": "Compare providers to send money from South Africa.", "desc_local": "Compare providers to send money from South Africa."},
+    "paraguay": {"name": "Paraguay", "flag": "🇵🇾", "currencies": ["PYG"], "lang": "es",
+        "title_en": "Send Money to Paraguay — Best Rates", "title_local": "Enviar dinero a Paraguay — Mejores tasas",
+        "desc_en": "Compare the cheapest ways to send money to Paraguay. Real-time rates from 30+ providers.", "desc_local": "Compara las formas más baratas de enviar dinero a Paraguay. Tasas en tiempo real de 30+ proveedores."},
+    "uruguay": {"name": "Uruguay", "flag": "🇺🇾", "currencies": ["UYU"], "lang": "es",
+        "title_en": "Send Money to Uruguay — Best Rates", "title_local": "Enviar dinero a Uruguay — Mejores tasas",
+        "desc_en": "Compare the cheapest ways to send money to Uruguay. Real-time rates from 30+ providers.", "desc_local": "Compara las formas más baratas de enviar dinero a Uruguay. Tasas en tiempo real de 30+ proveedores."},
 }

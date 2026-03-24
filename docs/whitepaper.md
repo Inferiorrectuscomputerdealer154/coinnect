@@ -1,6 +1,6 @@
 # Coinnect: The Open Route Guide for Global Money
 
-**Version:** 0.8 (March 2026)
+**Version:** 0.9 (March 2026)
 **Author:** Miguel
 **Domain:** coinnect.bot · **Status:** Live — public beta
 **Code:** [github.com/coinnect-dev/coinnect](https://github.com/coinnect-dev/coinnect) · MIT License
@@ -8,6 +8,8 @@
 ---
 
 ## Abstract
+
+**Our mission is to map the money rails of the internet.**
 
 Every year, people and machines move trillions of dollars across borders. The infrastructure exists. The exchanges are open. The corridors are live. But the information is fragmented, opaque, and — when it isn't — controlled by platforms that profit from sending you the wrong way.
 
@@ -302,7 +304,7 @@ Coinnect solves this structurally. The routing engine has no preference for any 
 
 ### 5.2 Revenue model
 
-Coinnect is **free for personal use**. Revenue comes from three sources, in order of priority:
+Coinnect is **free and open for everyone — humans and bots alike**. Revenue comes from three sources, in order of priority:
 
 1. **x402 micropayments** — autonomous AI agents pay $0.002 USDC per query. As agent-to-agent commerce grows, this becomes the primary revenue stream. No accounts, no billing — just HTTP payments.
 2. **Commercial API tiers** — high-volume integrations (fintech apps, comparison platforms) pay for dedicated throughput and SLA guarantees.
@@ -554,11 +556,13 @@ In a financial ecosystem trending toward openness — open banking APIs, real-ti
 
 ## 14. Vision
 
+**Our mission is to map the money rails of the internet.**
+
 Before GPS, every driver carried a road atlas. It didn't drive. It didn't own the roads. It had no preference for which highway you took. You trusted it precisely because it had no stake in your route — it just knew every path and showed you all of them.
 
 Then came Waze: the same neutrality, but live, collaborative, self-updating — and eventually, consulted by autonomous vehicles without any human in the loop.
 
-That is the arc of Coinnect.
+That is the arc of Coinnect. Free. Open. For humans and bots.
 
 Today: we show you the map.
 Tomorrow: the map updates itself with community data.
@@ -568,4 +572,4 @@ Eventually: machines consult it automatically, and money moves at its natural co
 
 ---
 
-*Version 0.8 (March 2026) · feedback: miguel@coinnect.bot*
+*Version 0.9 (March 2026) · feedback: miguel@coinnect.bot*

@@ -55,6 +55,8 @@ REMITLY_CORRIDORS: list[tuple] = [
     ("INR", "USD",  2.50, 1440,  "Remitly — bank withdrawal, India to USA"),
     ("PHP", "USD",  2.50, 1440,  "Remitly — bank withdrawal, Philippines to USA"),
     ("MXN", "USD",  2.50, 1440,  "Remitly — bank withdrawal, Mexico to USA"),
+    ("USD", "PYG",  3.80, 1440,  "Remitly Economy — bank deposit, Paraguay"),
+    ("USD", "UYU",  2.80, 1440,  "Remitly Economy — bank deposit, Uruguay"),
 ]
 
 WORLDREMIT_CORRIDORS: list[tuple] = [
@@ -80,6 +82,8 @@ WORLDREMIT_CORRIDORS: list[tuple] = [
     ("KES", "GBP",  3.50, 1440,  "WorldRemit — bank deposit, Kenya to UK"),
     ("GHS", "GBP",  4.00, 2880,  "WorldRemit — bank deposit, Ghana to UK"),
     ("PHP", "GBP",  3.00, 1440,  "WorldRemit — bank deposit, Philippines to UK"),
+    ("USD", "PYG",  4.00, 1440,  "WorldRemit — bank deposit or cash, Paraguay"),
+    ("USD", "UYU",  3.20, 1440,  "WorldRemit — bank deposit, Uruguay"),
 ]
 
 RIA_CORRIDORS: list[tuple] = [
@@ -100,6 +104,10 @@ RIA_CORRIDORS: list[tuple] = [
     ("MXN", "USD",  3.50, 60,   "Ria — bank deposit, Mexico to USA"),
     ("PHP", "USD",  3.80, 60,   "Ria — bank deposit, Philippines to USA"),
     ("INR", "USD",  3.20, 1440, "Ria — bank deposit, India to USA"),
+    ("USD", "PYG",  4.50, 1440, "Ria — bank deposit or cash, Paraguay"),
+    ("USD", "UYU",  3.50, 1440, "Ria — bank deposit, Uruguay"),
+    ("PYG", "USD",  5.00, 1440, "Ria — bank deposit, Paraguay to USA"),
+    ("UYU", "USD",  3.80, 1440, "Ria — bank deposit, Uruguay to USA"),
 ]
 
 SENDWAVE_CORRIDORS: list[tuple] = [
@@ -289,6 +297,12 @@ GLOBAL66_CORRIDORS: list[tuple] = [
     ("PEN", "USD",  1.50, 60,   "Global66 — bank deposit, Peru to USA"),
     ("BRL", "USD",  1.80, 1440, "Global66 — bank deposit, Brazil to USA"),
     ("ARS", "USD",  2.00, 60,   "Global66 — bank deposit, Argentina to USA"),
+    ("USD", "PYG",  1.40, 60,   "Global66 — bank deposit in Paraguay"),
+    ("USD", "UYU",  1.20, 60,   "Global66 — bank deposit in Uruguay"),
+    ("EUR", "PYG",  1.50, 60,   "Global66 — bank deposit in Paraguay"),
+    ("EUR", "UYU",  1.30, 60,   "Global66 — bank deposit in Uruguay"),
+    ("PYG", "USD",  1.50, 60,   "Global66 — send PYG, receive USD"),
+    ("UYU", "USD",  1.30, 60,   "Global66 — send UYU, receive USD"),
 ]
 
 
@@ -384,6 +398,10 @@ WESTERN_UNION_CORRIDORS: list[tuple] = [
     ("GHS", "USD",  6.00, 2880,  "Western Union — bank, Ghana to USA"),
     ("MXN", "EUR",  5.50,  60,   "Western Union — bank, Mexico to Europe"),
     ("PHP", "EUR",  5.50,  60,   "Western Union — bank, Philippines to Europe"),
+    ("USD", "PYG",  5.50,  60,   "Western Union — bank deposit or cash, Paraguay"),
+    ("USD", "UYU",  4.80, 1440,  "Western Union — bank deposit, Uruguay"),
+    ("PYG", "USD",  6.00,  60,   "Western Union — cash or bank, Paraguay to USA"),
+    ("UYU", "USD",  5.00, 1440,  "Western Union — bank, Uruguay to USA"),
 ]
 
 MONEYGRAM_CORRIDORS: list[tuple] = [
@@ -412,6 +430,10 @@ MONEYGRAM_CORRIDORS: list[tuple] = [
     ("NGN", "USD",  6.20, 2880,  "MoneyGram — bank, Nigeria to USA"),
     ("KES", "USD",  5.50, 1440,  "MoneyGram — bank or mobile money, Kenya to USA"),
     ("MXN", "EUR",  5.20,  60,   "MoneyGram — bank, Mexico to Europe"),
+    ("USD", "PYG",  5.50, 1440,  "MoneyGram — bank deposit or cash, Paraguay"),
+    ("USD", "UYU",  4.50, 1440,  "MoneyGram — bank deposit, Uruguay"),
+    ("PYG", "USD",  6.00, 1440,  "MoneyGram — cash or bank, Paraguay to USA"),
+    ("UYU", "USD",  5.00, 1440,  "MoneyGram — bank, Uruguay to USA"),
 ]
 
 CURRENCYFAIR_CORRIDORS: list[tuple] = [
