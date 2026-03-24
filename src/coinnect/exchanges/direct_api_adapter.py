@@ -2009,6 +2009,10 @@ async def get_ofx_edges() -> list[Edge]:
     Requires OFX_CLIENT_ID + OFX_CLIENT_SECRET env vars.
     Register free at https://developer.ofx.com/rates-api
     """
+    # OFX disabled until production API access is approved (sandbox returns 401 on rates)
+    # Re-enable by setting OFX_ENABLED=1 in .env
+    if not os.environ.get("OFX_ENABLED"):
+        return []
     cid = os.environ.get("OFX_CLIENT_ID", "")
     if not cid:
         return []
