@@ -571,7 +571,7 @@ def render_corridor_page(
   <meta property="og:description" content="{html.escape(og_desc)}">
   <meta property="og:url" content="{canonical}">
   <meta property="og:site_name" content="Coinnect">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Send {html.escape(from_c)} to {html.escape(to_c)} — Coinnect">
   <meta name="twitter:description" content="{html.escape(og_desc)}">
   <script type="application/ld+json">{json.dumps(json_ld)}</script>
@@ -734,7 +734,7 @@ def render_country_page(
   <meta property="og:description" content="{html.escape(meta_desc)}">
   <meta property="og:url" content="{canonical}">
   <meta property="og:site_name" content="Coinnect">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Money Transfer Rates — {country_name} | Coinnect">
   <meta name="twitter:description" content="{html.escape(meta_desc)}">
   <script type="application/ld+json">{json.dumps(json_ld)}</script>
@@ -987,7 +987,7 @@ def generate_exchange_page(slug: str) -> str | None:
   <meta property="og:description" content="{html.escape(meta_desc)}">
   <meta property="og:url" content="{canonical}">
   <meta property="og:site_name" content="Coinnect">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{name} — Coinnect Exchange Profile">
   <meta name="twitter:description" content="{html.escape(meta_desc)}">
   <script type="application/ld+json">{json.dumps(json_ld)}</script>
@@ -1124,7 +1124,7 @@ def generate_exchanges_directory() -> str:
   <meta property="og:description" content="{html.escape(meta_desc)}">
   <meta property="og:url" content="{canonical}">
   <meta property="og:site_name" content="Coinnect">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <script type="application/ld+json">{json.dumps(json_ld)}</script>
   <script type="application/ld+json">{json.dumps(breadcrumb_ld)}</script>
   <style>{_base_style()}</style>
